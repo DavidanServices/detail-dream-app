@@ -137,7 +137,7 @@ function PpfPage() {
                       }}
                       className={`cursor-pointer outline-none transition-all duration-200 ${
                         isActive(part.id)
-                          ? "fill-primary/70 stroke-primary"
+                          ? "fill-primary stroke-primary"
                           : hovered === part.id
                             ? "fill-primary/25 stroke-primary/60"
                             : "fill-muted/40 stroke-border"
