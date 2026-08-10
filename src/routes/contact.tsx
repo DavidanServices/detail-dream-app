@@ -3,6 +3,10 @@ import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/contact")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    service: typeof search["service"] === "string" ? (search["service"] as string) : undefined,
+    coverage: typeof search["coverage"] === "string" ? (search["coverage"] as string) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Contact & Book — Luxe Auto Detail" },
