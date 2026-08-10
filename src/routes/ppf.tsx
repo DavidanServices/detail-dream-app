@@ -28,24 +28,44 @@ type Part = {
   id: string;
   name: string;
   price: number;
-  /** SVG path or rect definition for the top-down car diagram */
+  /** SVG path for the 3/4 perspective car diagram */
   d: string;
+  /** Panel orientation — drives the shading gradient */
+  face?: "top" | "side" | "front" | "glass";
 };
 
 const PARTS: Part[] = [
-  { id: "front-bumper", name: "Front bumper", price: 220, d: "M120 40 q80 -22 160 0 l6 34 q-86 -16 -172 0 z" },
-  { id: "bonnet", name: "Bonnet / hood", price: 260, d: "M126 80 q74 -14 148 0 l8 78 q-82 -12 -164 0 z" },
-  { id: "headlights", name: "Headlights", price: 60, d: "M124 48 l40 -8 l4 22 l-40 8 z M276 48 l-40 -8 l-4 22 l40 8 z" },
-  { id: "front-wings", name: "Front wings", price: 180, d: "M112 84 l14 -2 l8 78 l-18 4 z M288 84 l-14 -2 l-8 78 l18 4 z" },
-  { id: "mirrors", name: "Wing mirrors", price: 70, d: "M100 176 h20 v20 h-20 z M280 176 h20 v20 h-20 z" },
-  { id: "windscreen-strip", name: "Windscreen strip", price: 90, d: "M118 164 q82 -12 164 0 l8 26 q-90 -12 -180 0 z" },
-  { id: "front-doors", name: "Front doors", price: 200, d: "M110 194 l16 -2 v78 l-16 2 z M290 194 l-16 -2 v78 l16 2 z" },
-  { id: "rear-doors", name: "Rear doors", price: 200, d: "M110 276 l16 -2 v76 l-16 2 z M290 276 l-16 -2 v76 l16 2 z" },
-  { id: "roof", name: "Roof", price: 240, d: "M130 196 q70 -10 140 0 v150 q-70 -10 -140 0 z" },
-  { id: "rear-quarters", name: "Rear quarter panels", price: 190, d: "M112 356 l16 -2 v66 l-18 -6 z M288 356 l-16 -2 v66 l18 -6 z" },
-  { id: "boot", name: "Boot lid", price: 180, d: "M130 352 q70 -10 140 0 l6 58 q-76 -10 -152 0 z" },
-  { id: "rear-bumper", name: "Rear bumper", price: 210, d: "M118 416 q82 -12 164 0 l-8 34 q-74 16 -148 0 z" },
-  { id: "sills", name: "Side sills", price: 120, d: "M104 210 h10 v150 h-10 z M296 210 h-10 v150 h10 z" },
+  {
+    id: "front-bumper",
+    name: "Front bumper",
+    price: 220,
+    face: "front",
+    d: "M128 250 L120 232 L126 212 L140 205 L78 181 L62 189 L56 209 L66 228 Z",
+  },
+  { id: "bonnet", name: "Bonnet / hood", price: 260, face: "top", d: "M140 205 L255 190 L193 166 L78 181 Z" },
+  {
+    id: "headlights",
+    name: "Headlights",
+    price: 60,
+    face: "front",
+    d: "M126 213 L140 206 L118 197 L104 203 Z M92 197 L106 191 L84 182 L70 187 Z",
+  },
+  { id: "front-wings", name: "Front wings", price: 180, face: "side", d: "M140 206 L225 200 L225 240 L128 248 Z" },
+  { id: "windscreen-strip", name: "Windscreen", price: 90, face: "glass", d: "M255 190 L330 138 L268 114 L193 166 Z" },
+  { id: "mirrors", name: "Wing mirrors", price: 70, face: "side", d: "M262 176 l24 -3 l3 12 l-24 4 z" },
+  { id: "roof", name: "Roof", price: 240, face: "top", d: "M330 138 L455 136 L393 112 L268 114 Z" },
+  { id: "front-doors", name: "Front doors", price: 200, face: "side", d: "M225 200 L350 196 L350 238 L225 240 Z" },
+  { id: "rear-doors", name: "Rear doors", price: 200, face: "side", d: "M350 196 L460 196 L460 239 L350 238 Z" },
+  { id: "rear-quarters", name: "Rear quarter panels", price: 190, face: "side", d: "M460 196 L588 202 L588 246 L460 239 Z" },
+  { id: "boot", name: "Boot lid", price: 180, face: "top", d: "M520 178 L588 186 L526 162 L458 154 Z" },
+  {
+    id: "rear-bumper",
+    name: "Rear bumper",
+    price: 210,
+    face: "front",
+    d: "M588 186 L598 214 L590 248 L528 224 L536 190 L526 162 Z",
+  },
+  { id: "sills", name: "Side sills", price: 120, face: "side", d: "M150 244 L560 240 L560 254 L150 258 Z" },
 ];
 
 const FULL_CAR_PRICE = 1800;
