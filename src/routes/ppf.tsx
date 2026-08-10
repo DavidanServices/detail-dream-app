@@ -176,7 +176,7 @@ function PpfPage() {
                     <path
                       d={part.d}
                       fill={
-                        isActive(part.id)
+                        isActive(part.id) || hovered === part.id
                           ? undefined
                           : `url(#ppf-${part.face === "glass" ? "glass" : (part.face ?? "side")})`
                       }
@@ -197,7 +197,7 @@ function PpfPage() {
                         isActive(part.id)
                           ? "fill-primary stroke-primary"
                           : hovered === part.id
-                            ? "stroke-primary [filter:saturate(0)_brightness(1.08)]"
+                            ? "fill-primary/45 stroke-primary"
                             : "stroke-border/80"
                       }`}
                       strokeWidth={1.25}
