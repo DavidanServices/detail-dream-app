@@ -29,6 +29,7 @@ const serviceOptions = [
 function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [service, setService] = useState(serviceOptions[0]);
+  const [message, setMessage] = useState("");
   const search = useSearch({ from: "/contact" });
 
   useEffect(() => {
@@ -39,6 +40,12 @@ function ContactPage() {
       if (matched) setService(matched);
     }
   }, [search.service]);
+
+  useEffect(() => {
+    if (typeof search.coverage === "string" && search.coverage) {
+      setMessage(`PPF coverage requested: ${search.coverage}.`);
+    }
+  }, [search.coverage]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -180,6 +187,8 @@ function ContactPage() {
                       id="message"
                       name="message"
                       rows={4}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
                       className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
                       placeholder="Tell us about your vehicle and what you're looking for..."
                     />
