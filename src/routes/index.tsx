@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Shield, Sparkles, Droplets, CheckCircle } from "lucide-react";
+import { ArrowRight, Shield, Sparkles, Droplets, CheckCircle, Star } from "lucide-react";
 import heroImage from "../assets/hero-detailing.jpg";
 import exteriorImage from "../assets/service-exterior.jpg";
 import interiorImage from "../assets/service-interior.jpg";
