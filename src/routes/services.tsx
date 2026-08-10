@@ -190,11 +190,10 @@ function ServicesPage() {
                 ))}
               </ul>
               <Link
-                to="/contact"
-                search={{ service: ppfPackage.name }}
+                to="/ppf"
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
               >
-                Request Quote <ArrowRight className="h-4 w-4" />
+                Configure Coverage <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
