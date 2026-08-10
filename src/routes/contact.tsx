@@ -16,8 +16,29 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
+const serviceOptions = [
+  "Interior Detail — £100",
+  "Exterior Detail — £110",
+  "Exterior + Interior — £190",
+  "Ceramic Coating — £150",
+  "The Complete Bundle — £300",
+  "Paint Protection Film — from £350",
+  "Not sure / Multiple services",
+];
+
 function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [service, setService] = useState(serviceOptions[0]);
+  const search = useSearch({ from: "/contact" });
+
+  useEffect(() => {
+    if (typeof search.service === "string") {
+      const matched = serviceOptions.find((option) =>
+        option.toLowerCase().startsWith(search.service.toLowerCase())
+      );
+      if (matched) setService(matched);
+    }
+  }, [search.service]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
