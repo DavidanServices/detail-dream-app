@@ -122,26 +122,64 @@ function PpfPage() {
             {/* Diagram */}
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-8">
               <svg
-                viewBox="0 0 400 480"
-                className="mx-auto h-auto w-full max-w-md select-none"
+                viewBox="20 90 610 220"
+                className="mx-auto h-auto w-full select-none"
                 role="img"
-                aria-label="Interactive top-down car diagram for choosing paint protection film coverage"
+                aria-label="Interactive three-quarter view car diagram for choosing paint protection film coverage"
               >
-                {/* body outline */}
+                <defs>
+                  <linearGradient id="ppf-top" x1="0" y1="0" x2="0.3" y2="1">
+                    <stop offset="0%" stopColor="var(--snow)" />
+                    <stop offset="100%" stopColor="var(--steel)" />
+                  </linearGradient>
+                  <linearGradient id="ppf-side" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--steel)" />
+                    <stop offset="55%" stopColor="var(--snow)" />
+                    <stop offset="100%" stopColor="var(--charcoal)" />
+                  </linearGradient>
+                  <linearGradient id="ppf-front" x1="0" y1="0" x2="0.4" y2="1">
+                    <stop offset="0%" stopColor="var(--steel)" />
+                    <stop offset="100%" stopColor="var(--charcoal)" />
+                  </linearGradient>
+                  <linearGradient id="ppf-glass" x1="0" y1="0" x2="0.6" y2="1">
+                    <stop offset="0%" stopColor="var(--charcoal)" />
+                    <stop offset="100%" stopColor="var(--steel)" />
+                  </linearGradient>
+                  <radialGradient id="ppf-shadow">
+                    <stop offset="0%" stopColor="var(--charcoal)" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="var(--charcoal)" stopOpacity="0" />
+                  </radialGradient>
+                </defs>
+
+                {/* ground shadow */}
+                <ellipse cx="350" cy="278" rx="270" ry="24" fill="url(#ppf-shadow)" />
+
+                {/* far-side wheels */}
+                <ellipse cx="150" cy="234" rx="24" ry="22" className="fill-charcoal-dark" />
+                <ellipse cx="452" cy="228" rx="24" ry="22" className="fill-charcoal-dark" />
+
+                {/* body shell beneath the panels */}
                 <path
-                  d="M200 24 q70 0 88 44 q16 46 16 176 q0 130 -16 190 q-18 42 -88 42 q-70 0 -88 -42 q-16 -60 -16 -190 q0 -130 16 -176 q18 -44 88 -44 z"
-                  className="fill-secondary stroke-border"
-                  strokeWidth={2}
+                  d="M56 209 L62 189 L78 181 L193 166 L268 114 L393 112 L458 154 L526 162 L536 190 L598 214 L590 248 L560 258 L150 260 L66 250 Z"
+                  fill="url(#ppf-side)"
+                  className="stroke-border"
+                  strokeWidth={1}
+                  strokeLinejoin="round"
                 />
-                {/* cabin glass hint */}
-                <path
-                  d="M130 190 q70 -12 140 0 v162 q-70 -12 -140 0 z"
-                  className="fill-background/40"
-                />
+
+                {/* side glass + Hofmeister kink */}
+                <path d="M340 140 L448 138 L512 176 L344 182 Z" fill="url(#ppf-glass)" opacity="0.9" />
+                <path d="M470 140 L512 176 L492 178 L452 141 Z" className="fill-charcoal-dark" opacity="0.7" />
+
                 {PARTS.map((part) => (
                   <g key={part.id}>
                     <path
                       d={part.d}
+                      fill={
+                        isActive(part.id)
+                          ? undefined
+                          : `url(#ppf-${part.face === "glass" ? "glass" : (part.face ?? "side")})`
+                      }
                       onClick={() => toggle(part.id)}
                       onMouseEnter={() => setHovered(part.id)}
                       onMouseLeave={() => setHovered(null)}
@@ -159,13 +197,36 @@ function PpfPage() {
                         isActive(part.id)
                           ? "fill-primary stroke-primary"
                           : hovered === part.id
-                            ? "fill-primary/25 stroke-primary/60"
-                            : "fill-muted/40 stroke-border"
+                            ? "stroke-primary [filter:saturate(0)_brightness(1.08)]"
+                            : "stroke-border/80"
                       }`}
-                      strokeWidth={1.5}
+                      strokeWidth={1.25}
+                      strokeLinejoin="round"
                     />
                   </g>
                 ))}
+
+                {/* BMW kidney grille */}
+                <path d="M104 216 L118 209 L112 196 L98 202 Z" className="fill-charcoal-dark" opacity="0.85" />
+                <path d="M92 210 L106 203 L100 190 L86 196 Z" className="fill-charcoal-dark" opacity="0.85" />
+
+                {/* near-side wheels */}
+                <g>
+                  <ellipse cx="205" cy="248" rx="34" ry="32" className="fill-charcoal-dark" />
+                  <ellipse cx="205" cy="248" rx="19" ry="18" className="fill-steel" />
+                  <ellipse cx="205" cy="248" rx="7" ry="6.5" className="fill-charcoal" />
+                  <ellipse cx="505" cy="244" rx="34" ry="32" className="fill-charcoal-dark" />
+                  <ellipse cx="505" cy="244" rx="19" ry="18" className="fill-steel" />
+                  <ellipse cx="505" cy="244" rx="7" ry="6.5" className="fill-charcoal" />
+                </g>
+
+                {/* shoulder crease + door shut lines */}
+                <path
+                  d="M140 206 L225 200 L350 196 L460 196 L588 202"
+                  fill="none"
+                  className="stroke-charcoal/25"
+                  strokeWidth={1.5}
+                />
               </svg>
               <p className="mt-4 text-center text-sm text-muted-foreground">
                 {hovered
