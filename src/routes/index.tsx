@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Shield, Sparkles, Droplets, CheckCircle } from "lucide-react";
+import { ArrowRight, Shield, Sparkles, Droplets, CheckCircle, Star } from "lucide-react";
 import heroImage from "../assets/hero-detailing.jpg";
 import exteriorImage from "../assets/service-exterior.jpg";
 import interiorImage from "../assets/service-interior.jpg";
@@ -152,8 +152,87 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Packages & Pricing */}
       <section className="bg-snow py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Packages & Pricing
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+              Clear, upfront pricing for every level of care. Custom quotes available for larger vehicles.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: "Interior Detail", price: "£100" },
+              { name: "Exterior Detail", price: "£110" },
+              { name: "Exterior + Interior", price: "£190", popular: true },
+              { name: "Ceramic Coating", price: "£150" },
+            ].map((pkg) => (
+              <div
+                key={pkg.name}
+                className={`relative flex flex-col rounded-2xl border bg-card p-6 text-center shadow-sm transition-all hover:border-primary/30 hover:shadow-lg ${pkg.popular ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}
+              >
+                {pkg.popular && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                    <Star className="h-3 w-3" /> Most Popular
+                  </span>
+                )}
+                <h3 className="font-heading text-lg font-semibold text-card-foreground">{pkg.name}</h3>
+                <p className="mt-3 font-heading text-4xl font-bold text-foreground">{pkg.price}</p>
+                <p className="mt-1 text-sm text-muted-foreground">starting</p>
+                <Link
+                  to="/contact"
+                  search={{ service: pkg.name }}
+                  className="mt-6 inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2.5 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80"
+                >
+                  Book Now
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            <div className="flex flex-col justify-center rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="font-heading text-lg font-semibold text-card-foreground">The Complete Bundle</h3>
+                <p className="text-sm text-muted-foreground">Exterior + Interior + Ceramic Coating</p>
+              </div>
+              <div className="mt-4 sm:mt-0 sm:text-right">
+                <p className="font-heading text-3xl font-bold text-foreground">£300</p>
+                <Link
+                  to="/contact"
+                  search={{ service: "The Complete Bundle" }}
+                  className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80"
+                >
+                  Book bundle <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center rounded-2xl border border-border bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="font-heading text-lg font-semibold text-card-foreground">Paint Protection Film</h3>
+                <p className="text-sm text-muted-foreground">Custom coverage for high-impact areas</p>
+              </div>
+              <div className="mt-4 sm:mt-0 sm:text-right">
+                <p className="font-heading text-3xl font-bold text-foreground">from £350</p>
+                <Link
+                  to="/contact"
+                  search={{ service: "Paint Protection Film" }}
+                  className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80"
+                >
+                  Request quote <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="bg-background py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>

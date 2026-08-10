@@ -62,6 +62,57 @@ const services = [
   },
 ];
 
+const packages = [
+  {
+    id: "interior",
+    name: "Interior Detail",
+    price: 100,
+    description: "Deep clean and restore your cabin from top to bottom.",
+    features: ["Vacuuming & shampoo", "Leather conditioning", "Steam sanitization", "Odor elimination"],
+    popular: false,
+  },
+  {
+    id: "exterior",
+    name: "Exterior Detail",
+    price: 110,
+    description: "Hand wash, clay bar, and protect your paintwork.",
+    features: ["Hand wash & dry", "Clay bar treatment", "Paint decontamination", "Sealant or wax protection"],
+    popular: false,
+  },
+  {
+    id: "exterior-interior",
+    name: "Exterior + Interior",
+    price: 190,
+    description: "Our most popular combo — a complete inside-and-out refresh.",
+    features: ["Full exterior detail", "Full interior detail", "Paint-safe techniques", "Cabin deep clean"],
+    popular: true,
+  },
+  {
+    id: "ceramic",
+    name: "Ceramic Coating",
+    price: 150,
+    description: "Long-lasting hydrophobic protection with a deep gloss finish.",
+    features: ["Multi-year protection", "Hydrophobic finish", "UV resistance", "Enhanced depth & gloss"],
+    popular: false,
+  },
+  {
+    id: "complete",
+    name: "The Complete Bundle",
+    price: 300,
+    description: "Everything in one package: exterior, interior, and ceramic coating.",
+    features: ["Exterior + Interior detail", "Ceramic coating application", "Full protection & gloss", "Best value"],
+    popular: false,
+  },
+];
+
+const ppfPackage = {
+  id: "ppf",
+  name: "Paint Protection Film",
+  startingFrom: 350,
+  description: "Invisible, self-healing armor for high-impact areas.",
+  features: ["Self-healing technology", "UV stable", "Prevents rock chips", "Custom coverage options"],
+};
+
 function ServicesPage() {
   return (
     <>
@@ -79,6 +130,87 @@ function ServicesPage() {
 
       <section className="bg-background py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Packages & Pricing
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+              Transparent pricing for every level of care. All packages are tailored to your vehicle's size and condition.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {packages.map((pkg) => (
+              <div
+                key={pkg.id}
+                className={`relative flex flex-col rounded-2xl border bg-card p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-lg ${pkg.popular ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}
+              >
+                {pkg.popular && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+                    Most Popular
+                  </span>
+                )}
+                <h3 className="font-heading text-xl font-semibold text-card-foreground">{pkg.name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{pkg.description}</p>
+                <div className="mt-4 flex items-baseline gap-1">
+                  <span className="font-heading text-4xl font-bold text-foreground">£{pkg.price}</span>
+                  <span className="text-muted-foreground">starting</span>
+                </div>
+                <ul className="mt-6 flex-1 space-y-3">
+                  {pkg.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2 text-sm text-foreground">
+                      <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/contact"
+                  search={{ service: pkg.name }}
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+                >
+                  Book Now <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            ))}
+
+            <div className="relative flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-lg sm:col-span-2 lg:col-span-1">
+              <h3 className="font-heading text-xl font-semibold text-card-foreground">{ppfPackage.name}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{ppfPackage.description}</p>
+              <div className="mt-4 flex items-baseline gap-1">
+                <span className="font-heading text-4xl font-bold text-foreground">£{ppfPackage.startingFrom}</span>
+                <span className="text-muted-foreground">starting from</span>
+              </div>
+              <ul className="mt-6 flex-1 space-y-3">
+                {ppfPackage.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2 text-sm text-foreground">
+                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/contact"
+                search={{ service: ppfPackage.name }}
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
+              >
+                Request Quote <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-snow py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              Service Details
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+              A closer look at what's included in every treatment we offer.
+            </p>
+          </div>
           <div className="space-y-20">
             {services.map((service, index) => (
               <div
@@ -124,7 +256,7 @@ function ServicesPage() {
         </div>
       </section>
 
-      <section className="bg-snow py-16">
+      <section className="bg-charcoal-dark py-16">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="font-heading text-2xl font-bold text-foreground">Not sure which service is right?</h2>
           <p className="mt-2 text-muted-foreground">We'll recommend the best package based on your vehicle and goals.</p>

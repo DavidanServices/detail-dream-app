@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -16,8 +16,29 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
+const serviceOptions = [
+  "Interior Detail — £100",
+  "Exterior Detail — £110",
+  "Exterior + Interior — £190",
+  "Ceramic Coating — £150",
+  "The Complete Bundle — £300",
+  "Paint Protection Film — from £350",
+  "Not sure / Multiple services",
+];
+
 function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [service, setService] = useState(serviceOptions[0]);
+  const search = useSearch({ from: "/contact" });
+
+  useEffect(() => {
+    if (typeof search.service === "string") {
+      const matched = serviceOptions.find((option) =>
+        option.toLowerCase().startsWith(search.service.toLowerCase())
+      );
+      if (matched) setService(matched);
+    }
+  }, [search.service]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -140,17 +161,17 @@ function ContactPage() {
 
                   <div className="space-y-2">
                     <label htmlFor="service" className="text-sm font-medium text-card-foreground">Service</label>
-                    <select
-                      id="service"
-                      name="service"
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
-                    >
-                      <option>Exterior Detailing</option>
-                      <option>Interior Detailing</option>
-                      <option>Ceramic Coating</option>
-                      <option>Paint Protection Film</option>
-                      <option>Not sure / Multiple services</option>
-                    </select>
+                  <select
+                    id="service"
+                    name="service"
+                    value={service}
+                    onChange={(e) => setService(e.target.value)}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+                  >
+                    {serviceOptions.map((option) => (
+                      <option key={option}>{option}</option>
+                    ))}
+                  </select>
                   </div>
 
                   <div className="space-y-2">
