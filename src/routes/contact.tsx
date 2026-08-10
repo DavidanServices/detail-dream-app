@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>) => ({
-    service: typeof search.service === "string" ? search.service : undefined,
-    coverage: typeof search.coverage === "string" ? search.coverage : undefined,
+    service: typeof search["service"] === "string" ? (search["service"] as string) : undefined,
+    coverage: typeof search["coverage"] === "string" ? (search["coverage"] as string) : undefined,
   }),
   head: () => ({
     meta: [
