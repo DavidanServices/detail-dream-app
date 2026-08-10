@@ -161,17 +161,17 @@ function ContactPage() {
 
                   <div className="space-y-2">
                     <label htmlFor="service" className="text-sm font-medium text-card-foreground">Service</label>
-                    <select
-                      id="service"
-                      name="service"
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
-                    >
-                      <option>Exterior Detailing</option>
-                      <option>Interior Detailing</option>
-                      <option>Ceramic Coating</option>
-                      <option>Paint Protection Film</option>
-                      <option>Not sure / Multiple services</option>
-                    </select>
+                  <select
+                    id="service"
+                    name="service"
+                    value={service}
+                    onChange={(e) => setService(e.target.value)}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+                  >
+                    {serviceOptions.map((option) => (
+                      <option key={option}>{option}</option>
+                    ))}
+                  </select>
                   </div>
 
                   <div className="space-y-2">
