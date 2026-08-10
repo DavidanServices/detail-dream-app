@@ -207,8 +207,22 @@ function PpfPage() {
                 ))}
 
                 {/* BMW kidney grille */}
-                <path d="M104 216 L118 209 L112 196 L98 202 Z" className="fill-charcoal-dark" opacity="0.85" />
-                <path d="M92 210 L106 203 L100 190 L86 196 Z" className="fill-charcoal-dark" opacity="0.85" />
+                <path d="M106 224 L122 216 L114 197 L98 204 Z" className="fill-charcoal-dark" opacity="0.9" />
+                <path d="M88 217 L104 209 L96 190 L80 197 Z" className="fill-charcoal-dark" opacity="0.9" />
+                <path
+                  d="M106 224 L122 216 L114 197 L98 204 Z M88 217 L104 209 L96 190 L80 197 Z"
+                  fill="none"
+                  className="stroke-steel"
+                  strokeWidth={1.5}
+                />
+
+                {/* roundel badge on the bonnet */}
+                <g transform="translate(150,190) rotate(-8) scale(1,0.42)">
+                  <circle r="9" className="fill-charcoal-dark" />
+                  <circle r="6.5" className="fill-snow" />
+                  <path d="M0 -6.5 A6.5 6.5 0 0 1 6.5 0 L0 0 Z" className="fill-primary/70" />
+                  <path d="M0 6.5 A6.5 6.5 0 0 1 -6.5 0 L0 0 Z" className="fill-primary/70" />
+                </g>
 
                 {/* near-side wheels */}
                 <g>
