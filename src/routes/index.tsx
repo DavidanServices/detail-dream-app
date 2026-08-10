@@ -66,7 +66,7 @@ function HomePage() {
             className="h-full w-full object-cover opacity-40"
             width={1920}
             height={1080}
-            fetchpriority="high"
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-charcoal-dark/90 via-charcoal-dark/70 to-transparent" />
         </div>
