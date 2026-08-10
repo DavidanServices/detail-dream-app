@@ -248,6 +248,14 @@ function ServicesPage() {
                       </li>
                     ))}
                   </ul>
+                  {service.id === "ppf" && (
+                    <Link
+                      to="/ppf"
+                      className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+                    >
+                      Open the PPF configurator <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}
