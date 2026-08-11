@@ -176,24 +176,31 @@ function PpfPage() {
                 </defs>
 
                 {/* ground shadow */}
-                <ellipse cx="350" cy="278" rx="270" ry="24" fill="url(#ppf-shadow)" />
+                <ellipse cx="380" cy="272" rx="290" ry="20" fill="url(#ppf-shadow)" />
 
-                {/* far-side wheels */}
-                <ellipse cx="150" cy="234" rx="24" ry="22" className="fill-charcoal-dark" />
-                <ellipse cx="452" cy="228" rx="24" ry="22" className="fill-charcoal-dark" />
+                {/* far-side wheels peeking through */}
+                <ellipse cx="224" cy="220" rx="30" ry="28" className="fill-charcoal-dark" opacity="0.85" />
+                <ellipse cx="558" cy="218" rx="30" ry="28" className="fill-charcoal-dark" opacity="0.85" />
 
                 {/* body shell beneath the panels */}
                 <path
-                  d="M56 209 L62 189 L78 181 L193 166 L268 114 L393 112 L458 154 L526 162 L536 190 L598 214 L590 248 L560 258 L150 260 L66 250 Z"
+                  d="M97 226 C97 208 106 199 118 202 C160 197 200 195 268 196 L348 138 C392 132 448 130 486 134 L560 196 L592 200 L624 208 C632 224 632 242 624 252 L592 256 L118 262 C104 254 97 242 97 226 Z"
                   fill="url(#ppf-side)"
                   className="stroke-border"
                   strokeWidth={1}
                   strokeLinejoin="round"
                 />
 
-                {/* side glass + Hofmeister kink */}
-                <path d="M340 140 L448 138 L512 176 L344 182 Z" fill="url(#ppf-glass)" opacity="0.9" />
-                <path d="M470 140 L512 176 L492 178 L452 141 Z" className="fill-charcoal-dark" opacity="0.7" />
+                {/* side glass */}
+                <path d="M284 191 L352 144 L418 142 L418 191 Z" fill="url(#ppf-glass)" opacity="0.92" />
+                <path d="M430 191 L430 142 L484 140 L544 191 Z" fill="url(#ppf-glass)" opacity="0.92" />
+                <path
+                  d="M284 191 L352 144 L484 140 L544 191 Z"
+                  fill="none"
+                  className="stroke-charcoal/40"
+                  strokeWidth={1.5}
+                  strokeLinejoin="round"
+                />
 
                 {PARTS.map((part) => (
                   <g key={part.id}>
