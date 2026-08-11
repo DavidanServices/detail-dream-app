@@ -146,7 +146,7 @@ function PpfPage() {
             {/* Diagram */}
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-8">
               <svg
-                viewBox="20 90 610 220"
+                viewBox="72 82 616 216"
                 className="mx-auto h-auto w-full select-none"
                 role="img"
                 aria-label="Interactive three-quarter view car diagram for choosing paint protection film coverage"
