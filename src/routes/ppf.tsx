@@ -81,7 +81,7 @@ const PARTS: Part[] = [
     face: "side",
     d: "M470 192 L560 196 L592 200 L592 254 L549 254 A44 44 0 0 0 461 254 L470 254 Z",
   },
-  { id: "boot", name: "Boot lid", price: 180, face: "top", d: "M560 196 L610 202 L638 182 L588 176 Z" },
+  { id: "boot", name: "Boot lid", price: 180, face: "top", d: "M560 196 L612 202 L628 190 L578 183 Z" },
   {
     id: "rear-bumper",
     name: "Rear bumper",
