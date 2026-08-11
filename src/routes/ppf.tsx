@@ -203,7 +203,7 @@ function PpfPage() {
                 />
 
                 {/* rear screen (top surface) */}
-                <path d="M486 134 L560 196 L588 176 L514 114 Z" fill="url(#ppf-glass)" opacity="0.9" />
+                <path d="M486 134 L560 196 L578 183 L506 121 Z" fill="url(#ppf-glass)" opacity="0.9" />
 
                 {PARTS.map((part) => (
                   <g key={part.id}>
