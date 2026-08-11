@@ -237,32 +237,79 @@ function PpfPage() {
                   </g>
                 ))}
 
-                {/* BMW kidney grille */}
-                <path d="M106 224 L122 216 L114 197 L98 204 Z" className="fill-charcoal-dark" opacity="0.9" />
-                <path d="M88 217 L104 209 L96 190 L80 197 Z" className="fill-charcoal-dark" opacity="0.9" />
+                {/* lower air intake + grille */}
                 <path
-                  d="M106 224 L122 216 L114 197 L98 204 Z M88 217 L104 209 L96 190 L80 197 Z"
+                  d="M101 232 L149 198 L156 209 L107 244 Z"
+                  className="fill-charcoal-dark"
+                  opacity="0.85"
+                />
+                <path d="M112 254 L158 222 L161 229 L116 259 Z" className="fill-charcoal-dark" opacity="0.6" />
+
+                {/* headlight glass sheen */}
+                <path
+                  d="M104 208 L127 192 L132 200 L109 216 Z M133 190 L154 175 L159 183 L138 198 Z"
                   fill="none"
-                  className="stroke-steel"
+                  className="stroke-snow/70"
+                  strokeWidth={1}
+                />
+
+                {/* bonnet crease + panel shut lines */}
+                <path
+                  d="M132 197 C172 186 222 178 300 170"
+                  fill="none"
+                  className="stroke-snow/40"
+                  strokeWidth={1.5}
+                />
+                <path
+                  d="M236 197 L236 258 M372 194 L372 256 M470 192 L470 254"
+                  fill="none"
+                  className="stroke-charcoal/25"
                   strokeWidth={1.5}
                 />
 
-                {/* roundel badge on the bonnet */}
-                <g transform="translate(150,190) rotate(-8) scale(1,0.42)">
-                  <circle r="9" className="fill-charcoal-dark" />
-                  <circle r="6.5" className="fill-snow" />
-                  <path d="M0 -6.5 A6.5 6.5 0 0 1 6.5 0 L0 0 Z" className="fill-primary/70" />
-                  <path d="M0 6.5 A6.5 6.5 0 0 1 -6.5 0 L0 0 Z" className="fill-primary/70" />
-                </g>
+                {/* body highlight sweep */}
+                <path
+                  d="M120 214 C220 205 380 202 592 208"
+                  fill="none"
+                  className="stroke-snow/60"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                />
+
+                {/* door handles */}
+                <rect x="330" y="204" width="22" height="6" rx="3" className="fill-charcoal/40" />
+                <rect x="440" y="203" width="22" height="6" rx="3" className="fill-charcoal/40" />
+
+                {/* wheel arches */}
+                <path
+                  d="M126 259 A44 44 0 0 1 214 259 M461 254 A44 44 0 0 1 549 254"
+                  fill="none"
+                  className="stroke-charcoal/45"
+                  strokeWidth={3}
+                />
 
                 {/* near-side wheels */}
                 <g>
-                  <ellipse cx="205" cy="248" rx="34" ry="32" className="fill-charcoal-dark" />
-                  <ellipse cx="205" cy="248" rx="19" ry="18" className="fill-steel" />
-                  <ellipse cx="205" cy="248" rx="7" ry="6.5" className="fill-charcoal" />
-                  <ellipse cx="505" cy="244" rx="34" ry="32" className="fill-charcoal-dark" />
-                  <ellipse cx="505" cy="244" rx="19" ry="18" className="fill-steel" />
-                  <ellipse cx="505" cy="244" rx="7" ry="6.5" className="fill-charcoal" />
+                  <circle cx="170" cy="254" r="42" className="fill-charcoal-dark" />
+                  <circle cx="170" cy="254" r="26" className="fill-steel" />
+                  <circle cx="170" cy="254" r="20" className="fill-charcoal/30" />
+                  <circle cx="170" cy="254" r="7" className="fill-charcoal-dark" />
+                  <path
+                    d="M170 234 L170 274 M153 244 L187 264 M153 264 L187 244"
+                    className="stroke-charcoal-dark"
+                    strokeWidth={4}
+                    strokeLinecap="round"
+                  />
+                  <circle cx="505" cy="252" r="42" className="fill-charcoal-dark" />
+                  <circle cx="505" cy="252" r="26" className="fill-steel" />
+                  <circle cx="505" cy="252" r="20" className="fill-charcoal/30" />
+                  <circle cx="505" cy="252" r="7" className="fill-charcoal-dark" />
+                  <path
+                    d="M505 232 L505 272 M488 242 L522 262 M488 262 L522 242"
+                    className="stroke-charcoal-dark"
+                    strokeWidth={4}
+                    strokeLinecap="round"
+                  />
                 </g>
 
                 {/* shoulder crease + door shut lines */}
