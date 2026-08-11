@@ -146,7 +146,7 @@ function PpfPage() {
             {/* Diagram */}
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-8">
               <svg
-                viewBox="72 82 616 216"
+                viewBox="78 100 588 200"
                 className="mx-auto h-auto w-full select-none"
                 role="img"
                 aria-label="Interactive three-quarter view car diagram for choosing paint protection film coverage"
@@ -202,6 +202,9 @@ function PpfPage() {
                   strokeLinejoin="round"
                 />
 
+                {/* rear screen (top surface) */}
+                <path d="M486 134 L560 196 L588 176 L514 114 Z" fill="url(#ppf-glass)" opacity="0.9" />
+
                 {PARTS.map((part) => (
                   <g key={part.id}>
                     <path
@@ -238,16 +241,12 @@ function PpfPage() {
                 ))}
 
                 {/* lower air intake + grille */}
-                <path
-                  d="M101 232 L149 198 L156 209 L107 244 Z"
-                  className="fill-charcoal-dark"
-                  opacity="0.85"
-                />
-                <path d="M112 254 L158 222 L161 229 L116 259 Z" className="fill-charcoal-dark" opacity="0.6" />
+                <path d="M101 234 L131 213 L136 224 L106 246 Z" className="fill-charcoal-dark" opacity="0.85" />
+                <path d="M110 253 L137 234 L139 241 L113 259 Z" className="fill-charcoal-dark" opacity="0.55" />
 
                 {/* headlight glass sheen */}
                 <path
-                  d="M104 208 L127 192 L132 200 L109 216 Z M133 190 L154 175 L159 183 L138 198 Z"
+                  d="M105 209 L118 200 L123 208 L110 217 Z M121 197 L134 188 L139 196 L126 205 Z"
                   fill="none"
                   className="stroke-snow/70"
                   strokeWidth={1}
