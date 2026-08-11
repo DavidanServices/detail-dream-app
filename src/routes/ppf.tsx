@@ -40,32 +40,56 @@ const PARTS: Part[] = [
     name: "Front bumper",
     price: 220,
     face: "front",
-    d: "M128 250 L120 232 L126 212 L140 205 L78 181 L62 189 L56 209 L66 228 Z",
+    d: "M97 226 C97 242 103 253 113 259 L141 239 C131 232 125 221 125 206 Z",
   },
-  { id: "bonnet", name: "Bonnet / hood", price: 260, face: "top", d: "M140 205 L255 190 L193 166 L78 181 Z" },
   {
     id: "headlights",
     name: "Headlights",
     price: 60,
     face: "front",
-    d: "M126 213 L140 206 L118 197 L104 203 Z M92 197 L106 191 L84 182 L70 187 Z",
+    d: "M105 209 L118 200 L123 208 L110 217 Z M121 197 L134 188 L139 196 L126 205 Z",
   },
-  { id: "front-wings", name: "Front wings", price: 180, face: "side", d: "M140 206 L225 200 L225 240 L128 248 Z" },
-  { id: "windscreen-strip", name: "Windscreen", price: 90, face: "glass", d: "M255 190 L330 138 L268 114 L193 166 Z" },
-  { id: "mirrors", name: "Wing mirrors", price: 70, face: "side", d: "M262 176 l24 -3 l3 12 l-24 4 z" },
-  { id: "roof", name: "Roof", price: 240, face: "top", d: "M330 138 L455 136 L393 112 L268 114 Z" },
-  { id: "front-doors", name: "Front doors", price: 200, face: "side", d: "M225 200 L350 196 L350 238 L225 240 Z" },
-  { id: "rear-doors", name: "Rear doors", price: 200, face: "side", d: "M350 196 L460 196 L460 239 L350 238 Z" },
-  { id: "rear-quarters", name: "Rear quarter panels", price: 190, face: "side", d: "M460 196 L588 202 L588 246 L460 239 Z" },
-  { id: "boot", name: "Boot lid", price: 180, face: "top", d: "M520 178 L588 186 L526 162 L458 154 Z" },
+  {
+    id: "bonnet",
+    name: "Bonnet / hood",
+    price: 260,
+    face: "top",
+    d: "M118 202 C136 199 176 197 268 196 L296 176 C214 177 172 179 146 182 Z",
+  },
+  {
+    id: "windscreen-strip",
+    name: "Windscreen",
+    price: 90,
+    face: "glass",
+    d: "M268 196 L348 138 L376 118 L296 176 Z",
+  },
+  { id: "roof", name: "Roof", price: 240, face: "top", d: "M348 138 L486 134 L514 114 L376 118 Z" },
+  {
+    id: "front-wings",
+    name: "Front wings",
+    price: 180,
+    face: "side",
+    d: "M112 259 C102 252 97 241 97 226 C97 208 106 200 118 202 L236 197 L236 259 L214 259 A44 44 0 0 0 126 259 Z",
+  },
+  { id: "mirrors", name: "Wing mirrors", price: 70, face: "side", d: "M282 178 l26 -6 l6 13 l-26 6 z" },
+  { id: "front-doors", name: "Front doors", price: 200, face: "side", d: "M236 197 L372 194 L372 256 L236 258 Z" },
+  { id: "rear-doors", name: "Rear doors", price: 200, face: "side", d: "M372 194 L470 192 L470 254 L372 256 Z" },
+  {
+    id: "rear-quarters",
+    name: "Rear quarter panels",
+    price: 190,
+    face: "side",
+    d: "M470 192 L560 196 L592 200 L592 254 L549 254 A44 44 0 0 0 461 254 L470 254 Z",
+  },
+  { id: "boot", name: "Boot lid", price: 180, face: "top", d: "M560 196 L612 202 L628 190 L578 183 Z" },
   {
     id: "rear-bumper",
     name: "Rear bumper",
     price: 210,
-    face: "front",
-    d: "M588 186 L598 214 L590 248 L528 224 L536 190 L526 162 Z",
+    face: "side",
+    d: "M592 200 L624 208 C632 224 632 242 624 252 L592 254 Z",
   },
-  { id: "sills", name: "Side sills", price: 120, face: "side", d: "M150 244 L560 240 L560 254 L150 258 Z" },
+  { id: "sills", name: "Side sills", price: 120, face: "side", d: "M214 246 L462 242 L462 258 L214 262 Z" },
 ];
 
 const FULL_CAR_PRICE = 1800;
@@ -122,7 +146,7 @@ function PpfPage() {
             {/* Diagram */}
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-8">
               <svg
-                viewBox="20 90 610 220"
+                viewBox="78 100 588 200"
                 className="mx-auto h-auto w-full select-none"
                 role="img"
                 aria-label="Interactive three-quarter view car diagram for choosing paint protection film coverage"
@@ -152,24 +176,34 @@ function PpfPage() {
                 </defs>
 
                 {/* ground shadow */}
-                <ellipse cx="350" cy="278" rx="270" ry="24" fill="url(#ppf-shadow)" />
+                <ellipse cx="380" cy="272" rx="290" ry="20" fill="url(#ppf-shadow)" />
 
-                {/* far-side wheels */}
-                <ellipse cx="150" cy="234" rx="24" ry="22" className="fill-charcoal-dark" />
-                <ellipse cx="452" cy="228" rx="24" ry="22" className="fill-charcoal-dark" />
+                {/* far-side wheels peeking through */}
+                <ellipse cx="224" cy="220" rx="30" ry="28" className="fill-charcoal-dark" opacity="0.85" />
+                <ellipse cx="558" cy="218" rx="30" ry="28" className="fill-charcoal-dark" opacity="0.85" />
 
                 {/* body shell beneath the panels */}
                 <path
-                  d="M56 209 L62 189 L78 181 L193 166 L268 114 L393 112 L458 154 L526 162 L536 190 L598 214 L590 248 L560 258 L150 260 L66 250 Z"
+                  d="M97 226 C97 208 106 199 118 202 C160 197 200 195 268 196 L348 138 C392 132 448 130 486 134 L560 196 L592 200 L624 208 C632 224 632 242 624 252 L592 256 L118 262 C104 254 97 242 97 226 Z"
                   fill="url(#ppf-side)"
                   className="stroke-border"
                   strokeWidth={1}
                   strokeLinejoin="round"
                 />
 
-                {/* side glass + Hofmeister kink */}
-                <path d="M340 140 L448 138 L512 176 L344 182 Z" fill="url(#ppf-glass)" opacity="0.9" />
-                <path d="M470 140 L512 176 L492 178 L452 141 Z" className="fill-charcoal-dark" opacity="0.7" />
+                {/* side glass */}
+                <path d="M284 191 L352 144 L418 142 L418 191 Z" fill="url(#ppf-glass)" opacity="0.92" />
+                <path d="M430 191 L430 142 L484 140 L544 191 Z" fill="url(#ppf-glass)" opacity="0.92" />
+                <path
+                  d="M284 191 L352 144 L484 140 L544 191 Z"
+                  fill="none"
+                  className="stroke-charcoal/40"
+                  strokeWidth={1.5}
+                  strokeLinejoin="round"
+                />
+
+                {/* rear screen (top surface) */}
+                <path d="M486 134 L560 196 L578 183 L506 121 Z" fill="url(#ppf-glass)" opacity="0.9" />
 
                 {PARTS.map((part) => (
                   <g key={part.id}>
@@ -206,32 +240,75 @@ function PpfPage() {
                   </g>
                 ))}
 
-                {/* BMW kidney grille */}
-                <path d="M106 224 L122 216 L114 197 L98 204 Z" className="fill-charcoal-dark" opacity="0.9" />
-                <path d="M88 217 L104 209 L96 190 L80 197 Z" className="fill-charcoal-dark" opacity="0.9" />
+                {/* lower air intake + grille */}
+                <path d="M101 234 L131 213 L136 224 L106 246 Z" className="fill-charcoal-dark" opacity="0.85" />
+                <path d="M110 253 L137 234 L139 241 L113 259 Z" className="fill-charcoal-dark" opacity="0.55" />
+
+                {/* headlight glass sheen */}
                 <path
-                  d="M106 224 L122 216 L114 197 L98 204 Z M88 217 L104 209 L96 190 L80 197 Z"
+                  d="M105 209 L118 200 L123 208 L110 217 Z M121 197 L134 188 L139 196 L126 205 Z"
                   fill="none"
-                  className="stroke-steel"
+                  className="stroke-snow/70"
+                  strokeWidth={1}
+                />
+
+                {/* bonnet crease + panel shut lines */}
+                <path
+                  d="M132 197 C172 186 222 178 300 170"
+                  fill="none"
+                  className="stroke-snow/40"
+                  strokeWidth={1.5}
+                />
+                <path
+                  d="M236 197 L236 258 M372 194 L372 256 M470 192 L470 254"
+                  fill="none"
+                  className="stroke-charcoal/25"
                   strokeWidth={1.5}
                 />
 
-                {/* roundel badge on the bonnet */}
-                <g transform="translate(150,190) rotate(-8) scale(1,0.42)">
-                  <circle r="9" className="fill-charcoal-dark" />
-                  <circle r="6.5" className="fill-snow" />
-                  <path d="M0 -6.5 A6.5 6.5 0 0 1 6.5 0 L0 0 Z" className="fill-primary/70" />
-                  <path d="M0 6.5 A6.5 6.5 0 0 1 -6.5 0 L0 0 Z" className="fill-primary/70" />
-                </g>
+                {/* body highlight sweep */}
+                <path
+                  d="M120 214 C220 205 380 202 592 208"
+                  fill="none"
+                  className="stroke-snow/60"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                />
+
+                {/* door handles */}
+                <rect x="330" y="204" width="22" height="6" rx="3" className="fill-charcoal/40" />
+                <rect x="440" y="203" width="22" height="6" rx="3" className="fill-charcoal/40" />
+
+                {/* wheel arches */}
+                <path
+                  d="M126 259 A44 44 0 0 1 214 259 M461 254 A44 44 0 0 1 549 254"
+                  fill="none"
+                  className="stroke-charcoal/45"
+                  strokeWidth={3}
+                />
 
                 {/* near-side wheels */}
                 <g>
-                  <ellipse cx="205" cy="248" rx="34" ry="32" className="fill-charcoal-dark" />
-                  <ellipse cx="205" cy="248" rx="19" ry="18" className="fill-steel" />
-                  <ellipse cx="205" cy="248" rx="7" ry="6.5" className="fill-charcoal" />
-                  <ellipse cx="505" cy="244" rx="34" ry="32" className="fill-charcoal-dark" />
-                  <ellipse cx="505" cy="244" rx="19" ry="18" className="fill-steel" />
-                  <ellipse cx="505" cy="244" rx="7" ry="6.5" className="fill-charcoal" />
+                  <circle cx="170" cy="254" r="42" className="fill-charcoal-dark" />
+                  <circle cx="170" cy="254" r="26" className="fill-steel" />
+                  <circle cx="170" cy="254" r="20" className="fill-charcoal/30" />
+                  <circle cx="170" cy="254" r="7" className="fill-charcoal-dark" />
+                  <path
+                    d="M170 234 L170 274 M153 244 L187 264 M153 264 L187 244"
+                    className="stroke-charcoal-dark"
+                    strokeWidth={4}
+                    strokeLinecap="round"
+                  />
+                  <circle cx="505" cy="252" r="42" className="fill-charcoal-dark" />
+                  <circle cx="505" cy="252" r="26" className="fill-steel" />
+                  <circle cx="505" cy="252" r="20" className="fill-charcoal/30" />
+                  <circle cx="505" cy="252" r="7" className="fill-charcoal-dark" />
+                  <path
+                    d="M505 232 L505 272 M488 242 L522 262 M488 262 L522 242"
+                    className="stroke-charcoal-dark"
+                    strokeWidth={4}
+                    strokeLinecap="round"
+                  />
                 </g>
 
                 {/* shoulder crease + door shut lines */}
