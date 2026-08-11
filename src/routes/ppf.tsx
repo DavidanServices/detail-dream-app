@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, Check, Shield, RotateCcw } from "lucide-react";
+import frontImg from "@/assets/ppf-front.jpg";
+import rearImg from "@/assets/ppf-rear.jpg";
+import leftImg from "@/assets/ppf-left.jpg";
+import rightImg from "@/assets/ppf-right.jpg";
+import topImg from "@/assets/ppf-top.jpg";
 
 export const Route = createFileRoute("/ppf")({
   head: () => ({
@@ -9,7 +14,7 @@ export const Route = createFileRoute("/ppf")({
       {
         name: "description",
         content:
-          "Use our interactive car diagram to choose which panels you want protected with paint protection film, or select full-car coverage.",
+          "Choose which panels you want protected with paint protection film using our interactive vehicle selector — front, rear, sides and roof.",
       },
       { property: "og:title", content: "PPF Configurator — Luxe Auto Detail" },
       {
@@ -24,72 +29,118 @@ export const Route = createFileRoute("/ppf")({
   component: PpfPage,
 });
 
-type Part = {
-  id: string;
-  name: string;
-  price: number;
-  /** SVG path for the 3/4 perspective car diagram */
-  d: string;
-  /** Panel orientation — drives the shading gradient */
-  face?: "top" | "side" | "front" | "glass";
-};
+type ViewId = "front" | "rear" | "left" | "right" | "top";
 
-const PARTS: Part[] = [
+type Panel = { id: string; name: string; price: number };
+
+const PANELS: Panel[] = [
+  { id: "front-bumper", name: "Front bumper", price: 220 },
+  { id: "rear-bumper", name: "Rear bumper", price: 210 },
+  { id: "bonnet", name: "Bonnet", price: 260 },
+  { id: "roof", name: "Roof", price: 240 },
+  { id: "boot", name: "Boot", price: 180 },
+  { id: "headlights", name: "Headlights", price: 60 },
+  { id: "wing-l", name: "Left front wing", price: 95 },
+  { id: "wing-r", name: "Right front wing", price: 95 },
+  { id: "door-fl", name: "Left front door", price: 105 },
+  { id: "door-fr", name: "Right front door", price: 105 },
+  { id: "door-rl", name: "Left rear door", price: 100 },
+  { id: "door-rr", name: "Right rear door", price: 100 },
+  { id: "quarter-l", name: "Left rear quarter", price: 100 },
+  { id: "quarter-r", name: "Right rear quarter", price: 100 },
+  { id: "mirror-l", name: "Left wing mirror", price: 35 },
+  { id: "mirror-r", name: "Right wing mirror", price: 35 },
+];
+
+const PANEL_BY_ID = Object.fromEntries(PANELS.map((p) => [p.id, p])) as Record<string, Panel>;
+
+/** Hotspot polygons are in the natural 1280x832 image coordinate space. */
+type Hotspot = { id: string; points: string };
+
+const VIEWS: { id: ViewId; label: string; src: string; hotspots: Hotspot[] }[] = [
   {
-    id: "front-bumper",
-    name: "Front bumper",
-    price: 220,
-    face: "front",
-    d: "M97 226 C97 242 103 253 113 259 L141 239 C131 232 125 221 125 206 Z",
+    id: "front",
+    label: "Front",
+    src: frontImg,
+    hotspots: [
+      { id: "bonnet", points: "300,418 392,344 890,344 982,418 870,398 412,398" },
+      { id: "front-bumper", points: "262,502 1020,502 1006,676 276,676" },
+      { id: "headlights", points: "276,404 412,420 416,482 280,482 876,420 1006,404 1002,482 878,482" },
+      { id: "roof", points: "432,172 850,172 862,198 420,198" },
+      { id: "wing-r", points: "252,428 300,414 306,500 256,506" },
+      { id: "wing-l", points: "982,414 1030,428 1026,506 976,500" },
+      { id: "mirror-r", points: "256,282 346,286 346,332 258,326" },
+      { id: "mirror-l", points: "936,286 1026,282 1024,326 938,332" },
+    ],
   },
   {
-    id: "headlights",
-    name: "Headlights",
-    price: 60,
-    face: "front",
-    d: "M105 209 L118 200 L123 208 L110 217 Z M121 197 L134 188 L139 196 L126 205 Z",
+    id: "rear",
+    label: "Rear",
+    src: rearImg,
+    hotspots: [
+      { id: "boot", points: "332,292 948,292 958,470 322,470" },
+      { id: "rear-bumper", points: "216,482 1064,482 1048,700 232,700" },
+      { id: "roof", points: "360,96 920,96 930,122 350,122" },
+      { id: "quarter-l", points: "182,300 322,290 322,520 192,520" },
+      { id: "quarter-r", points: "958,290 1098,300 1088,520 962,520" },
+    ],
   },
   {
-    id: "bonnet",
-    name: "Bonnet / hood",
-    price: 260,
-    face: "top",
-    d: "M118 202 C136 199 176 197 268 196 L296 176 C214 177 172 179 146 182 Z",
+    id: "left",
+    label: "Left",
+    src: leftImg,
+    hotspots: [
+      { id: "front-bumper", points: "86,398 150,392 160,542 96,546" },
+      { id: "headlights", points: "96,404 190,398 194,440 100,446" },
+      { id: "wing-l", points: "152,388 402,374 420,530 162,542" },
+      { id: "bonnet", points: "152,372 428,358 430,382 156,394" },
+      { id: "door-fl", points: "424,378 690,374 690,546 430,550" },
+      { id: "door-rl", points: "690,374 870,374 870,546 690,546" },
+      { id: "quarter-l", points: "870,374 1088,380 1118,520 878,546" },
+      { id: "rear-bumper", points: "1088,378 1200,400 1194,530 1110,524" },
+      { id: "mirror-l", points: "470,338 532,334 536,366 474,370" },
+      { id: "roof", points: "600,254 900,264 896,290 596,280" },
+    ],
   },
   {
-    id: "windscreen-strip",
-    name: "Windscreen",
-    price: 90,
-    face: "glass",
-    d: "M268 196 L348 138 L376 118 L296 176 Z",
+    id: "right",
+    label: "Right",
+    src: rightImg,
+    hotspots: [
+      { id: "front-bumper", points: "1180,418 1258,430 1252,560 1178,554" },
+      { id: "headlights", points: "1174,420 1250,428 1244,462 1178,456" },
+      { id: "wing-r", points: "940,398 1180,414 1174,560 944,554" },
+      { id: "bonnet", points: "940,394 1180,410 1176,426 944,412" },
+      { id: "door-fr", points: "600,394 936,400 940,560 604,564" },
+      { id: "door-rr", points: "410,394 600,394 604,564 414,564" },
+      { id: "quarter-r", points: "170,388 410,394 414,564 180,550" },
+      { id: "rear-bumper", points: "32,400 170,388 180,550 42,544" },
+      { id: "mirror-r", points: "790,338 856,344 850,376 788,370" },
+      { id: "roof", points: "330,274 700,264 704,290 334,300" },
+    ],
   },
-  { id: "roof", name: "Roof", price: 240, face: "top", d: "M348 138 L486 134 L514 114 L376 118 Z" },
   {
-    id: "front-wings",
-    name: "Front wings",
-    price: 180,
-    face: "side",
-    d: "M112 259 C102 252 97 241 97 226 C97 208 106 200 118 202 L236 197 L236 259 L214 259 A44 44 0 0 0 126 259 Z",
+    id: "top",
+    label: "Top",
+    src: topImg,
+    hotspots: [
+      { id: "front-bumper", points: "96,300 160,250 166,590 100,546" },
+      { id: "bonnet", points: "168,254 432,240 440,600 172,590" },
+      { id: "roof", points: "600,268 812,268 816,572 600,572" },
+      { id: "boot", points: "1000,264 1180,290 1174,560 1000,576" },
+      { id: "rear-bumper", points: "1178,290 1216,332 1210,530 1176,560" },
+      { id: "wing-r", points: "176,246 436,232 438,292 180,300" },
+      { id: "wing-l", points: "180,556 438,566 436,630 176,620" },
+      { id: "door-fr", points: "440,238 700,242 700,296 440,292" },
+      { id: "door-rr", points: "700,242 962,250 960,300 700,296" },
+      { id: "door-fl", points: "440,570 700,576 700,628 440,624" },
+      { id: "door-rl", points: "700,576 962,570 960,620 700,628" },
+      { id: "quarter-r", points: "962,250 1176,286 1174,318 960,300" },
+      { id: "quarter-l", points: "960,568 1174,538 1176,566 962,618" },
+      { id: "mirror-r", points: "504,174 556,166 560,214 508,220" },
+      { id: "mirror-l", points: "500,600 552,598 550,656 498,652" },
+    ],
   },
-  { id: "mirrors", name: "Wing mirrors", price: 70, face: "side", d: "M282 178 l26 -6 l6 13 l-26 6 z" },
-  { id: "front-doors", name: "Front doors", price: 200, face: "side", d: "M236 197 L372 194 L372 256 L236 258 Z" },
-  { id: "rear-doors", name: "Rear doors", price: 200, face: "side", d: "M372 194 L470 192 L470 254 L372 256 Z" },
-  {
-    id: "rear-quarters",
-    name: "Rear quarter panels",
-    price: 190,
-    face: "side",
-    d: "M470 192 L560 196 L592 200 L592 254 L549 254 A44 44 0 0 0 461 254 L470 254 Z",
-  },
-  { id: "boot", name: "Boot lid", price: 180, face: "top", d: "M560 196 L612 202 L628 190 L578 183 Z" },
-  {
-    id: "rear-bumper",
-    name: "Rear bumper",
-    price: 210,
-    face: "side",
-    d: "M592 200 L624 208 C632 224 632 242 624 252 L592 254 Z",
-  },
-  { id: "sills", name: "Side sills", price: 120, face: "side", d: "M214 246 L462 242 L462 258 L214 262 Z" },
 ];
 
 const FULL_CAR_PRICE = 1800;
@@ -98,6 +149,7 @@ const BASE_PRICE = 350;
 const gbp = (n: number) => `£${n.toLocaleString("en-GB")}`;
 
 function PpfPage() {
+  const [view, setView] = useState<ViewId>("front");
   const [selected, setSelected] = useState<string[]>([]);
   const [fullCar, setFullCar] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -112,16 +164,14 @@ function PpfPage() {
   const total = useMemo(() => {
     if (fullCar) return FULL_CAR_PRICE;
     if (selected.length === 0) return 0;
-    return BASE_PRICE + PARTS.filter((p) => selected.includes(p.id)).reduce((sum, p) => sum + p.price, 0);
+    return BASE_PRICE + selected.reduce((sum, id) => sum + (PANEL_BY_ID[id]?.price ?? 0), 0);
   }, [selected, fullCar]);
 
   const summary = fullCar
     ? "Full car PPF"
-    : selected.length > 0
-      ? PARTS.filter((p) => selected.includes(p.id))
-          .map((p) => p.name)
-          .join(", ")
-      : "";
+    : PANELS.filter((p) => selected.includes(p.id))
+        .map((p) => p.name)
+        .join(", ");
 
   return (
     <>
@@ -134,8 +184,8 @@ function PpfPage() {
             Build your PPF coverage
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
-            Tap the panels on the car you'd like protected — or wrap the whole thing. Prices are indicative and
-            confirmed after we see your vehicle.
+            Rotate through each view and tap the panels you'd like protected — or wrap the whole car. Prices are
+            indicative and confirmed after we see your vehicle.
           </p>
         </div>
       </section>
@@ -143,186 +193,103 @@ function PpfPage() {
       <section className="bg-background py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-            {/* Diagram */}
-            <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-8">
-              <svg
-                viewBox="78 100 588 200"
-                className="mx-auto h-auto w-full select-none"
-                role="img"
-                aria-label="Interactive three-quarter view car diagram for choosing paint protection film coverage"
-              >
-                <defs>
-                  <linearGradient id="ppf-top" x1="0" y1="0" x2="0.3" y2="1">
-                    <stop offset="0%" stopColor="var(--snow)" />
-                    <stop offset="100%" stopColor="var(--steel)" />
-                  </linearGradient>
-                  <linearGradient id="ppf-side" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--steel)" />
-                    <stop offset="55%" stopColor="var(--snow)" />
-                    <stop offset="100%" stopColor="var(--charcoal)" />
-                  </linearGradient>
-                  <linearGradient id="ppf-front" x1="0" y1="0" x2="0.4" y2="1">
-                    <stop offset="0%" stopColor="var(--steel)" />
-                    <stop offset="100%" stopColor="var(--charcoal)" />
-                  </linearGradient>
-                  <linearGradient id="ppf-glass" x1="0" y1="0" x2="0.6" y2="1">
-                    <stop offset="0%" stopColor="var(--charcoal)" />
-                    <stop offset="100%" stopColor="var(--steel)" />
-                  </linearGradient>
-                  <radialGradient id="ppf-shadow">
-                    <stop offset="0%" stopColor="var(--charcoal)" stopOpacity="0.35" />
-                    <stop offset="100%" stopColor="var(--charcoal)" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-
-                {/* ground shadow */}
-                <ellipse cx="380" cy="272" rx="290" ry="20" fill="url(#ppf-shadow)" />
-
-                {/* far-side wheels peeking through */}
-                <ellipse cx="224" cy="220" rx="30" ry="28" className="fill-charcoal-dark" opacity="0.85" />
-                <ellipse cx="558" cy="218" rx="30" ry="28" className="fill-charcoal-dark" opacity="0.85" />
-
-                {/* body shell beneath the panels */}
-                <path
-                  d="M97 226 C97 208 106 199 118 202 C160 197 200 195 268 196 L348 138 C392 132 448 130 486 134 L560 196 L592 200 L624 208 C632 224 632 242 624 252 L592 256 L118 262 C104 254 97 242 97 226 Z"
-                  fill="url(#ppf-side)"
-                  className="stroke-border"
-                  strokeWidth={1}
-                  strokeLinejoin="round"
-                />
-
-                {/* side glass */}
-                <path d="M284 191 L352 144 L418 142 L418 191 Z" fill="url(#ppf-glass)" opacity="0.92" />
-                <path d="M430 191 L430 142 L484 140 L544 191 Z" fill="url(#ppf-glass)" opacity="0.92" />
-                <path
-                  d="M284 191 L352 144 L484 140 L544 191 Z"
-                  fill="none"
-                  className="stroke-charcoal/40"
-                  strokeWidth={1.5}
-                  strokeLinejoin="round"
-                />
-
-                {/* rear screen (top surface) */}
-                <path d="M486 134 L560 196 L578 183 L506 121 Z" fill="url(#ppf-glass)" opacity="0.9" />
-
-                {PARTS.map((part) => (
-                  <g key={part.id}>
-                    <path
-                      d={part.d}
-                      fill={
-                        isActive(part.id) || hovered === part.id
-                          ? undefined
-                          : `url(#ppf-${part.face === "glass" ? "glass" : (part.face ?? "side")})`
-                      }
-                      onClick={() => toggle(part.id)}
-                      onMouseEnter={() => setHovered(part.id)}
-                      onMouseLeave={() => setHovered(null)}
-                      tabIndex={0}
-                      role="button"
-                      aria-pressed={isActive(part.id)}
-                      aria-label={`${part.name}, ${gbp(part.price)}`}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          toggle(part.id);
-                        }
-                      }}
-                      className={`cursor-pointer outline-none transition-all duration-200 ${
-                        isActive(part.id)
-                          ? "fill-primary stroke-primary"
-                          : hovered === part.id
-                            ? "fill-primary/45 stroke-primary"
-                            : "stroke-border/80"
-                      }`}
-                      strokeWidth={1.25}
-                      strokeLinejoin="round"
-                    />
-                  </g>
+            {/* Vehicle viewer */}
+            <div>
+              <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-card p-1.5 shadow-sm">
+                {VIEWS.map((v) => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => setView(v.id)}
+                    aria-pressed={view === v.id}
+                    className={`flex-1 rounded-lg px-4 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest transition-all ${
+                      view === v.id
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                    }`}
+                  >
+                    {v.label}
+                  </button>
                 ))}
+              </div>
 
-                {/* lower air intake + grille */}
-                <path d="M101 234 L131 213 L136 224 L106 246 Z" className="fill-charcoal-dark" opacity="0.85" />
-                <path d="M110 253 L137 234 L139 241 L113 259 Z" className="fill-charcoal-dark" opacity="0.55" />
-
-                {/* headlight glass sheen */}
-                <path
-                  d="M105 209 L118 200 L123 208 L110 217 Z M121 197 L134 188 L139 196 L126 205 Z"
-                  fill="none"
-                  className="stroke-snow/70"
-                  strokeWidth={1}
-                />
-
-                {/* bonnet crease + panel shut lines */}
-                <path
-                  d="M132 197 C172 186 222 178 300 170"
-                  fill="none"
-                  className="stroke-snow/40"
-                  strokeWidth={1.5}
-                />
-                <path
-                  d="M236 197 L236 258 M372 194 L372 256 M470 192 L470 254"
-                  fill="none"
-                  className="stroke-charcoal/25"
-                  strokeWidth={1.5}
-                />
-
-                {/* body highlight sweep */}
-                <path
-                  d="M120 214 C220 205 380 202 592 208"
-                  fill="none"
-                  className="stroke-snow/60"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                />
-
-                {/* door handles */}
-                <rect x="330" y="204" width="22" height="6" rx="3" className="fill-charcoal/40" />
-                <rect x="440" y="203" width="22" height="6" rx="3" className="fill-charcoal/40" />
-
-                {/* wheel arches */}
-                <path
-                  d="M126 259 A44 44 0 0 1 214 259 M461 254 A44 44 0 0 1 549 254"
-                  fill="none"
-                  className="stroke-charcoal/45"
-                  strokeWidth={3}
-                />
-
-                {/* near-side wheels */}
-                <g>
-                  <circle cx="170" cy="254" r="42" className="fill-charcoal-dark" />
-                  <circle cx="170" cy="254" r="26" className="fill-steel" />
-                  <circle cx="170" cy="254" r="20" className="fill-charcoal/30" />
-                  <circle cx="170" cy="254" r="7" className="fill-charcoal-dark" />
-                  <path
-                    d="M170 234 L170 274 M153 244 L187 264 M153 264 L187 244"
-                    className="stroke-charcoal-dark"
-                    strokeWidth={4}
-                    strokeLinecap="round"
-                  />
-                  <circle cx="505" cy="252" r="42" className="fill-charcoal-dark" />
-                  <circle cx="505" cy="252" r="26" className="fill-steel" />
-                  <circle cx="505" cy="252" r="20" className="fill-charcoal/30" />
-                  <circle cx="505" cy="252" r="7" className="fill-charcoal-dark" />
-                  <path
-                    d="M505 232 L505 272 M488 242 L522 262 M488 262 L522 242"
-                    className="stroke-charcoal-dark"
-                    strokeWidth={4}
-                    strokeLinecap="round"
-                  />
-                </g>
-
-                {/* shoulder crease + door shut lines */}
-                <path
-                  d="M140 206 L225 200 L350 196 L460 196 L588 202"
-                  fill="none"
-                  className="stroke-charcoal/25"
-                  strokeWidth={1.5}
-                />
-              </svg>
-              <p className="mt-4 text-center text-sm text-muted-foreground">
-                {hovered
-                  ? `${PARTS.find((p) => p.id === hovered)?.name} — ${gbp(PARTS.find((p) => p.id === hovered)!.price)}`
-                  : "Hover or tap a panel to select it"}
+              <div className="relative mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                <div className="relative aspect-[1280/832] w-full">
+                  {VIEWS.map((v) => {
+                    const active = v.id === view;
+                    return (
+                      <div
+                        key={v.id}
+                        className={`absolute inset-0 transition-opacity duration-500 ease-out ${
+                          active ? "opacity-100" : "pointer-events-none opacity-0"
+                        }`}
+                        aria-hidden={!active}
+                      >
+                        <img
+                          src={v.src}
+                          alt={`${v.label} view of the vehicle used to select paint protection film coverage`}
+                          width={1280}
+                          height={832}
+                          loading={v.id === "front" ? "eager" : "lazy"}
+                          className="h-full w-full object-cover"
+                        />
+                        <svg
+                          viewBox="0 0 1280 832"
+                          preserveAspectRatio="none"
+                          className="absolute inset-0 h-full w-full"
+                        >
+                          <defs>
+                            <linearGradient id="ppf-film" x1="0" y1="0" x2="0.8" y2="1">
+                              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.30" />
+                              <stop offset="45%" stopColor="#ffffff" stopOpacity="0.08" />
+                              <stop offset="70%" stopColor="#ffffff" stopOpacity="0.22" />
+                              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.06" />
+                            </linearGradient>
+                          </defs>
+                          {v.hotspots.map((h) => {
+                            const on = isActive(h.id);
+                            const hot = hovered === h.id;
+                            return (
+                              <polygon
+                                key={`${v.id}-${h.id}`}
+                                points={h.points}
+                                fill={on ? "url(#ppf-film)" : hot ? "rgba(255,255,255,0.14)" : "transparent"}
+                                stroke={
+                                  on
+                                    ? "rgba(255,255,255,0.75)"
+                                    : hot
+                                      ? "rgba(255,255,255,0.55)"
+                                      : "transparent"
+                                }
+                                strokeWidth={on ? 2 : 1.5}
+                                strokeLinejoin="round"
+                                tabIndex={active ? 0 : -1}
+                                role="button"
+                                aria-pressed={on}
+                                aria-label={`${PANEL_BY_ID[h.id]?.name}, ${gbp(PANEL_BY_ID[h.id]?.price ?? 0)}`}
+                                onClick={() => toggle(h.id)}
+                                onMouseEnter={() => setHovered(h.id)}
+                                onMouseLeave={() => setHovered(null)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    toggle(h.id);
+                                  }
+                                }}
+                                className="cursor-pointer outline-none transition-all duration-300"
+                              />
+                            );
+                          })}
+                        </svg>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <p className="mt-3 text-center text-sm text-muted-foreground">
+                {hovered && PANEL_BY_ID[hovered]
+                  ? `${PANEL_BY_ID[hovered].name} — ${gbp(PANEL_BY_ID[hovered].price)}`
+                  : "Hover or tap a panel to protect it. Selections are kept across every view."}
               </p>
             </div>
 
@@ -354,7 +321,7 @@ function PpfPage() {
 
               <h2 className="mt-8 font-heading text-lg font-semibold text-foreground">Or pick individual panels</h2>
               <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                {PARTS.map((part) => (
+                {PANELS.map((part) => (
                   <li key={part.id}>
                     <button
                       type="button"
@@ -386,7 +353,9 @@ function PpfPage() {
               <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    {fullCar ? "Full car coverage" : `${selected.length} panel${selected.length === 1 ? "" : "s"} selected`}
+                    {fullCar
+                      ? "Full car coverage"
+                      : `${selected.length} panel${selected.length === 1 ? "" : "s"} selected`}
                   </span>
                   {(fullCar || selected.length > 0) && (
                     <button
@@ -401,6 +370,18 @@ function PpfPage() {
                     </button>
                   )}
                 </div>
+                {!fullCar && selected.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {PANELS.filter((p) => selected.includes(p.id)).map((p) => (
+                      <span
+                        key={p.id}
+                        className="rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs text-foreground"
+                      >
+                        {p.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className="font-heading text-4xl font-bold text-foreground">
                     {total > 0 ? gbp(total) : gbp(BASE_PRICE)}
