@@ -63,11 +63,26 @@ const services = [
   },
 ];
 
-const packages = [
+const vehicleTypes = [
+  { id: "hatchback", label: "Hatchback", hint: "Small & compact cars" },
+  { id: "saloon", label: "Saloon / Coupe", hint: "Sedans & coupes" },
+  { id: "suv", label: "SUV", hint: "4x4s, MPVs & large vehicles" },
+] as const;
+
+type VehicleType = (typeof vehicleTypes)[number]["id"];
+
+const packages: {
+  id: string;
+  name: string;
+  prices: Record<VehicleType, number>;
+  description: string;
+  features: string[];
+  popular: boolean;
+}[] = [
   {
     id: "interior",
     name: "Interior Detail",
-    price: 100,
+    prices: { hatchback: 105, saloon: 120, suv: 140 },
     description: "Deep clean and restore your cabin from top to bottom.",
     features: ["Vacuuming & shampoo", "Leather conditioning", "Steam sanitization", "Odor elimination"],
     popular: false,
@@ -75,7 +90,7 @@ const packages = [
   {
     id: "exterior",
     name: "Exterior Detail",
-    price: 110,
+    prices: { hatchback: 110, saloon: 130, suv: 150 },
     description: "Hand wash, clay bar, and protect your paintwork.",
     features: ["Hand wash & dry", "Clay bar treatment", "Paint decontamination", "Sealant or wax protection"],
     popular: false,
@@ -83,7 +98,7 @@ const packages = [
   {
     id: "exterior-interior",
     name: "Exterior + Interior",
-    price: 190,
+    prices: { hatchback: 185, saloon: 210, suv: 250 },
     description: "Our most popular combo — a complete inside-and-out refresh.",
     features: ["Full exterior detail", "Full interior detail", "Paint-safe techniques", "Cabin deep clean"],
     popular: true,
@@ -91,7 +106,7 @@ const packages = [
   {
     id: "ceramic",
     name: "Ceramic Coating",
-    price: 150,
+    prices: { hatchback: 175, saloon: 200, suv: 220 },
     description: "Long-lasting hydrophobic protection with a deep gloss finish.",
     features: ["Multi-year protection", "Hydrophobic finish", "UV resistance", "Enhanced depth & gloss"],
     popular: false,
@@ -99,7 +114,7 @@ const packages = [
   {
     id: "complete",
     name: "The Complete Bundle",
-    price: 300,
+    prices: { hatchback: 310, saloon: 360, suv: 420 },
     description: "Everything in one package: exterior, interior, and ceramic coating.",
     features: ["Exterior + Interior detail", "Ceramic coating application", "Full protection & gloss", "Best value"],
     popular: false,
@@ -115,6 +130,9 @@ const ppfPackage = {
 };
 
 function ServicesPage() {
+  const [vehicle, setVehicle] = useState<VehicleType>("hatchback");
+  const vehicleLabel = vehicleTypes.find((v) => v.id === vehicle)!.label;
+
   return (
     <>
       <section className="bg-secondary py-20 lg:py-28">
