@@ -160,16 +160,16 @@ function HomePage() {
               Packages & Pricing
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Clear, upfront pricing for every level of care. Custom quotes available for larger vehicles.
+              Clear, upfront pricing for every level of care. Prices vary by vehicle type — hatchback, saloon/coupe or SUV.
             </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { name: "Interior Detail", price: "£100" },
+              { name: "Interior Detail", price: "£105" },
               { name: "Exterior Detail", price: "£110" },
-              { name: "Exterior + Interior", price: "£190", popular: true },
-              { name: "Ceramic Coating", price: "£150" },
+              { name: "Exterior + Interior", price: "£185", popular: true },
+              { name: "Ceramic Coating", price: "£175" },
             ].map((pkg) => (
               <div
                 key={pkg.name}
@@ -182,7 +182,7 @@ function HomePage() {
                 )}
                 <h3 className="font-heading text-lg font-semibold text-card-foreground">{pkg.name}</h3>
                 <p className="mt-3 font-heading text-4xl font-bold text-foreground">{pkg.price}</p>
-                <p className="mt-1 text-sm text-muted-foreground">starting</p>
+                <p className="mt-1 text-sm text-muted-foreground">starting from</p>
                 <Link
                   to="/contact"
                   search={{ service: pkg.name }}
@@ -201,7 +201,7 @@ function HomePage() {
                 <p className="text-sm text-muted-foreground">Exterior + Interior + Ceramic Coating</p>
               </div>
               <div className="mt-4 sm:mt-0 sm:text-right">
-                <p className="font-heading text-3xl font-bold text-foreground">£300</p>
+                <p className="font-heading text-3xl font-bold text-foreground">from £310</p>
                 <Link
                   to="/contact"
                   search={{ service: "The Complete Bundle" }}
