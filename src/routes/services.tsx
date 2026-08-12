@@ -154,8 +154,27 @@ function ServicesPage() {
               Packages & Pricing
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Transparent pricing for every level of care. All packages are tailored to your vehicle's size and condition.
+              Transparent pricing for every level of care. Choose your vehicle type to see exact prices.
             </p>
+          </div>
+
+          <div className="mb-12 flex flex-wrap justify-center gap-3">
+            {vehicleTypes.map((type) => (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() => setVehicle(type.id)}
+                aria-pressed={vehicle === type.id}
+                className={`rounded-xl border px-5 py-3 text-left transition-all ${
+                  vehicle === type.id
+                    ? "border-primary bg-primary/10 text-foreground ring-1 ring-primary/30"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/30"
+                }`}
+              >
+                <span className="block font-heading text-sm font-semibold text-foreground">{type.label}</span>
+                <span className="block text-xs text-muted-foreground">{type.hint}</span>
+              </button>
+            ))}
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -172,8 +191,8 @@ function ServicesPage() {
                 <h3 className="font-heading text-xl font-semibold text-card-foreground">{pkg.name}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{pkg.description}</p>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="font-heading text-4xl font-bold text-foreground">£{pkg.price}</span>
-                  <span className="text-muted-foreground">starting</span>
+                  <span className="font-heading text-4xl font-bold text-foreground">£{pkg.prices[vehicle]}</span>
+                  <span className="text-muted-foreground">{vehicleLabel}</span>
                 </div>
                 <ul className="mt-6 flex-1 space-y-3">
                   {pkg.features.map((feature) => (
@@ -185,7 +204,7 @@ function ServicesPage() {
                 </ul>
                 <Link
                   to="/contact"
-                  search={{ service: pkg.name }}
+                  search={{ service: pkg.name, vehicle: vehicleLabel }}
                   className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
                 >
                   Book Now <ArrowRight className="h-4 w-4" />
