@@ -3,10 +3,13 @@ import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/contact")({
-  validateSearch: (search: Record<string, unknown>): { service?: string; coverage?: string } => {
-    const out: { service?: string; coverage?: string } = {};
+  validateSearch: (
+    search: Record<string, unknown>
+  ): { service?: string | undefined; coverage?: string | undefined; vehicle?: string | undefined } => {
+    const out: { service?: string | undefined; coverage?: string | undefined; vehicle?: string | undefined } = {};
     if (typeof search["service"] === "string") out.service = search["service"];
     if (typeof search["coverage"] === "string") out.coverage = search["coverage"];
+    if (typeof search["vehicle"] === "string") out.vehicle = search["vehicle"];
     return out;
   },
   head: () => ({
@@ -23,11 +26,11 @@ export const Route = createFileRoute("/contact")({
 });
 
 const serviceOptions = [
-  "Interior Detail — £100",
-  "Exterior Detail — £110",
-  "Exterior + Interior — £190",
-  "Ceramic Coating — £150",
-  "The Complete Bundle — £300",
+  "Interior Detail — from £105",
+  "Exterior Detail — from £110",
+  "Exterior + Interior — from £185",
+  "Ceramic Coating — from £175",
+  "The Complete Bundle — from £310",
   "Paint Protection Film — from £350",
   "Not sure / Multiple services",
 ];
@@ -39,19 +42,25 @@ function ContactPage() {
   const search = useSearch({ from: "/contact" });
 
   useEffect(() => {
-    if (typeof search.service === "string") {
+    const requested = search.service;
+    if (typeof requested === "string") {
       const matched = serviceOptions.find((option) =>
-        option.toLowerCase().startsWith(search.service.toLowerCase())
+        option.toLowerCase().startsWith(requested.toLowerCase())
       );
       if (matched) setService(matched);
     }
   }, [search.service]);
 
   useEffect(() => {
-    if (typeof search.coverage === "string" && search.coverage) {
-      setMessage(`PPF coverage requested: ${search.coverage}.`);
+    const parts: string[] = [];
+    if (typeof search.vehicle === "string" && search.vehicle) {
+      parts.push(`Vehicle type: ${search.vehicle}.`);
     }
-  }, [search.coverage]);
+    if (typeof search.coverage === "string" && search.coverage) {
+      parts.push(`PPF coverage requested: ${search.coverage}.`);
+    }
+    if (parts.length) setMessage(parts.join(" "));
+  }, [search.coverage, search.vehicle]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

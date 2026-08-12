@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { ArrowRight, Droplets, Sparkles, Shield, CheckCircle } from "lucide-react";
 import exteriorImage from "../assets/service-exterior.jpg";
 import interiorImage from "../assets/service-interior.jpg";
@@ -62,11 +63,26 @@ const services = [
   },
 ];
 
-const packages = [
+const vehicleTypes = [
+  { id: "hatchback", label: "Hatchback", hint: "Small & compact cars" },
+  { id: "saloon", label: "Saloon / Coupe", hint: "Sedans & coupes" },
+  { id: "suv", label: "SUV", hint: "4x4s, MPVs & large vehicles" },
+] as const;
+
+type VehicleType = (typeof vehicleTypes)[number]["id"];
+
+const packages: {
+  id: string;
+  name: string;
+  prices: Record<VehicleType, number>;
+  description: string;
+  features: string[];
+  popular: boolean;
+}[] = [
   {
     id: "interior",
     name: "Interior Detail",
-    price: 100,
+    prices: { hatchback: 105, saloon: 120, suv: 140 },
     description: "Deep clean and restore your cabin from top to bottom.",
     features: ["Vacuuming & shampoo", "Leather conditioning", "Steam sanitization", "Odor elimination"],
     popular: false,
@@ -74,7 +90,7 @@ const packages = [
   {
     id: "exterior",
     name: "Exterior Detail",
-    price: 110,
+    prices: { hatchback: 110, saloon: 130, suv: 150 },
     description: "Hand wash, clay bar, and protect your paintwork.",
     features: ["Hand wash & dry", "Clay bar treatment", "Paint decontamination", "Sealant or wax protection"],
     popular: false,
@@ -82,7 +98,7 @@ const packages = [
   {
     id: "exterior-interior",
     name: "Exterior + Interior",
-    price: 190,
+    prices: { hatchback: 185, saloon: 210, suv: 250 },
     description: "Our most popular combo — a complete inside-and-out refresh.",
     features: ["Full exterior detail", "Full interior detail", "Paint-safe techniques", "Cabin deep clean"],
     popular: true,
@@ -90,7 +106,7 @@ const packages = [
   {
     id: "ceramic",
     name: "Ceramic Coating",
-    price: 150,
+    prices: { hatchback: 175, saloon: 200, suv: 220 },
     description: "Long-lasting hydrophobic protection with a deep gloss finish.",
     features: ["Multi-year protection", "Hydrophobic finish", "UV resistance", "Enhanced depth & gloss"],
     popular: false,
@@ -98,7 +114,7 @@ const packages = [
   {
     id: "complete",
     name: "The Complete Bundle",
-    price: 300,
+    prices: { hatchback: 310, saloon: 360, suv: 420 },
     description: "Everything in one package: exterior, interior, and ceramic coating.",
     features: ["Exterior + Interior detail", "Ceramic coating application", "Full protection & gloss", "Best value"],
     popular: false,
@@ -114,6 +130,9 @@ const ppfPackage = {
 };
 
 function ServicesPage() {
+  const [vehicle, setVehicle] = useState<VehicleType>("hatchback");
+  const vehicleLabel = vehicleTypes.find((v) => v.id === vehicle)!.label;
+
   return (
     <>
       <section className="bg-secondary py-20 lg:py-28">
@@ -135,8 +154,27 @@ function ServicesPage() {
               Packages & Pricing
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Transparent pricing for every level of care. All packages are tailored to your vehicle's size and condition.
+              Transparent pricing for every level of care. Choose your vehicle type to see exact prices.
             </p>
+          </div>
+
+          <div className="mb-12 flex flex-wrap justify-center gap-3">
+            {vehicleTypes.map((type) => (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() => setVehicle(type.id)}
+                aria-pressed={vehicle === type.id}
+                className={`rounded-xl border px-5 py-3 text-left transition-all ${
+                  vehicle === type.id
+                    ? "border-primary bg-primary/10 text-foreground ring-1 ring-primary/30"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/30"
+                }`}
+              >
+                <span className="block font-heading text-sm font-semibold text-foreground">{type.label}</span>
+                <span className="block text-xs text-muted-foreground">{type.hint}</span>
+              </button>
+            ))}
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -153,8 +191,8 @@ function ServicesPage() {
                 <h3 className="font-heading text-xl font-semibold text-card-foreground">{pkg.name}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{pkg.description}</p>
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="font-heading text-4xl font-bold text-foreground">£{pkg.price}</span>
-                  <span className="text-muted-foreground">starting</span>
+                  <span className="font-heading text-4xl font-bold text-foreground">£{pkg.prices[vehicle]}</span>
+                  <span className="text-muted-foreground">{vehicleLabel}</span>
                 </div>
                 <ul className="mt-6 flex-1 space-y-3">
                   {pkg.features.map((feature) => (
@@ -166,7 +204,7 @@ function ServicesPage() {
                 </ul>
                 <Link
                   to="/contact"
-                  search={{ service: pkg.name }}
+                  search={{ service: pkg.name, vehicle: vehicleLabel }}
                   className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
                 >
                   Book Now <ArrowRight className="h-4 w-4" />
