@@ -1,6 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import logoAsset from "../assets/davidan-logo.png.asset.json";
+
 
 const navLinks = [
   { to: "/", label: "Home" },
