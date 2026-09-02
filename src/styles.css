@@ -53,33 +53,35 @@
 :root {
   --radius: 0.625rem;
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.25 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.25 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0 0);
-  --primary: oklch(0.58 0.20 25);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.25 0 0);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.58 0.20 25);
-  --accent-foreground: oklch(0.984 0.003 247.858);
+  /* Davidan Services: gunmetal + chrome + racing red */
+  --background: oklch(0.17 0.005 260);
+  --foreground: oklch(0.96 0.002 260);
+  --card: oklch(0.22 0.006 260);
+  --card-foreground: oklch(0.96 0.002 260);
+  --popover: oklch(0.22 0.006 260);
+  --popover-foreground: oklch(0.96 0.002 260);
+  --primary: oklch(0.56 0.22 28);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.12 0.004 260);
+  --secondary-foreground: oklch(0.96 0.002 260);
+  --muted: oklch(0.26 0.006 260);
+  --muted-foreground: oklch(0.72 0.004 260);
+  --accent: oklch(0.56 0.22 28);
+  --accent-foreground: oklch(0.99 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.9 0 0);
-  --ring: oklch(0.58 0.20 25);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.56 0.22 28);
 
-  --charcoal: oklch(0.25 0 0);
-  --charcoal-dark: oklch(0.15 0 0);
-  --electric: oklch(0.58 0.20 25);
-  --electric-glow: oklch(0.68 0.23 25);
-  --snow: oklch(0.97 0 0);
-  --steel: oklch(0.55 0 0);
+  --charcoal: oklch(0.22 0.006 260);
+  --charcoal-dark: oklch(0.12 0.004 260);
+  --electric: oklch(0.56 0.22 28);
+  --electric-glow: oklch(0.68 0.24 28);
+  --snow: oklch(0.21 0.006 260);
+  --steel: oklch(0.72 0.004 260);
 }
+
 
 .dark {
   --background: oklch(0.15 0 0);
@@ -135,4 +137,11 @@
 
 @utility glow-electric {
   box-shadow: 0 0 40px -10px color-mix(in oklab, var(--electric) 40%, transparent);
+}
+
+@utility text-chrome {
+  background: linear-gradient(180deg, oklch(0.99 0 0) 0%, oklch(0.82 0.004 260) 45%, oklch(0.62 0.005 260) 55%, oklch(0.95 0 0) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

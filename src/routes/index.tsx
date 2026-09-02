@@ -9,9 +9,9 @@ import ppfImage from "../assets/service-ppf.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Luxe Auto Detail | Premium Car Detailing in Los Angeles" },
-      { name: "description", content: "Expert exterior and interior detailing, ceramic coating, and paint protection film. Restore and protect your vehicle with Luxe Auto Detail." },
-      { property: "og:title", content: "Luxe Auto Detail | Premium Car Detailing in Los Angeles" },
+      { title: "Davidan Services | Premium Car Detailing in Los Angeles" },
+      { name: "description", content: "Expert exterior and interior detailing, ceramic coating, and paint protection film. Restore and protect your vehicle with Davidan Services." },
+      { property: "og:title", content: "Davidan Services | Premium Car Detailing in Los Angeles" },
       { property: "og:description", content: "Expert exterior and interior detailing, ceramic coating, and paint protection film." },
       { property: "og:type", content: "website" },
     ],
@@ -237,7 +237,7 @@ function HomePage() {
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
               <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Why drivers trust Luxe Auto
+                Why drivers trust Davidan Services
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
                 We treat every vehicle like it's our own. From daily drivers to exotic collectibles, our process is meticulous, paint-safe, and built around lasting results.

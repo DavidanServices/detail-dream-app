@@ -9,9 +9,9 @@ import ppfImage from "../assets/service-ppf.jpg";
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Our Services — Luxe Auto Detail" },
+      { title: "Our Services — Davidan Services" },
       { name: "description", content: "Explore our premium auto detailing services: exterior detailing, interior detailing, ceramic coating, and paint protection film." },
-      { property: "og:title", content: "Our Services — Luxe Auto Detail" },
+      { property: "og:title", content: "Our Services — Davidan Services" },
       { property: "og:description", content: "Explore our premium auto detailing services." },
       { property: "og:type", content: "website" },
     ],

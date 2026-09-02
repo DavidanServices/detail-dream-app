@@ -10,10 +10,9 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <Link to="/" className="inline-block">
-              <span className="font-heading text-2xl font-bold tracking-tight">
-                Luxe<span className="text-primary">Auto</span>
-              </span>
+              <img src={logoAsset.url} alt="Davidan Services logo" className="h-14 w-auto" width={841} height={280} />
             </Link>
+
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
               Premium auto detailing services that protect, restore, and elevate your vehicle's finish.
             </p>
@@ -53,7 +52,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 text-primary" />
-                <span>hello@luxeautodetail.com</span>
+                <span>hello@davidanservices.com</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 shrink-0 text-primary" />
@@ -72,7 +71,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-border/50 pt-8 text-center text-sm text-muted-foreground">
-          © {currentYear} Luxe Auto Detail. All rights reserved.
+          © {currentYear} Davidan Services. All rights reserved.
         </div>
       </div>
     </footer>
