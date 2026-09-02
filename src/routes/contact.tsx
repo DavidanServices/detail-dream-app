@@ -14,10 +14,10 @@ export const Route = createFileRoute("/contact")({
   },
   head: () => ({
     meta: [
-      { title: "Contact & Book — Luxe Auto Detail" },
-      { name: "description", content: "Book an appointment or get in touch with Luxe Auto Detail for premium car detailing services." },
-      { property: "og:title", content: "Contact & Book — Luxe Auto Detail" },
-      { property: "og:description", content: "Book an appointment or get in touch with Luxe Auto Detail." },
+      { title: "Contact & Book — Davidan Services" },
+      { name: "description", content: "Book an appointment or get in touch with Davidan Services for premium car detailing services." },
+      { property: "og:title", content: "Contact & Book — Davidan Services" },
+      { property: "og:description", content: "Book an appointment or get in touch with Davidan Services." },
       { property: "og:type", content: "website" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -107,7 +107,7 @@ function ContactPage() {
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Email</p>
-                    <p className="text-muted-foreground">hello@luxeautodetail.com</p>
+                    <p className="text-muted-foreground">hello@davidanservices.com</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">

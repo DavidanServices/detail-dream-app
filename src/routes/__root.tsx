@@ -78,9 +78,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Luxe Auto Detail | Premium Car Detailing" },
+      { title: "Davidan Services | Premium Car Detailing" },
       { name: "description", content: "Premium auto detailing services including exterior detailing, interior detailing, ceramic coating, and paint protection film." },
-      { property: "og:title", content: "Luxe Auto Detail | Premium Car Detailing" },
+      { property: "og:title", content: "Davidan Services | Premium Car Detailing" },
       { property: "og:description", content: "Premium auto detailing services including exterior detailing, interior detailing, ceramic coating, and paint protection film." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

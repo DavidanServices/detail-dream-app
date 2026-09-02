@@ -10,13 +10,13 @@ import topImg from "@/assets/ppf-top.jpg";
 export const Route = createFileRoute("/ppf")({
   head: () => ({
     meta: [
-      { title: "PPF Configurator — Build Your Coverage | Luxe Auto Detail" },
+      { title: "PPF Configurator — Build Your Coverage | Davidan Services" },
       {
         name: "description",
         content:
           "Choose which panels you want protected with paint protection film using our interactive vehicle selector — front, rear, sides and roof.",
       },
-      { property: "og:title", content: "PPF Configurator — Luxe Auto Detail" },
+      { property: "og:title", content: "PPF Configurator — Davidan Services" },
       {
         property: "og:description",
         content: "Pick the panels you want wrapped in self-healing paint protection film.",

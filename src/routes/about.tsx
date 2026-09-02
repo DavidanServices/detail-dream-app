@@ -5,10 +5,10 @@ import heroImage from "../assets/hero-detailing.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — Luxe Auto Detail" },
-      { name: "description", content: "Learn about Luxe Auto Detail's commitment to premium car care, expert technicians, and customer satisfaction." },
-      { property: "og:title", content: "About Us — Luxe Auto Detail" },
-      { property: "og:description", content: "Learn about Luxe Auto Detail's commitment to premium car care." },
+      { title: "About Us — Davidan Services" },
+      { name: "description", content: "Learn about Davidan Services's commitment to premium car care, expert technicians, and customer satisfaction." },
+      { property: "og:title", content: "About Us — Davidan Services" },
+      { property: "og:description", content: "Learn about Davidan Services's commitment to premium car care." },
       { property: "og:type", content: "website" },
     ],
     links: [{ rel: "canonical", href: "/about" }],
@@ -35,7 +35,7 @@ function AboutPage() {
                 Passion for every finish
               </h1>
               <p className="mt-6 text-lg text-white/80">
-                Luxe Auto Detail was founded on a simple belief: every vehicle deserves to look its absolute best. What started as a one-person obsession with perfect paint has grown into a trusted detailing studio serving discerning drivers across Los Angeles.
+                Davidan Services was founded on a simple belief: every vehicle deserves to look its absolute best. What started as a one-person obsession with perfect paint has grown into a trusted detailing studio serving discerning drivers across Los Angeles.
               </p>
               <p className="mt-4 text-lg text-white/80">
                 We combine meticulous technique, premium products, and a genuine love for cars to deliver results that speak for themselves.
@@ -44,7 +44,7 @@ function AboutPage() {
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
               <img
                 src={heroImage}
-                alt="Luxe Auto Detail studio"
+                alt="Davidan Services studio"
                 className="h-full w-full object-cover"
                 loading="lazy"
                 width={1920}

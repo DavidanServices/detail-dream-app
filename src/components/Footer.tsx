@@ -53,7 +53,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 text-primary" />
-                <span>hello@luxeautodetail.com</span>
+                <span>hello@davidanservices.com</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 shrink-0 text-primary" />
@@ -72,7 +72,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-border/50 pt-8 text-center text-sm text-muted-foreground">
-          © {currentYear} Luxe Auto Detail. All rights reserved.
+          © {currentYear} Davidan Services. All rights reserved.
         </div>
       </div>
     </footer>
