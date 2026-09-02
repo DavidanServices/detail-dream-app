@@ -16,11 +16,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="font-heading text-xl font-bold tracking-tight text-foreground">
-            Luxe<span className="text-primary">Auto</span>
-          </span>
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logoAsset.url} alt="Davidan Services logo" className="h-10 w-auto" width={841} height={280} />
+          <span className="sr-only">Davidan Services</span>
         </Link>
+
 
         <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
