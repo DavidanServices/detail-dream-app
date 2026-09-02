@@ -10,10 +10,9 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <Link to="/" className="inline-block">
-              <span className="font-heading text-2xl font-bold tracking-tight">
-                Luxe<span className="text-primary">Auto</span>
-              </span>
+              <img src={logoAsset.url} alt="Davidan Services logo" className="h-14 w-auto" width={841} height={280} />
             </Link>
+
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
               Premium auto detailing services that protect, restore, and elevate your vehicle's finish.
             </p>
