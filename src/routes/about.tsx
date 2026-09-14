@@ -17,7 +17,7 @@ export const Route = createFileRoute("/about")({
 });
 
 const stats = [
-  { label: "Mobile & Flexible Booking", value: "7 Days", icon: Calendar },
+  { label: "Flexible Booking", value: "7 Days", icon: Calendar },
   { label: "Satisfaction Promise", value: "100%", icon: Award },
   { label: "Fully Insured & Careful", value: "Insured", icon: Users },
   { label: "Premium Products", value: "100%", icon: Wrench },
