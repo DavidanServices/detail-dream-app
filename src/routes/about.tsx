@@ -17,9 +17,9 @@ export const Route = createFileRoute("/about")({
 });
 
 const stats = [
-  { label: "Vehicles Detailed", value: "2,500+", icon: Calendar },
-  { label: "Years Experience", value: "10+", icon: Award },
-  { label: "Expert Team", value: "8", icon: Users },
+  { label: "Mobile & Flexible Booking", value: "7 Days", icon: Calendar },
+  { label: "Satisfaction Promise", value: "100%", icon: Award },
+  { label: "Fully Insured & Careful", value: "Insured", icon: Users },
   { label: "Premium Products", value: "100%", icon: Wrench },
 ];
 
