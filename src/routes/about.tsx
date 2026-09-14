@@ -17,9 +17,9 @@ export const Route = createFileRoute("/about")({
 });
 
 const stats = [
-  { label: "Vehicles Detailed", value: "2,500+", icon: Calendar },
-  { label: "Years Experience", value: "10+", icon: Award },
-  { label: "Expert Team", value: "8", icon: Users },
+  { label: "Mobile & Flexible Booking", value: "7 Days", icon: Calendar },
+  { label: "Satisfaction Promise", value: "100%", icon: Award },
+  { label: "Fully Insured & Careful", value: "Insured", icon: Users },
   { label: "Premium Products", value: "100%", icon: Wrench },
 ];
 
@@ -35,10 +35,10 @@ function AboutPage() {
                 Passion for every finish
               </h1>
               <p className="mt-6 text-lg text-white/80">
-                Davidan Services was founded on a simple belief: every vehicle deserves to look its absolute best. What started as a one-person obsession with perfect paint has grown into a trusted detailing studio serving discerning drivers across Los Angeles.
+                Davidan Services is a new detailing business built on a simple belief: every vehicle deserves to look its absolute best. We're just getting started, which means every single car gets our full attention and time — no rushing, no shortcuts.
               </p>
               <p className="mt-4 text-lg text-white/80">
-                We combine meticulous technique, premium products, and a genuine love for cars to deliver results that speak for themselves.
+                We use the same premium products and techniques as long-established studios, and we back every job with an honest price and a satisfaction promise. Early customers get our very best work as we build our reputation one finish at a time.
               </p>
             </div>
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
