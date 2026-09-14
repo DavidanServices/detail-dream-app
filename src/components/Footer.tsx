@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
+import logoAsset from "../assets/davidan-logo.png.asset.json";
+
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
