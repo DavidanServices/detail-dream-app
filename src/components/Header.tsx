@@ -1,85 +1,88 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import logoAsset from "../assets/davidan-logo.png.asset.json";
 
-
 const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/services", label: "Services" },
-  { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
-];
+  { to: "/", label: "Home", n: "01" },
+  { to: "/services", label: "Services", n: "02" },
+  { to: "/about", label: "About", n: "03" },
+  { to: "/contact", label: "Contact", n: "04" },
+] as const;
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+  }, [mobileOpen]);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-3">
-          <img src={logoAsset.url} alt="Davidan Services logo" className="h-10 w-auto" width={841} height={280} />
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md">
+      <div className="mx-auto flex h-20 max-w-[1440px] items-stretch justify-between px-4 sm:px-8">
+        <Link to="/" className="flex items-center pr-6 md:border-r md:border-border">
+          <img src={logoAsset.url} alt="Davidan Services logo" className="h-12 w-auto" width={841} height={280} />
           <span className="sr-only">Davidan Services</span>
         </Link>
 
-
-        <nav className="hidden items-center gap-8 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              activeProps={{ className: "text-primary" }}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === link.to ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden flex-1 items-stretch md:flex">
+          {navLinks.map((link) => {
+            const active = pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`group relative flex items-center gap-2 border-r border-border px-6 text-sm font-semibold uppercase tracking-[0.14em] transition-colors hover:text-foreground ${active ? "text-foreground" : "text-muted-foreground"}`}
+              >
+                <span className="font-mono text-[10px] text-primary">{link.n}</span>
+                {link.label}
+                <span className={`absolute inset-x-0 bottom-0 h-[3px] origin-left bg-primary transition-transform duration-300 ${active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`} />
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="hidden md:block">
-          <Link
-            to="/contact"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 glow-electric"
-          >
-            Book Now
-          </Link>
-        </div>
+        <Link
+          to="/contact"
+          className="group hidden items-center gap-3 bg-primary px-8 text-sm font-bold uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-electric-glow md:flex"
+        >
+          Book Now
+          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        </Link>
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="inline-flex items-center justify-center rounded-md p-2 text-foreground md:hidden"
+          className="inline-flex items-center justify-center p-2 text-foreground md:hidden"
           aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
         </button>
       </div>
 
       {mobileOpen && (
-        <div className="border-t border-border/50 bg-background px-4 py-4 md:hidden">
-          <nav className="flex flex-col gap-4">
+        <div className="fixed inset-x-0 bottom-0 top-20 flex flex-col bg-secondary [animation:menu-in_.4s_cubic-bezier(.2,.7,.2,1)] md:hidden">
+          <nav className="flex flex-1 flex-col">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileOpen(false)}
-                className={`text-base font-medium ${
-                  pathname === link.to ? "text-primary" : "text-muted-foreground"
-                }`}
+                className={`flex items-baseline gap-4 border-b border-border px-6 py-6 font-heading text-5xl font-extrabold uppercase ${pathname === link.to ? "text-primary" : "text-foreground"}`}
               >
+                <span className="font-mono text-xs text-muted-foreground">{link.n}</span>
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/contact"
-              onClick={() => setMobileOpen(false)}
-              className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
-            >
-              Book Now
-            </Link>
           </nav>
+          <Link
+            to="/contact"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center justify-between bg-primary px-6 py-6 text-lg font-bold uppercase tracking-[0.14em] text-primary-foreground"
+          >
+            Book Now <ArrowUpRight className="h-6 w-6" />
+          </Link>
         </div>
       )}
     </header>
