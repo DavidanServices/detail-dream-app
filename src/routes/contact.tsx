@@ -71,8 +71,8 @@ function ContactPage() {
     <>
       <section className="bg-secondary py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="font-heading text-sm font-semibold uppercase tracking-widest text-primary">Get in Touch</p>
-          <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          <p className="label-tech !text-primary">Get in Touch</p>
+          <h1 className="mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
             Book your detail
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
@@ -132,7 +132,7 @@ function ContactPage() {
             </div>
 
             {/* Form */}
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
+            <div className="border border-border border-t-2 border-t-primary bg-card p-6 sm:p-8">
               {submitted ? (
                 <div className="text-center">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -211,7 +211,7 @@ function ContactPage() {
 
                   <button
                     type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 glow-electric"
+                    className="inline-flex w-full items-center justify-center gap-2 glow-electric bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 glow-electric"
                   >
                     <Send className="h-4 w-4" />
                     Request Appointment
