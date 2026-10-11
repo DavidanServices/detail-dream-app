@@ -177,10 +177,10 @@ function PpfPage() {
     <>
       <section className="bg-secondary py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="font-heading text-sm font-semibold uppercase tracking-widest text-primary">
+          <p className="label-tech !text-primary">
             Paint Protection Film
           </p>
-          <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          <h1 className="mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
             Build your PPF coverage
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
@@ -195,7 +195,7 @@ function PpfPage() {
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             {/* Vehicle viewer */}
             <div>
-              <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-card p-1.5 shadow-sm">
+              <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-card p-1.5">
                 {VIEWS.map((v) => (
                   <button
                     key={v.id}
@@ -204,7 +204,7 @@ function PpfPage() {
                     aria-pressed={view === v.id}
                     className={`flex-1 rounded-lg px-4 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest transition-all ${
                       view === v.id
-                        ? "bg-primary text-primary-foreground shadow-sm"
+                        ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                     }`}
                   >
@@ -213,7 +213,7 @@ function PpfPage() {
                 ))}
               </div>
 
-              <div className="relative mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+              <div className="relative mt-4 overflow-hidden border border-border border-t-2 border-t-primary bg-card">
                 <div className="relative aspect-[1280/832] w-full">
                   {VIEWS.map((v) => {
                     const active = v.id === view;
@@ -350,7 +350,7 @@ function PpfPage() {
                 ))}
               </ul>
 
-              <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <div className="mt-8 border border-border border-t-2 border-t-primary bg-card p-6">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
                     {fullCar
@@ -399,7 +399,7 @@ function PpfPage() {
                     service: "Paint Protection Film",
                     coverage: summary || undefined,
                   }}
-                  className="glow-electric mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+                  className="glow-electric mt-6 inline-flex w-full items-center justify-center gap-2 glow-electric bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
                 >
                   Request quote <ArrowRight className="h-4 w-4" />
                 </Link>

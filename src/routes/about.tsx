@@ -10,6 +10,7 @@ export const Route = createFileRoute("/about")({
       { property: "og:title", content: "About Us — Davidan Services" },
       { property: "og:description", content: "Learn about Davidan Services's commitment to premium car care." },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/about" }],
   }),
@@ -26,64 +27,54 @@ const stats = [
 function AboutPage() {
   return (
     <>
-      <section className="bg-secondary py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div>
-              <p className="font-heading text-sm font-semibold uppercase tracking-widest text-primary">About Us</p>
-              <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl">
-                Passion for every finish
-              </h1>
-              <p className="mt-6 text-lg text-white/80">
+      <section className="relative overflow-hidden border-b border-border bg-secondary">
+        <div className="mx-auto grid max-w-[1440px] lg:grid-cols-12">
+          <div className="px-4 py-16 sm:px-8 lg:col-span-7 lg:py-28">
+            <p className="label-tech">03 — About Us</p>
+            <h1 className="mt-6 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
+              Passion for <span className="text-primary">every</span> finish
+            </h1>
+            <div className="mt-10 grid gap-6 border-l-2 border-primary pl-6 text-lg text-muted-foreground md:grid-cols-2">
+              <p>
                 Davidan Services is a new detailing business built on a simple belief: every vehicle deserves to look its absolute best. We're just getting started, which means every single car gets our full attention and time — no rushing, no shortcuts.
               </p>
-              <p className="mt-4 text-lg text-white/80">
+              <p>
                 We use the same premium products and techniques as long-established studios, and we back every job with an honest price and a satisfaction promise. Early customers get our very best work as we build our reputation one finish at a time.
               </p>
             </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-              <img
-                src={heroImage}
-                alt="Davidan Services studio"
-                className="h-full w-full object-cover"
-                loading="lazy"
-                width={1920}
-                height={1080}
-              />
-            </div>
+          </div>
+          <div className="relative min-h-[320px] lg:col-span-5">
+            <img src={heroImage} alt="Davidan Services studio" className="clip-corner absolute inset-0 h-full w-full object-cover" loading="lazy" width={1920} height={1080} />
           </div>
         </div>
       </section>
 
-      <section className="bg-background py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-primary/30"
-              >
-                <stat.icon className="mx-auto h-8 w-8 text-primary" />
-                <p className="mt-4 font-heading text-3xl font-bold text-card-foreground">{stat.value}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+      <section className="bg-background">
+        <div className="mx-auto grid max-w-[1440px] gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat, i) => (
+            <div key={stat.label} className="reveal group bg-background p-8 transition-colors hover:bg-card">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs text-muted-foreground">0{i + 1}</span>
+                <stat.icon className="h-6 w-6 text-primary transition-transform group-hover:rotate-12" />
               </div>
-            ))}
-          </div>
+              <p className="mt-10 font-heading text-6xl font-black text-foreground">{stat.value}</p>
+              <p className="mt-2 label-tech">{stat.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="bg-snow py-20 lg:py-28">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground">Our promise</h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            We never rush a detail. Every vehicle is inspected, prepped, and finished with care. If you're not thrilled with the result, we'll make it right.
-          </p>
-          <Link
-            to="/contact"
-            className="mt-8 inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 glow-electric"
-          >
-            Book your detail <ArrowRight className="h-4 w-4" />
-          </Link>
+      <section className="hairline-grid border-y border-border bg-snow py-24 lg:py-32">
+        <div className="reveal mx-auto max-w-[1440px] px-4 sm:px-8">
+          <h2 className="font-heading text-6xl font-black text-foreground sm:text-8xl">Our promise</h2>
+          <div className="mt-8 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+            <p className="max-w-2xl text-xl text-muted-foreground">
+              We never rush a detail. Every vehicle is inspected, prepped, and finished with care. If you're not thrilled with the result, we'll make it right.
+            </p>
+            <Link to="/contact" className="group glow-electric inline-flex items-center gap-3 bg-primary px-8 py-4 text-sm font-bold text-primary-foreground">
+              Book your detail <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
       </section>
     </>

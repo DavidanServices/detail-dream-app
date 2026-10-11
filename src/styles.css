@@ -10,13 +10,13 @@
  */
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-sm: 1px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 3px;
+  --radius-2xl: 3px;
+  --radius-3xl: 4px;
+  --radius-4xl: 4px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,8 +46,9 @@
   --color-snow: var(--snow);
   --color-steel: var(--steel);
 
-  --font-heading: "Urbanist", sans-serif;
-  --font-body: "Epilogue", sans-serif;
+  --font-heading: "Big Shoulders Display", sans-serif;
+  --font-body: "Archivo", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 :root {
@@ -124,6 +125,16 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 0.95;
+  }
+  h1 { font-weight: 900; }
+  ::selection { background: var(--primary); color: var(--primary-foreground); }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+  main > * { animation: route-in 0.5s cubic-bezier(.2,.7,.2,1) both; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
 
@@ -136,8 +147,44 @@
 }
 
 @utility glow-electric {
-  box-shadow: 0 0 40px -10px color-mix(in oklab, var(--electric) 40%, transparent);
+  box-shadow: inset 0 -3px 0 0 color-mix(in oklab, black 25%, transparent);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
+
+@utility label-tech {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@utility clip-corner {
+  clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 0 100%);
+}
+
+@utility hairline-grid {
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility link-wipe {
+  background: linear-gradient(var(--primary), var(--primary)) left bottom / 0% 2px no-repeat;
+  transition: background-size 0.25s ease-out, color 0.2s;
+  &:hover { background-size: 100% 2px; }
+}
+
+@utility reveal {
+  animation: reveal-up linear both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 40%;
+}
+
+@keyframes reveal-up { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: none; } }
+@keyframes route-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes menu-in { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
 
 @utility text-chrome {
   background: linear-gradient(180deg, oklch(0.99 0 0) 0%, oklch(0.82 0.004 260) 45%, oklch(0.62 0.005 260) 55%, oklch(0.95 0 0) 100%);

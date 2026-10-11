@@ -137,7 +137,7 @@ function PackageCard({ pkg }: { pkg: (typeof packages)[number] }) {
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border bg-card p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-lg ${pkg.popular ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}
+      className={`relative flex flex-col rounded-2xl border bg-card p-6 transition-all hover:border-primary/30 hover:bg-muted ${pkg.popular ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}
     >
       {pkg.popular && (
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
@@ -201,7 +201,7 @@ function PackageCard({ pkg }: { pkg: (typeof packages)[number] }) {
         <Link
           to="/contact"
           search={{ service: pkg.name, vehicle: vehicleLabel }}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 glow-electric bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
         >
           Book Now <ArrowRight className="h-4 w-4" />
         </Link>
@@ -209,7 +209,7 @@ function PackageCard({ pkg }: { pkg: (typeof packages)[number] }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 glow-electric bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
         >
           Choose your vehicle <ArrowRight className="h-4 w-4" />
         </button>
@@ -223,8 +223,8 @@ function ServicesPage() {
     <>
       <section className="bg-secondary py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="font-heading text-sm font-semibold uppercase tracking-widest text-primary">What We Do</p>
-          <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          <p className="label-tech !text-primary">What We Do</p>
+          <h1 className="mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
             Premium detailing services
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
@@ -236,7 +236,7 @@ function ServicesPage() {
       <section className="bg-background py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
-            <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="font-heading text-5xl font-black text-foreground sm:text-7xl">
               Packages & Pricing
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -249,7 +249,7 @@ function ServicesPage() {
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
 
-            <div className="relative flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:border-primary/30 hover:shadow-lg sm:col-span-2 lg:col-span-1">
+            <div className="relative flex flex-col border border-border border-t-2 border-t-primary bg-card p-6 transition-all hover:border-primary/30 hover:bg-muted sm:col-span-2 lg:col-span-1">
               <h3 className="font-heading text-xl font-semibold text-card-foreground">{ppfPackage.name}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{ppfPackage.description}</p>
               <div className="mt-4 flex items-baseline gap-1">
@@ -278,7 +278,7 @@ function ServicesPage() {
       <section className="bg-snow py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
-            <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="font-heading text-5xl font-black text-foreground sm:text-7xl">
               Service Details
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -309,7 +309,7 @@ function ServicesPage() {
                     <service.icon className="h-4 w-4" />
                     {service.title}
                   </div>
-                  <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-foreground">
+                  <h2 className="mt-4 font-heading text-5xl font-black text-foreground sm:text-7xl">
                     {service.short}
                   </h2>
                   <p className="mt-4 text-lg text-muted-foreground">
@@ -326,7 +326,7 @@ function ServicesPage() {
                   {service.id === "ppf" && (
                     <Link
                       to="/ppf"
-                      className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90"
+                      className="mt-6 inline-flex items-center gap-2 glow-electric bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
                     >
                       Open the PPF configurator <ArrowRight className="h-4 w-4" />
                     </Link>
@@ -344,7 +344,7 @@ function ServicesPage() {
           <p className="mt-2 text-muted-foreground">We'll recommend the best package based on your vehicle and goals.</p>
           <Link
             to="/contact"
-            className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 glow-electric"
+            className="mt-6 inline-flex items-center gap-2 glow-electric bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 glow-electric"
           >
             Get a recommendation <ArrowRight className="h-4 w-4" />
           </Link>
