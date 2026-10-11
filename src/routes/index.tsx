@@ -51,7 +51,11 @@ const services = [
 const highlights = [
   "Premium products & professional-grade tools",
   "Trained, insured detailing technicians",
-  "Paint-safeconst packages = [
+  "Paint-safe techniques on every vehicle",
+  "Satisfaction guaranteed",
+];
+
+const packages = [
   { name: "Interior Detail", price: "£105" },
   { name: "Exterior Detail", price: "£110" },
   { name: "Exterior + Interior", price: "£185", popular: true },
