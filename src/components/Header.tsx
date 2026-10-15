@@ -38,8 +38,8 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex h-20 max-w-[1440px] items-stretch justify-between px-4 sm:px-8">
-          <Link to="/" className="flex items-center pr-6 md:border-r md:border-border">
-            <img src={logoAsset.url} alt="Davidan Services logo" className="h-12 w-auto" width={841} height={280} />
+          <Link to="/" className="flex shrink-0 items-center pr-4 md:border-r md:border-border md:pr-6">
+            <img src={logoAsset.url} alt="Davidan Services logo" className="h-10 w-auto shrink-0 sm:h-11 lg:h-12" width={841} height={280} />
             <span className="sr-only">Davidan Services</span>
           </Link>
 
@@ -50,7 +50,7 @@ export function Header() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`group relative flex items-center gap-2 border-r border-border px-6 text-sm font-semibold uppercase tracking-[0.14em] transition-colors hover:text-foreground ${active ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`group relative flex items-center gap-1.5 border-r border-border px-3 text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:text-foreground lg:gap-2 lg:px-6 lg:text-sm lg:tracking-[0.14em] ${active ? "text-foreground" : "text-muted-foreground"}`}
                 >
                   <span className="font-mono text-[10px] text-primary">{link.n}</span>
                   {link.label}
@@ -62,7 +62,7 @@ export function Header() {
 
           <Link
             to="/contact"
-            className="group hidden items-center gap-3 bg-primary px-8 text-sm font-bold uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-electric-glow md:flex"
+            className="group hidden shrink-0 items-center gap-2 bg-primary px-4 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-electric-glow lg:gap-3 lg:px-8 lg:text-sm lg:tracking-[0.14em] md:flex"
           >
             Book Now
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
