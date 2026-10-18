@@ -1,12 +1,20 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
-import { lowestPrice, vehicleTypes, type Package, type VehicleType } from "@/data/packages";
+import { lowestPrice, type Package, type VehicleTypeInfo } from "@/data/packages";
 
-export function PackageCard({ pkg }: { pkg: Package }) {
+export function PackageCard({
+  pkg,
+  vehicleTypes,
+}: {
+  pkg: Package;
+  vehicleTypes: VehicleTypeInfo[];
+}) {
   const [open, setOpen] = useState(false);
-  const [vehicle, setVehicle] = useState<VehicleType>("hatchback");
-  const vehicleLabel = vehicleTypes.find((v) => v.id === vehicle)!.label;
+  // Only offer vehicle types this package has a price for.
+  const offered = vehicleTypes.filter((v) => pkg.prices[v.id] !== undefined);
+  const [vehicle, setVehicle] = useState<string>(offered[0]?.id ?? "");
+  const vehicleLabel = offered.find((v) => v.id === vehicle)?.label ?? "";
   const lowest = lowestPrice(pkg);
 
   return (
@@ -43,7 +51,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
             Your vehicle type
           </p>
           <div className="flex flex-wrap gap-2">
-            {vehicleTypes.map((type) => (
+            {offered.map((type) => (
               <button
                 key={type.id}
                 type="button"

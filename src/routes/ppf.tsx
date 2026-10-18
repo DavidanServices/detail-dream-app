@@ -6,8 +6,9 @@ import rearImg from "@/assets/ppf-rear.jpg";
 import leftImg from "@/assets/ppf-left.jpg";
 import rightImg from "@/assets/ppf-right.jpg";
 import topImg from "@/assets/ppf-top.jpg";
-import { gbp, ppfPackage } from "@/data/packages";
+import { gbp } from "@/data/packages";
 import { stagger } from "@/lib/motion";
+import { loadCatalog } from "@/lib/catalog";
 import { pageHead } from "@/lib/seo";
 import { PageHero } from "@/components/PageHero";
 
@@ -21,33 +22,12 @@ export const Route = createFileRoute("/ppf")({
       ogDescription: "Pick the panels you want wrapped in self-healing paint protection film.",
       path: "/ppf",
     }),
+  loader: () => loadCatalog(),
+  staleTime: 60_000,
   component: PpfPage,
 });
 
 type ViewId = "front" | "rear" | "left" | "right" | "top";
-
-type Panel = { id: string; name: string; price: number };
-
-const PANELS: Panel[] = [
-  { id: "front-bumper", name: "Front bumper", price: 220 },
-  { id: "rear-bumper", name: "Rear bumper", price: 210 },
-  { id: "bonnet", name: "Bonnet", price: 260 },
-  { id: "roof", name: "Roof", price: 240 },
-  { id: "boot", name: "Boot", price: 180 },
-  { id: "headlights", name: "Headlights", price: 60 },
-  { id: "wing-l", name: "Left front wing", price: 95 },
-  { id: "wing-r", name: "Right front wing", price: 95 },
-  { id: "door-fl", name: "Left front door", price: 105 },
-  { id: "door-fr", name: "Right front door", price: 105 },
-  { id: "door-rl", name: "Left rear door", price: 100 },
-  { id: "door-rr", name: "Right rear door", price: 100 },
-  { id: "quarter-l", name: "Left rear quarter", price: 100 },
-  { id: "quarter-r", name: "Right rear quarter", price: 100 },
-  { id: "mirror-l", name: "Left wing mirror", price: 35 },
-  { id: "mirror-r", name: "Right wing mirror", price: 35 },
-];
-
-const PANEL_BY_ID = Object.fromEntries(PANELS.map((p) => [p.id, p])) as Record<string, Panel>;
 
 /** Hotspot polygons are in the natural 1280x832 image coordinate space. */
 type Hotspot = { id: string; points: string };
@@ -141,10 +121,11 @@ const VIEWS: { id: ViewId; label: string; src: string; hotspots: Hotspot[] }[] =
   },
 ];
 
-const FULL_CAR_PRICE = 1800;
-const BASE_PRICE = ppfPackage.startingFrom;
-
 function PpfPage() {
+  const { panels: PANELS, ppf } = Route.useLoaderData();
+  const FULL_CAR_PRICE = ppf.fullCarPrice;
+  const BASE_PRICE = ppf.startingFrom;
+  const PANEL_BY_ID = useMemo(() => Object.fromEntries(PANELS.map((p) => [p.id, p])), [PANELS]);
   const [view, setView] = useState<ViewId>("front");
   const [selected, setSelected] = useState<string[]>([]);
   const [fullCar, setFullCar] = useState(false);
@@ -161,7 +142,7 @@ function PpfPage() {
     if (fullCar) return FULL_CAR_PRICE;
     if (selected.length === 0) return 0;
     return BASE_PRICE + selected.reduce((sum, id) => sum + (PANEL_BY_ID[id]?.price ?? 0), 0);
-  }, [selected, fullCar]);
+  }, [selected, fullCar, FULL_CAR_PRICE, BASE_PRICE, PANEL_BY_ID]);
 
   const summary = fullCar
     ? "Full car PPF"
@@ -237,46 +218,48 @@ function PpfPage() {
                               <stop offset="100%" stopColor="#ffffff" stopOpacity="0.06" />
                             </linearGradient>
                           </defs>
-                          {v.hotspots.map((h) => {
-                            const on = isActive(h.id);
-                            const hot = hovered === h.id;
-                            return (
-                              <polygon
-                                key={`${v.id}-${h.id}`}
-                                points={h.points}
-                                fill={
-                                  on
-                                    ? "url(#ppf-film)"
-                                    : hot
-                                      ? "rgba(255,255,255,0.14)"
-                                      : "transparent"
-                                }
-                                stroke={
-                                  on
-                                    ? "rgba(255,255,255,0.75)"
-                                    : hot
-                                      ? "rgba(255,255,255,0.55)"
-                                      : "transparent"
-                                }
-                                strokeWidth={on ? 2 : 1.5}
-                                strokeLinejoin="round"
-                                tabIndex={active ? 0 : -1}
-                                role="button"
-                                aria-pressed={on}
-                                aria-label={`${PANEL_BY_ID[h.id]?.name}, ${gbp(PANEL_BY_ID[h.id]?.price ?? 0)}`}
-                                onClick={() => toggle(h.id)}
-                                onMouseEnter={() => setHovered(h.id)}
-                                onMouseLeave={() => setHovered(null)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    e.preventDefault();
-                                    toggle(h.id);
+                          {v.hotspots
+                            .filter((h) => PANEL_BY_ID[h.id])
+                            .map((h) => {
+                              const on = isActive(h.id);
+                              const hot = hovered === h.id;
+                              return (
+                                <polygon
+                                  key={`${v.id}-${h.id}`}
+                                  points={h.points}
+                                  fill={
+                                    on
+                                      ? "url(#ppf-film)"
+                                      : hot
+                                        ? "rgba(255,255,255,0.14)"
+                                        : "transparent"
                                   }
-                                }}
-                                className="cursor-pointer outline-none transition-all duration-300"
-                              />
-                            );
-                          })}
+                                  stroke={
+                                    on
+                                      ? "rgba(255,255,255,0.75)"
+                                      : hot
+                                        ? "rgba(255,255,255,0.55)"
+                                        : "transparent"
+                                  }
+                                  strokeWidth={on ? 2 : 1.5}
+                                  strokeLinejoin="round"
+                                  tabIndex={active ? 0 : -1}
+                                  role="button"
+                                  aria-pressed={on}
+                                  aria-label={`${PANEL_BY_ID[h.id]?.name}, ${gbp(PANEL_BY_ID[h.id]?.price ?? 0)}`}
+                                  onClick={() => toggle(h.id)}
+                                  onMouseEnter={() => setHovered(h.id)}
+                                  onMouseLeave={() => setHovered(null)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                      e.preventDefault();
+                                      toggle(h.id);
+                                    }
+                                  }}
+                                  className="cursor-pointer outline-none transition-all duration-300"
+                                />
+                              );
+                            })}
                         </svg>
                       </div>
                     );

@@ -7,9 +7,10 @@ import { Faq } from "@/components/sections/Faq";
 import { QuoteCta } from "@/components/sections/QuoteCta";
 import { Process } from "@/components/sections/Process";
 import { TrustStrip } from "@/components/sections/TrustStrip";
-import { cheapestPackagePrice, gbp, lowestPrice, packages, ppfPackage } from "@/data/packages";
+import { cheapestPackagePrice, gbp, lowestPrice } from "@/data/packages";
 import { highlights, services } from "@/data/services";
 import { stagger } from "@/lib/motion";
+import { loadCatalog } from "@/lib/catalog";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -22,28 +23,31 @@ export const Route = createFileRoute("/")({
         "Expert exterior and interior detailing, ceramic coating, and paint protection film.",
       path: "/",
     }),
+  loader: () => loadCatalog(),
+  staleTime: 60_000,
   component: HomePage,
 });
 
-const featuredPackages = packages.filter((pkg) => pkg.featured);
-const widePackages = [
-  ...packages
-    .filter((pkg) => !pkg.featured)
-    .map((pkg) => ({
-      name: pkg.name,
-      description: pkg.tagline ?? pkg.description,
-      price: gbp(lowestPrice(pkg)),
-      cta: "Book bundle",
-    })),
-  {
-    name: ppfPackage.name,
-    description: ppfPackage.tagline,
-    price: gbp(ppfPackage.startingFrom),
-    cta: "Request quote",
-  },
-];
-
 function HomePage() {
+  const { packages, ppf } = Route.useLoaderData();
+  const featuredPackages = packages.filter((pkg) => pkg.featured);
+  const widePackages = [
+    ...packages
+      .filter((pkg) => !pkg.featured)
+      .map((pkg) => ({
+        name: pkg.name,
+        description: pkg.tagline ?? pkg.description,
+        price: gbp(lowestPrice(pkg)),
+        cta: "Book bundle",
+      })),
+    {
+      name: ppf.name,
+      description: ppf.tagline,
+      price: gbp(ppf.startingFrom),
+      cta: "Request quote",
+    },
+  ];
+
   return (
     <>
       {/* Hero */}
@@ -99,7 +103,7 @@ function HomePage() {
             >
               <p className="label-tech">Packages from</p>
               <p className="mt-1 font-heading text-5xl text-foreground">
-                {gbp(cheapestPackagePrice)}
+                {gbp(cheapestPackagePrice(packages))}
               </p>
             </div>
           </div>

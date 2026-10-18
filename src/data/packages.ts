@@ -1,17 +1,22 @@
-export const vehicleTypes = [
+// Default catalogue. It seeds the database and is the fallback when Supabase is unreachable.
+// Live prices are edited in /admin and loaded through src/lib/catalog.ts.
+export type VehicleTypeInfo = { id: string; label: string; hint: string };
+
+export const vehicleTypes: VehicleTypeInfo[] = [
   { id: "hatchback", label: "Hatchback", hint: "Small & compact cars" },
   { id: "saloon", label: "Saloon / Coupe", hint: "Sedans & coupes" },
   { id: "suv", label: "SUV", hint: "4x4s, MPVs & large vehicles" },
-] as const;
+];
 
-export type VehicleType = (typeof vehicleTypes)[number]["id"];
+export type VehicleType = string;
 
 export type Package = {
   id: string;
   name: string;
-  prices: Record<VehicleType, number>;
+  /** Price per vehicle type id; a missing key means the package is not offered for that type. */
+  prices: Record<string, number>;
   description: string;
-  tagline?: string;
+  tagline?: string | undefined;
   features: string[];
   popular: boolean;
   /** Shown as a card in the home page price list; the rest appear as wide rows. */
@@ -92,22 +97,14 @@ export const packages: Package[] = [
   },
 ];
 
-export const ppfPackage = {
-  id: "ppf",
-  name: "Paint Protection Film",
-  startingFrom: 350,
-  description: "Invisible, self-healing armor for high-impact areas.",
-  tagline: "Custom coverage for high-impact areas",
-  features: [
-    "Self-healing technology",
-    "UV stable",
-    "Prevents rock chips",
-    "Custom coverage options",
-  ],
+export const lowestPrice = (pkg: Package) => {
+  const prices = Object.values(pkg.prices);
+  return prices.length ? Math.min(...prices) : 0;
 };
 
-export const lowestPrice = (pkg: Package) => Math.min(...Object.values(pkg.prices));
-
-export const cheapestPackagePrice = Math.min(...packages.map(lowestPrice));
+export const cheapestPackagePrice = (list: Package[]) => {
+  const prices = list.map(lowestPrice).filter((p) => p > 0);
+  return prices.length ? Math.min(...prices) : 0;
+};
 
 export const gbp = (n: number) => `£${n.toLocaleString("en-GB")}`;

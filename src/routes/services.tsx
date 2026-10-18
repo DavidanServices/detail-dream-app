@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { PackageCard } from "@/components/PackageCard";
-import { packages, ppfPackage } from "@/data/packages";
 import { services } from "@/data/services";
+import { loadCatalog } from "@/lib/catalog";
 import { pageHead } from "@/lib/seo";
 import { PageHero } from "@/components/PageHero";
 import { Faq } from "@/components/sections/Faq";
@@ -17,10 +17,14 @@ export const Route = createFileRoute("/services")({
       ogDescription: "Explore our premium auto detailing services.",
       path: "/services",
     }),
+  loader: () => loadCatalog(),
+  staleTime: 60_000,
   component: ServicesPage,
 });
 
 function ServicesPage() {
+  const { packages, vehicleTypes, ppf: ppfPackage } = Route.useLoaderData();
+
   return (
     <>
       <PageHero
@@ -47,7 +51,7 @@ function ServicesPage() {
 
           <div className="reveal grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {packages.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} />
+              <PackageCard key={pkg.id} pkg={pkg} vehicleTypes={vehicleTypes} />
             ))}
 
             <div className="lift relative flex flex-col border border-border border-t-2 border-t-primary bg-card p-6 hover:border-primary/30 hover:bg-muted sm:col-span-2 lg:col-span-1">
