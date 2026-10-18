@@ -1,19 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Award, Users, Wrench, Calendar } from "lucide-react";
-import heroImage from "../assets/hero-detailing.jpg";
+import heroImage from "@/assets/hero-detailing.jpg";
+import { stagger } from "@/lib/motion";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Us — Davidan Services" },
-      { name: "description", content: "Learn about Davidan Services's commitment to premium car care, expert technicians, and customer satisfaction." },
-      { property: "og:title", content: "About Us — Davidan Services" },
-      { property: "og:description", content: "Learn about Davidan Services's commitment to premium car care." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/about" }],
-  }),
+  head: () =>
+    pageHead({
+      title: "About Us — Davidan Services",
+      description:
+        "Learn about Davidan Services's commitment to premium car care, expert technicians, and customer satisfaction.",
+      ogDescription: "Learn about Davidan Services's commitment to premium car care.",
+      path: "/about",
+    }),
   component: AboutPage,
 });
 
@@ -30,11 +29,11 @@ function AboutPage() {
       <section className="relative overflow-hidden border-b border-border bg-secondary">
         <div className="mx-auto grid max-w-[1440px] lg:grid-cols-12">
           <div className="px-4 py-16 sm:px-8 lg:col-span-7 lg:py-28">
-            <p className="label-tech">03 — About Us</p>
-            <h1 className="mt-6 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
+            <p style={stagger(0)} className="enter label-tech">03 — About Us</p>
+            <h1 style={stagger(1)} className="enter mt-6 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
               Passion for <span className="text-primary">every</span> finish
             </h1>
-            <div className="mt-10 grid gap-6 border-l-2 border-primary pl-6 text-lg text-muted-foreground md:grid-cols-2">
+            <div style={stagger(2)} className="enter mt-10 grid gap-6 border-l-2 border-primary pl-6 text-lg text-muted-foreground md:grid-cols-2">
               <p>
                 Davidan Services is a new detailing business built on a simple belief: every vehicle deserves to look its absolute best. We're just getting started, which means every single car gets our full attention and time — no rushing, no shortcuts.
               </p>
@@ -44,7 +43,7 @@ function AboutPage() {
             </div>
           </div>
           <div className="relative min-h-[320px] lg:col-span-5">
-            <img src={heroImage} alt="Davidan Services studio" className="clip-corner absolute inset-0 h-full w-full object-cover" loading="lazy" width={1920} height={1080} />
+            <img src={heroImage} alt="Davidan Services studio" style={stagger(2)} className="enter-scale clip-corner absolute inset-0 h-full w-full object-cover" loading="lazy" width={1920} height={1080} />
           </div>
         </div>
       </section>

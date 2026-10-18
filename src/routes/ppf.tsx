@@ -6,26 +6,20 @@ import rearImg from "@/assets/ppf-rear.jpg";
 import leftImg from "@/assets/ppf-left.jpg";
 import rightImg from "@/assets/ppf-right.jpg";
 import topImg from "@/assets/ppf-top.jpg";
+import { gbp, ppfPackage } from "@/data/packages";
+import { stagger } from "@/lib/motion";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/ppf")({
-  head: () => ({
-    meta: [
-      { title: "PPF Configurator — Build Your Coverage | Davidan Services" },
-      {
-        name: "description",
-        content:
-          "Choose which panels you want protected with paint protection film using our interactive vehicle selector — front, rear, sides and roof.",
-      },
-      { property: "og:title", content: "PPF Configurator — Davidan Services" },
-      {
-        property: "og:description",
-        content: "Pick the panels you want wrapped in self-healing paint protection film.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/ppf" }],
-  }),
+  head: () =>
+    pageHead({
+      title: "PPF Configurator — Build Your Coverage | Davidan Services",
+      description:
+        "Choose which panels you want protected with paint protection film using our interactive vehicle selector — front, rear, sides and roof.",
+      ogTitle: "PPF Configurator — Davidan Services",
+      ogDescription: "Pick the panels you want wrapped in self-healing paint protection film.",
+      path: "/ppf",
+    }),
   component: PpfPage,
 });
 
@@ -144,9 +138,8 @@ const VIEWS: { id: ViewId; label: string; src: string; hotspots: Hotspot[] }[] =
 ];
 
 const FULL_CAR_PRICE = 1800;
-const BASE_PRICE = 350;
+const BASE_PRICE = ppfPackage.startingFrom;
 
-const gbp = (n: number) => `£${n.toLocaleString("en-GB")}`;
 
 function PpfPage() {
   const [view, setView] = useState<ViewId>("front");
@@ -177,13 +170,13 @@ function PpfPage() {
     <>
       <section className="bg-secondary py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="label-tech !text-primary">
+          <p style={stagger(0)} className="enter label-tech !text-primary">
             Paint Protection Film
           </p>
-          <h1 className="mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
+          <h1 style={stagger(1)} className="enter mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
             Build your PPF coverage
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
+          <p style={stagger(2)} className="enter mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             Rotate through each view and tap the panels you'd like protected — or wrap the whole car. Prices are
             indicative and confirmed after we see your vehicle.
           </p>
@@ -194,7 +187,7 @@ function PpfPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             {/* Vehicle viewer */}
-            <div>
+            <div className="reveal">
               <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-card p-1.5">
                 {VIEWS.map((v) => (
                   <button
@@ -294,7 +287,7 @@ function PpfPage() {
             </div>
 
             {/* Panel list + summary */}
-            <div>
+            <div style={stagger(2)} className="reveal">
               <button
                 type="button"
                 onClick={() => {

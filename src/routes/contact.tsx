@@ -1,6 +1,10 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { useEffect, useState } from "react";
+import { gbp, lowestPrice, packages, ppfPackage } from "@/data/packages";
+import { site } from "@/data/site";
+import { stagger } from "@/lib/motion";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   validateSearch: (
@@ -12,26 +16,20 @@ export const Route = createFileRoute("/contact")({
     if (typeof search["vehicle"] === "string") out.vehicle = search["vehicle"];
     return out;
   },
-  head: () => ({
-    meta: [
-      { title: "Contact & Book — Davidan Services" },
-      { name: "description", content: "Book an appointment or get in touch with Davidan Services for premium car detailing services." },
-      { property: "og:title", content: "Contact & Book — Davidan Services" },
-      { property: "og:description", content: "Book an appointment or get in touch with Davidan Services." },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "/contact" }],
-  }),
+  head: () =>
+    pageHead({
+      title: "Contact & Book — Davidan Services",
+      description:
+        "Book an appointment or get in touch with Davidan Services for premium car detailing services.",
+      ogDescription: "Book an appointment or get in touch with Davidan Services.",
+      path: "/contact",
+    }),
   component: ContactPage,
 });
 
 const serviceOptions = [
-  "Interior Detail — from £105",
-  "Exterior Detail — from £110",
-  "Exterior + Interior — from £185",
-  "Ceramic Coating — from £175",
-  "The Complete Bundle — from £310",
-  "Paint Protection Film — from £350",
+  ...packages.map((pkg) => `${pkg.name} — from ${gbp(lowestPrice(pkg))}`),
+  `${ppfPackage.name} — from ${gbp(ppfPackage.startingFrom)}`,
   "Not sure / Multiple services",
 ];
 
@@ -71,11 +69,11 @@ function ContactPage() {
     <>
       <section className="bg-secondary py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="label-tech !text-primary">Get in Touch</p>
-          <h1 className="mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
+          <p style={stagger(0)} className="enter label-tech !text-primary">Get in Touch</p>
+          <h1 style={stagger(1)} className="enter mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
             Book your detail
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-white/70">
+          <p style={stagger(2)} className="enter mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
             Tell us about your vehicle and the service you're interested in. We'll respond with availability and a quote.
           </p>
         </div>
@@ -85,7 +83,7 @@ function ContactPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-2">
             {/* Contact Info */}
-            <div>
+            <div className="reveal">
               <h2 className="font-heading text-2xl font-bold text-foreground">Contact information</h2>
               <p className="mt-4 text-muted-foreground">
                 Visit our studio or reach out directly. We typically respond within a few hours during business hours.
@@ -93,49 +91,49 @@ function ContactPage() {
 
               <ul className="mt-8 space-y-5">
                 <li className="flex items-start gap-4">
-                  <div className="rounded-full bg-primary/10 p-2.5 text-primary">
+                  <div className="rounded-full bg-primary/10 p-2.5 text-primary transition-transform duration-300 hover:scale-110 hover:rotate-6">
                     <Phone className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Phone</p>
-                    <p className="text-muted-foreground">(555) 123-4567</p>
+                    <p className="text-muted-foreground">{site.phone}</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="rounded-full bg-primary/10 p-2.5 text-primary">
+                  <div className="rounded-full bg-primary/10 p-2.5 text-primary transition-transform duration-300 hover:scale-110 hover:rotate-6">
                     <Mail className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Email</p>
-                    <p className="text-muted-foreground">hello@davidanservices.com</p>
+                    <p className="text-muted-foreground">{site.email}</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="rounded-full bg-primary/10 p-2.5 text-primary">
+                  <div className="rounded-full bg-primary/10 p-2.5 text-primary transition-transform duration-300 hover:scale-110 hover:rotate-6">
                     <MapPin className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Studio</p>
-                    <p className="text-muted-foreground">123 Detail Drive, Suite 100<br />Los Angeles, CA 90001</p>
+                    <p className="text-muted-foreground">{site.address.lines[0]}<br />{site.address.lines[1]}</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="rounded-full bg-primary/10 p-2.5 text-primary">
+                  <div className="rounded-full bg-primary/10 p-2.5 text-primary transition-transform duration-300 hover:scale-110 hover:rotate-6">
                     <Clock className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">Hours</p>
-                    <p className="text-muted-foreground">Mon–Fri: 8am – 6pm<br />Saturday: 9am – 4pm</p>
+                    <p className="text-muted-foreground">{site.hours[0]}<br />{site.hours[1]}</p>
                   </div>
                 </li>
               </ul>
             </div>
 
             {/* Form */}
-            <div className="border border-border border-t-2 border-t-primary bg-card p-6 sm:p-8">
+            <div style={stagger(2)} className="reveal border border-border border-t-2 border-t-primary bg-card p-6 sm:p-8">
               {submitted ? (
                 <div className="text-center">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <div className="mx-auto flex h-12 w-12 animate-[pop_.5s_ease-out_both] items-center justify-center rounded-full bg-primary/10 text-primary">
                     <Send className="h-6 w-6" />
                   </div>
                   <h3 className="mt-4 font-heading text-xl font-semibold text-card-foreground">Message sent!</h3>
@@ -153,7 +151,7 @@ function ContactPage() {
                         name="name"
                         type="text"
                         required
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background transition-shadow duration-200 focus:ring-2 focus:ring-ring"
                         placeholder="John Doe"
                       />
                     </div>
@@ -164,7 +162,7 @@ function ContactPage() {
                         name="email"
                         type="email"
                         required
-                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background transition-shadow duration-200 focus:ring-2 focus:ring-ring"
                         placeholder="john@example.com"
                       />
                     </div>
@@ -176,7 +174,7 @@ function ContactPage() {
                       id="phone"
                       name="phone"
                       type="tel"
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background transition-shadow duration-200 focus:ring-2 focus:ring-ring"
                       placeholder="(555) 000-0000"
                     />
                   </div>
@@ -188,7 +186,7 @@ function ContactPage() {
                     name="service"
                     value={service}
                     onChange={(e) => setService(e.target.value)}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background transition-shadow duration-200 focus:ring-2 focus:ring-ring"
                   >
                     {serviceOptions.map((option) => (
                       <option key={option}>{option}</option>
@@ -204,7 +202,7 @@ function ContactPage() {
                       rows={4}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-ring"
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none ring-offset-background transition-shadow duration-200 focus:ring-2 focus:ring-ring"
                       placeholder="Tell us about your vehicle and what you're looking for..."
                     />
                   </div>

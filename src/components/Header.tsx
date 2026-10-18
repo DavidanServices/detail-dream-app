@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
-import logoAsset from "../assets/davidan-logo.png.asset.json";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { site } from "@/data/site";
 
 const navLinks = [
   { to: "/", label: "Home", n: "01" },
@@ -33,14 +34,13 @@ export function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 w-full border-b border-border transition-colors duration-300 ${
+        className={`enter-down sticky top-0 z-50 w-full border-b border-border transition-colors duration-300 ${
           mobileOpen ? "bg-charcoal-dark" : "bg-background/90 backdrop-blur-md"
         }`}
       >
         <div className="mx-auto flex h-20 max-w-[1440px] items-stretch justify-between px-4 sm:px-8">
           <Link to="/" className="flex shrink-0 items-center pr-4 md:border-r md:border-border md:pr-6">
-            <img src={logoAsset.url} alt="Davidan Services logo" className="h-10 w-auto shrink-0 sm:h-11 lg:h-12" width={841} height={280} />
-            <span className="sr-only">Davidan Services</span>
+            <img src="/logo.png" alt={`${site.name} logo`} className="h-12 w-auto shrink-0 transition-transform duration-300 hover:scale-105 sm:h-14" width={512} height={200} />
           </Link>
 
           <nav className="hidden flex-1 items-stretch md:flex">
@@ -60,6 +60,10 @@ export function Header() {
             })}
           </nav>
 
+          <div className="hidden items-center border-l border-border px-2 md:flex">
+            <ThemeToggle />
+          </div>
+
           <Link
             to="/contact"
             className="group hidden shrink-0 items-center gap-2 bg-primary px-4 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-electric-glow lg:gap-3 lg:px-8 lg:text-sm lg:tracking-[0.14em] md:flex"
@@ -68,15 +72,19 @@ export function Header() {
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
 
+          <div className="flex items-center gap-1 md:hidden">
+            <ThemeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="inline-flex items-center justify-center p-2 text-foreground md:hidden"
+            className="inline-flex items-center justify-center p-2 text-foreground transition-transform active:scale-90"
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
           </button>
+          </div>
         </div>
+        <div aria-hidden className="scroll-progress absolute inset-x-0 bottom-[-1px] h-[2px] bg-primary" />
       </header>
 
       {mobileOpen && (
