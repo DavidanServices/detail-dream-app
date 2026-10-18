@@ -9,6 +9,7 @@ import topImg from "@/assets/ppf-top.jpg";
 import { gbp, ppfPackage } from "@/data/packages";
 import { stagger } from "@/lib/motion";
 import { pageHead } from "@/lib/seo";
+import { PageHero } from "@/components/PageHero";
 
 export const Route = createFileRoute("/ppf")({
   head: () =>
@@ -59,7 +60,10 @@ const VIEWS: { id: ViewId; label: string; src: string; hotspots: Hotspot[] }[] =
     hotspots: [
       { id: "bonnet", points: "300,418 392,344 890,344 982,418 870,398 412,398" },
       { id: "front-bumper", points: "262,502 1020,502 1006,676 276,676" },
-      { id: "headlights", points: "276,404 412,420 416,482 280,482 876,420 1006,404 1002,482 878,482" },
+      {
+        id: "headlights",
+        points: "276,404 412,420 416,482 280,482 876,420 1006,404 1002,482 878,482",
+      },
       { id: "roof", points: "432,172 850,172 862,198 420,198" },
       { id: "wing-r", points: "252,428 300,414 306,500 256,506" },
       { id: "wing-l", points: "982,414 1030,428 1026,506 976,500" },
@@ -140,7 +144,6 @@ const VIEWS: { id: ViewId; label: string; src: string; hotspots: Hotspot[] }[] =
 const FULL_CAR_PRICE = 1800;
 const BASE_PRICE = ppfPackage.startingFrom;
 
-
 function PpfPage() {
   const [view, setView] = useState<ViewId>("front");
   const [selected, setSelected] = useState<string[]>([]);
@@ -168,34 +171,29 @@ function PpfPage() {
 
   return (
     <>
-      <section className="bg-secondary py-16 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <p style={stagger(0)} className="enter label-tech !text-primary">
-            Paint Protection Film
-          </p>
-          <h1 style={stagger(1)} className="enter mt-4 font-heading text-6xl text-foreground sm:text-8xl lg:text-9xl">
-            Build your PPF coverage
-          </h1>
-          <p style={stagger(2)} className="enter mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Rotate through each view and tap the panels you'd like protected — or wrap the whole car. Prices are
-            indicative and confirmed after we see your vehicle.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Paint protection film"
+        title={
+          <>
+            Build your <span className="text-primary">PPF</span> coverage
+          </>
+        }
+        lead="Rotate through each view and tap the panels you'd like protected, or wrap the whole car. Prices are indicative and confirmed after we see your vehicle."
+      />
 
       <section className="bg-background py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             {/* Vehicle viewer */}
             <div className="reveal">
-              <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-card p-1.5">
+              <div className="flex flex-wrap gap-2 rounded-sm border border-border bg-card p-1.5">
                 {VIEWS.map((v) => (
                   <button
                     key={v.id}
                     type="button"
                     onClick={() => setView(v.id)}
                     aria-pressed={view === v.id}
-                    className={`flex-1 rounded-lg px-4 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest transition-all ${
+                    className={`flex-1 rounded-sm px-4 py-2.5 font-heading text-xs font-semibold uppercase tracking-widest transition-all ${
                       view === v.id
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
@@ -246,7 +244,13 @@ function PpfPage() {
                               <polygon
                                 key={`${v.id}-${h.id}`}
                                 points={h.points}
-                                fill={on ? "url(#ppf-film)" : hot ? "rgba(255,255,255,0.14)" : "transparent"}
+                                fill={
+                                  on
+                                    ? "url(#ppf-film)"
+                                    : hot
+                                      ? "rgba(255,255,255,0.14)"
+                                      : "transparent"
+                                }
                                 stroke={
                                   on
                                     ? "rgba(255,255,255,0.75)"
@@ -294,7 +298,7 @@ function PpfPage() {
                   setFullCar((v) => !v);
                   setSelected([]);
                 }}
-                className={`flex w-full items-center justify-between gap-4 rounded-2xl border p-5 text-left transition-all ${
+                className={`flex w-full items-center justify-between gap-4 rounded-sm border p-5 text-left transition-all ${
                   fullCar
                     ? "border-primary bg-primary/10 ring-1 ring-primary/30"
                     : "border-border bg-card hover:border-primary/40"
@@ -303,16 +307,22 @@ function PpfPage() {
                 <span className="flex items-center gap-3">
                   <Shield className="h-5 w-5 text-primary" />
                   <span>
-                    <span className="block font-heading font-semibold text-card-foreground">Full car PPF</span>
+                    <span className="block font-heading font-semibold text-card-foreground">
+                      Full car PPF
+                    </span>
                     <span className="block text-sm text-muted-foreground">
                       Every painted panel wrapped, edge-to-edge
                     </span>
                   </span>
                 </span>
-                <span className="font-heading text-xl font-bold text-foreground">{gbp(FULL_CAR_PRICE)}</span>
+                <span className="font-heading text-xl font-bold text-foreground">
+                  {gbp(FULL_CAR_PRICE)}
+                </span>
               </button>
 
-              <h2 className="mt-8 font-heading text-lg font-semibold text-foreground">Or pick individual panels</h2>
+              <h2 className="mt-8 font-heading text-lg font-semibold text-foreground">
+                Or pick individual panels
+              </h2>
               <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                 {PANELS.map((part) => (
                   <li key={part.id}>
@@ -321,7 +331,7 @@ function PpfPage() {
                       onClick={() => toggle(part.id)}
                       onMouseEnter={() => setHovered(part.id)}
                       onMouseLeave={() => setHovered(null)}
-                      className={`flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition-all ${
+                      className={`flex w-full items-center justify-between gap-3 rounded-sm border px-3 py-2.5 text-left text-sm transition-all ${
                         isActive(part.id)
                           ? "border-primary/60 bg-primary/10 text-foreground"
                           : "border-border bg-card text-muted-foreground hover:border-primary/40"
@@ -333,7 +343,9 @@ function PpfPage() {
                             isActive(part.id) ? "border-primary bg-primary" : "border-border"
                           }`}
                         >
-                          {isActive(part.id) && <Check className="h-3 w-3 text-primary-foreground" />}
+                          {isActive(part.id) && (
+                            <Check className="h-3 w-3 text-primary-foreground" />
+                          )}
                         </span>
                         {part.name}
                       </span>
@@ -368,7 +380,7 @@ function PpfPage() {
                     {PANELS.filter((p) => selected.includes(p.id)).map((p) => (
                       <span
                         key={p.id}
-                        className="rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs text-foreground"
+                        className="rounded-sm border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs text-foreground"
                       >
                         {p.name}
                       </span>
@@ -379,7 +391,9 @@ function PpfPage() {
                   <span className="font-heading text-4xl font-bold text-foreground">
                     {total > 0 ? gbp(total) : gbp(BASE_PRICE)}
                   </span>
-                  <span className="text-muted-foreground">{total > 0 ? "estimate" : "starting from"}</span>
+                  <span className="text-muted-foreground">
+                    {total > 0 ? "estimate" : "starting from"}
+                  </span>
                 </div>
                 {!fullCar && selected.length > 0 && (
                   <p className="mt-2 text-xs text-muted-foreground">
@@ -392,7 +406,7 @@ function PpfPage() {
                     service: "Paint Protection Film",
                     coverage: summary || undefined,
                   }}
-                  className="glow-electric mt-6 inline-flex w-full items-center justify-center gap-2 glow-electric bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
+                  className="btn-primary mt-6 inline-flex w-full items-center justify-center gap-2 btn-primary bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
                 >
                   Request quote <ArrowRight className="h-4 w-4" />
                 </Link>

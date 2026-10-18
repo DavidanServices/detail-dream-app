@@ -1,6 +1,26 @@
 import { Link } from "@tanstack/react-router";
-import { Phone, Mail, MapPin, Instagram, Facebook, ArrowUpRight } from "lucide-react";
-import { site } from "@/data/site";
+import { ArrowUpRight, Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { WhatsappIcon } from "@/components/icons";
+import { services } from "@/data/services";
+import { mapsUrl, site, telHref, whatsappUrl } from "@/data/site";
+
+const explore = [
+  { to: "/services", label: "Services & pricing" },
+  { to: "/ppf", label: "PPF configurator" },
+  { to: "/gallery", label: "Gallery" },
+  { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
+] as const;
+
+const legal = [
+  { to: "/privacy", label: "Privacy policy" },
+  { to: "/terms", label: "Terms of service" },
+] as const;
+
+const socialIcons = { Instagram, Facebook } as const;
+
+const linkClass = "link-wipe text-muted-foreground transition-colors hover:text-foreground";
+const rowClass = "flex items-start gap-3 transition-colors hover:text-foreground";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -8,45 +28,137 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-secondary text-secondary-foreground">
       <Link to="/contact" className="group block border-b border-border">
-        <div className="reveal mx-auto flex max-w-[1440px] items-end justify-between gap-6 px-4 py-14 sm:px-8">
-          <h2 className="font-heading text-6xl font-black sm:text-8xl lg:text-[9rem]">
-            Book your <span className="text-primary">detail</span>
-          </h2>
-          <ArrowUpRight className="h-14 w-14 shrink-0 text-primary transition-transform duration-300 group-hover:-translate-y-2 group-hover:translate-x-2 sm:h-24 sm:w-24" />
+        <div className="reveal mx-auto flex max-w-7xl items-end justify-between gap-6 px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div>
+            <p className="eyebrow">Ready when you are</p>
+            <h2 className="mt-5 font-heading text-5xl sm:text-6xl lg:text-7xl">
+              Book your <span className="text-primary">detail</span>
+            </h2>
+          </div>
+          <ArrowUpRight className="h-12 w-12 shrink-0 text-primary transition-transform duration-300 group-hover:-translate-y-2 group-hover:translate-x-2 sm:h-16 sm:w-16" />
         </div>
       </Link>
-      <div className="reveal mx-auto grid max-w-[1440px] gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-secondary p-8">
+
+      {/* Four equal columns on desktop, two by two on tablet, stacked on mobile */}
+      <div className="reveal mx-auto grid max-w-7xl gap-x-10 gap-y-12 px-4 py-16 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+        <div>
           <Link to="/" className="inline-block">
-            <img src="/logo.png" alt={`${site.name} logo`} className="h-16 w-auto transition-transform duration-300 hover:scale-105" width={512} height={200} />
+            <img
+              src="/logo.png"
+              alt={`${site.name} logo`}
+              className="h-16 w-auto transition-transform duration-300 hover:scale-105"
+              width={512}
+              height={200}
+            />
           </Link>
-          <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-            Premium auto detailing services that protect, restore, and elevate your vehicle's finish.
+          <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            Premium auto detailing that protects, restores and elevates your vehicle&apos;s finish.
           </p>
+          {site.social.length > 0 && (
+            <div className="mt-6 flex gap-3">
+              {site.social.map((item) => {
+                const Icon = socialIcons[item.name];
+                return (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={item.name}
+                    className="border border-border p-3 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:text-primary active:scale-90"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                );
+              })}
+            </div>
+          )}
         </div>
-        <div className="bg-secondary p-8">
-          <h3 className="label-tech">Quick Links</h3>
-          <ul className="mt-4 space-y-2 font-heading text-2xl font-bold uppercase">
-            <li><Link to="/services" className="link-wipe">Services</Link></li>
-            <li><Link to="/about" className="link-wipe">About</Link></li>
-            <li><Link to="/contact" className="link-wipe">Contact</Link></li>
+
+        <div>
+          <h3 className="eyebrow">Explore</h3>
+          <ul className="mt-6 space-y-3 text-sm">
+            {explore.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className={linkClass}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
-        <div className="bg-secondary p-8">
-          <h3 className="label-tech">Contact</h3>
-          <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-            <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-primary" />{site.phone}</li>
-            <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" />{site.email}</li>
-            <li className="flex items-start gap-2"><MapPin className="h-4 w-4 shrink-0 text-primary" /><span>{site.address.lines[0]}<br />{site.address.lines[1]}</span></li>
+
+        <div>
+          <h3 className="eyebrow">Services</h3>
+          <ul className="mt-6 space-y-3 text-sm">
+            {services.map((s) => (
+              <li key={s.id}>
+                <Link to="/services" hash={s.id} className={linkClass}>
+                  {s.title}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                to="/contact"
+                search={{ service: "Not sure" }}
+                className={`${linkClass} !text-primary`}
+              >
+                Request a quote
+              </Link>
+            </li>
           </ul>
         </div>
-        <div className="flex flex-col justify-between bg-secondary p-8">
-          <h3 className="label-tech">Follow</h3>
-          <div className="mt-4 flex gap-3">
-            <a href="#" aria-label="Instagram" className="border border-border p-3 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:text-primary active:scale-90"><Instagram className="h-5 w-5" /></a>
-            <a href="#" aria-label="Facebook" className="border border-border p-3 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:text-primary active:scale-90"><Facebook className="h-5 w-5" /></a>
-          </div>
-          <p className="mt-8 font-mono text-xs text-muted-foreground">© {currentYear} {site.name}. All rights reserved.</p>
+
+        <div>
+          <h3 className="eyebrow">Contact</h3>
+          <ul className="mt-6 space-y-4 text-sm text-muted-foreground">
+            <li>
+              <a href={telHref} className={rowClass}>
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                {site.phone}
+              </a>
+            </li>
+            <li>
+              <a href={whatsappUrl} target="_blank" rel="noreferrer" className={rowClass}>
+                <WhatsappIcon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                WhatsApp us
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${site.email}`} className={`${rowClass} break-all`}>
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                {site.email}
+              </a>
+            </li>
+            <li>
+              <a href={mapsUrl} target="_blank" rel="noreferrer" className={rowClass}>
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span>
+                  {site.address.lines[0]}
+                  <br />
+                  {site.address.lines[1]}
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 pb-24 font-mono text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:pb-6 sm:pr-24 lg:px-8 lg:pr-28">
+          <p>
+            © {currentYear} {site.name}. All rights reserved.
+          </p>
+          <ul className="flex flex-wrap gap-x-6 gap-y-2">
+            {legal.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className="transition-colors hover:text-foreground">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

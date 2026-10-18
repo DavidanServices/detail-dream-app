@@ -5,10 +5,11 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { site } from "@/data/site";
 
 const navLinks = [
-  { to: "/", label: "Home", n: "01" },
-  { to: "/services", label: "Services", n: "02" },
-  { to: "/about", label: "About", n: "03" },
-  { to: "/contact", label: "Contact", n: "04" },
+  { to: "/services", label: "Services" },
+  { to: "/ppf", label: "PPF" },
+  { to: "/gallery", label: "Gallery" },
+  { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
 ] as const;
 
 export function Header() {
@@ -35,56 +36,61 @@ export function Header() {
     <>
       <header
         className={`enter-down sticky top-0 z-50 w-full border-b border-border transition-colors duration-300 ${
-          mobileOpen ? "bg-charcoal-dark" : "bg-background/90 backdrop-blur-md"
+          mobileOpen ? "bg-charcoal-dark" : "bg-background/85 backdrop-blur-md"
         }`}
       >
-        <div className="mx-auto flex h-20 max-w-[1440px] items-stretch justify-between px-4 sm:px-8">
-          <Link to="/" className="flex shrink-0 items-center pr-4 md:border-r md:border-border md:pr-6">
-            <img src="/logo.png" alt={`${site.name} logo`} className="h-12 w-auto shrink-0 transition-transform duration-300 hover:scale-105 sm:h-14" width={512} height={200} />
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex shrink-0 items-center">
+            <img
+              src="/logo.png"
+              alt={`${site.name} logo`}
+              className="h-12 w-auto transition-transform duration-300 hover:scale-105"
+              width={512}
+              height={200}
+            />
           </Link>
 
-          <nav className="hidden flex-1 items-stretch md:flex">
+          <nav className="hidden items-center gap-8 md:flex lg:gap-10">
             {navLinks.map((link) => {
               const active = pathname === link.to;
               return (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`group relative flex items-center gap-1.5 border-r border-border px-3 text-xs font-semibold uppercase tracking-[0.1em] transition-colors hover:text-foreground lg:gap-2 lg:px-6 lg:text-sm lg:tracking-[0.14em] ${active ? "text-foreground" : "text-muted-foreground"}`}
+                  className={`group relative py-2 text-xs font-medium uppercase tracking-[0.16em] transition-colors hover:text-foreground ${active ? "text-foreground" : "text-muted-foreground"}`}
                 >
-                  <span className="font-mono text-[10px] text-primary">{link.n}</span>
                   {link.label}
-                  <span className={`absolute inset-x-0 bottom-0 h-[3px] origin-left bg-primary transition-transform duration-300 ${active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`} />
+                  <span
+                    className={`absolute inset-x-0 -bottom-0.5 h-px origin-left bg-primary transition-transform duration-300 ${active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
+                  />
                 </Link>
               );
             })}
           </nav>
 
-          <div className="hidden items-center border-l border-border px-2 md:flex">
+          <div className="flex items-center gap-2">
             <ThemeToggle />
-          </div>
-
-          <Link
-            to="/contact"
-            className="group hidden shrink-0 items-center gap-2 bg-primary px-4 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-colors hover:bg-electric-glow lg:gap-3 lg:px-8 lg:text-sm lg:tracking-[0.14em] md:flex"
-          >
-            Book Now
-            <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
-
-          <div className="flex items-center gap-1 md:hidden">
-            <ThemeToggle />
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="inline-flex items-center justify-center p-2 text-foreground transition-transform active:scale-90"
-            aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
-          >
-            {mobileOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
-          </button>
+            <Link
+              to="/contact"
+              className="btn-primary group hidden items-center gap-2 bg-primary px-5 py-3 text-xs font-semibold text-primary-foreground md:inline-flex"
+            >
+              Book now
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="inline-flex items-center justify-center p-2 text-foreground transition-transform active:scale-90 md:hidden"
+              aria-label="Toggle menu"
+              aria-expanded={mobileOpen}
+            >
+              {mobileOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+            </button>
           </div>
         </div>
-        <div aria-hidden className="scroll-progress absolute inset-x-0 bottom-[-1px] h-[2px] bg-primary" />
+        <div
+          aria-hidden
+          className="scroll-progress absolute inset-x-0 bottom-[-1px] h-[2px] bg-primary"
+        />
       </header>
 
       {mobileOpen && (
@@ -101,20 +107,22 @@ export function Header() {
                   key={link.to}
                   to={link.to}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-baseline gap-4 border-b border-border py-6 font-heading text-5xl font-extrabold uppercase [animation:link-in_.45s_cubic-bezier(.2,.7,.2,1)_both]"
+                  className="flex items-baseline gap-4 border-b border-border py-5 font-heading text-4xl font-bold uppercase [animation:link-in_.45s_cubic-bezier(.2,.7,.2,1)_both]"
                   style={{ animationDelay: `${120 + i * 60}ms` }}
                 >
-                  <span className="font-mono text-xs text-muted-foreground">{link.n}</span>
-                  <span className={pathname === link.to ? "text-primary" : "text-foreground"}>{link.label}</span>
+                  <span className="font-mono text-xs text-muted-foreground">0{i + 1}</span>
+                  <span className={pathname === link.to ? "text-primary" : "text-foreground"}>
+                    {link.label}
+                  </span>
                 </Link>
               ))}
             </nav>
             <Link
               to="/contact"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-between bg-primary px-6 py-6 text-lg font-bold uppercase tracking-[0.14em] text-primary-foreground"
+              className="flex items-center justify-between bg-primary px-6 py-6 text-base font-semibold uppercase tracking-[0.14em] text-primary-foreground"
             >
-              Book Now <ArrowUpRight className="h-6 w-6" />
+              Book now <ArrowUpRight className="h-6 w-6" />
             </Link>
           </div>
         </div>

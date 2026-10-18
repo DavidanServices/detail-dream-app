@@ -11,10 +11,10 @@ export function PackageCard({ pkg }: { pkg: Package }) {
 
   return (
     <div
-      className={`lift relative flex flex-col rounded-2xl border bg-card p-6 hover:border-primary/30 hover:bg-muted ${pkg.popular ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}
+      className={`lift relative flex flex-col rounded-sm border bg-card p-6 hover:border-primary/30 hover:bg-muted ${pkg.popular ? "border-primary/50 ring-1 ring-primary/20" : "border-border"}`}
     >
       {pkg.popular && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-sm bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
           Most Popular
         </span>
       )}
@@ -49,7 +49,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
                 type="button"
                 onClick={() => setVehicle(type.id)}
                 aria-pressed={vehicle === type.id}
-                className={`rounded-lg border px-3 py-2 text-xs font-semibold transition-all duration-300 ${
+                className={`rounded-sm border px-3 py-2 text-xs font-semibold transition-all duration-300 ${
                   vehicle === type.id
                     ? "border-primary bg-primary/10 text-foreground ring-1 ring-primary/30"
                     : "border-border bg-background text-muted-foreground hover:border-primary/30"
@@ -75,7 +75,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         <Link
           to="/contact"
           search={{ service: pkg.name, vehicle: vehicleLabel }}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 glow-electric bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 btn-primary bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
         >
           Book Now <ArrowRight className="h-4 w-4" />
         </Link>
@@ -83,7 +83,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 glow-electric bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 btn-primary bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
         >
           Choose your vehicle <ArrowRight className="h-4 w-4" />
         </button>
