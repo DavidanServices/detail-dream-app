@@ -124,8 +124,9 @@ function HomePage() {
             {services.map((service, i) => (
               <Link
                 key={service.id}
-                to="/services"
-                hash={service.id}
+                {...(service.id === "interior"
+                  ? { to: "/interior-detailing" as const }
+                  : { to: "/services" as const, hash: service.id })}
                 className="reveal group grid items-center gap-6 py-7 md:grid-cols-12"
               >
                 <span className="font-mono text-sm text-primary md:col-span-1">0{i + 1}</span>

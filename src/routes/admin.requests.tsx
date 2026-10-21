@@ -314,6 +314,16 @@ function RequestDetail({ request, onClose }: { request: QuoteRequest; onClose: (
           <dd>{request.service ?? "—"}</dd>
           <dt className="text-muted-foreground">Vehicle</dt>
           <dd>{request.vehicle ?? "—"}</dd>
+          <dt className="text-muted-foreground">Preferred date</dt>
+          <dd>
+            {request.preferred_date
+              ? new Date(request.preferred_date).toLocaleDateString("en-GB", {
+                  dateStyle: "medium",
+                })
+              : "—"}
+          </dd>
+          <dt className="text-muted-foreground">Extras</dt>
+          <dd>{request.addons && request.addons.length > 0 ? request.addons.join(", ") : "—"}</dd>
         </dl>
 
         <div>

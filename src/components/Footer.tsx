@@ -6,6 +6,7 @@ import { mapsUrl, site, telHref, whatsappUrl } from "@/data/site";
 
 const explore = [
   { to: "/services", label: "Services & pricing" },
+  { to: "/interior-detailing", label: "Interior packages" },
   { to: "/ppf", label: "PPF configurator" },
   { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About" },
@@ -93,9 +94,15 @@ export function Footer() {
           <ul className="mt-6 space-y-3 text-sm">
             {services.map((s) => (
               <li key={s.id}>
-                <Link to="/services" hash={s.id} className={linkClass}>
-                  {s.title}
-                </Link>
+                {s.id === "interior" ? (
+                  <Link to="/interior-detailing" className={linkClass}>
+                    {s.title}
+                  </Link>
+                ) : (
+                  <Link to="/services" hash={s.id} className={linkClass}>
+                    {s.title}
+                  </Link>
+                )}
               </li>
             ))}
             <li>

@@ -1,10 +1,12 @@
+import { interiorIncludedServices } from "@/data/interior";
+
 // Default catalogue. It seeds the database and is the fallback when Supabase is unreachable.
 // Live prices are edited in /admin and loaded through src/lib/catalog.ts.
 export type VehicleTypeInfo = { id: string; label: string; hint: string };
 
 export const vehicleTypes: VehicleTypeInfo[] = [
   { id: "hatchback", label: "Hatchback", hint: "Small & compact cars" },
-  { id: "saloon", label: "Saloon / Coupe", hint: "Sedans & coupes" },
+  { id: "saloon", label: "Saloon / Sedan", hint: "Saloons, sedans & coupes" },
   { id: "suv", label: "SUV", hint: "4x4s, MPVs & large vehicles" },
 ];
 
@@ -27,14 +29,9 @@ export const packages: Package[] = [
   {
     id: "interior",
     name: "Interior Detail",
-    prices: { hatchback: 105, saloon: 120, suv: 140 },
-    description: "Deep clean and restore your cabin from top to bottom.",
-    features: [
-      "Vacuuming & shampoo",
-      "Leather conditioning",
-      "Steam sanitization",
-      "Odor elimination",
-    ],
+    prices: { hatchback: 110, saloon: 150, suv: 180 },
+    description: "A thorough interior detail for every vehicle size, from hatchback to SUV.",
+    features: interiorIncludedServices,
     popular: false,
     featured: true,
   },

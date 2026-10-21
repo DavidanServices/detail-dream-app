@@ -82,6 +82,8 @@ export type QuoteRequest = {
   quoted_price: number | null;
   admin_notes: string | null;
   handled_at: string | null;
+  preferred_date?: string | null;
+  addons?: string[] | null;
 };
 
 export const formatDate = (iso: string) =>

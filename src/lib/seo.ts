@@ -7,10 +7,12 @@ type PageSeo = {
   /** Shorter variants for social cards; fall back to the page title/description. */
   ogTitle?: string;
   ogDescription?: string;
+  /** Structured data to embed as JSON-LD (only data that is accurate for the page). */
+  jsonLd?: Record<string, unknown>;
 };
 
 // Shared <head> for every route: absolute canonical, Open Graph and Twitter tags.
-export function pageHead({ title, description, path, ogTitle, ogDescription }: PageSeo) {
+export function pageHead({ title, description, path, ogTitle, ogDescription, jsonLd }: PageSeo) {
   const url = absoluteUrl(path);
   const image = `${site.url}${site.ogImage}`;
   return {
@@ -28,5 +30,8 @@ export function pageHead({ title, description, path, ogTitle, ogDescription }: P
       { name: "twitter:image", content: image },
     ],
     links: [{ rel: "canonical", href: url }],
+    ...(jsonLd
+      ? { scripts: [{ type: "application/ld+json", children: JSON.stringify(jsonLd) }] }
+      : {}),
   };
 }

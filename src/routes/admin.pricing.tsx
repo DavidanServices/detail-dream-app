@@ -8,6 +8,7 @@ import {
   type AdminPackage,
   type AdminVehicleType,
 } from "@/components/admin/PackageEditor";
+import { AddonsEditor, type AdminAddon } from "@/components/admin/AddonsEditor";
 import { VehicleTypesEditor } from "@/components/admin/VehicleTypesEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,18 +24,21 @@ function PricingPage() {
   const data = useQuery({
     queryKey: ["admin", "pricing"],
     queryFn: async () => {
-      const [vehicles, packages] = await Promise.all([
+      const [vehicles, packages, addons] = await Promise.all([
         supabase!.from("vehicle_types").select("*").order("sort_order"),
         supabase!
           .from("packages")
           .select("*,package_prices(vehicle_type_id,price)")
           .order("sort_order"),
+        supabase!.from("addons").select("*").order("sort_order"),
       ]);
       if (vehicles.error) throw vehicles.error;
       if (packages.error) throw packages.error;
       return {
         vehicleTypes: vehicles.data as AdminVehicleType[],
         packages: packages.data as AdminPackage[],
+        // The add-ons table comes from a later migration: show a hint instead of failing the page.
+        addons: addons.error ? null : (addons.data as AdminAddon[]),
       };
     },
   });
@@ -114,6 +118,18 @@ function PricingPage() {
                 <p className="text-sm text-muted-foreground">No packages yet. Add one above.</p>
               )}
             </div>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="font-heading text-2xl">Optional extras</h2>
+            {data.data.addons ? (
+              <AddonsEditor key={JSON.stringify(data.data.addons)} addons={data.data.addons} />
+            ) : (
+              <p className="border border-border bg-card p-5 text-sm text-muted-foreground">
+                Optional extras are not set up yet. Run the migration{" "}
+                <code>20261022120000_interior_pricing_addons.sql</code> in the Supabase SQL Editor.
+              </p>
+            )}
           </section>
         </>
       )}

@@ -6,6 +6,7 @@ import { site } from "@/data/site";
 
 const navLinks = [
   { to: "/services", label: "Services" },
+  { to: "/interior-detailing", label: "Interior" },
   { to: "/ppf", label: "PPF" },
   { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About" },
@@ -50,7 +51,7 @@ export function Header() {
             />
           </Link>
 
-          <nav className="hidden items-center gap-8 md:flex lg:gap-10">
+          <nav className="hidden items-center gap-5 md:flex lg:gap-9">
             {navLinks.map((link) => {
               const active = pathname === link.to;
               return (

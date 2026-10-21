@@ -1,3 +1,4 @@
+import { addons as defaultAddons, type Addon } from "@/data/addons";
 import { ppfPanels, ppfSettings, type Panel, type PpfSettings } from "@/data/ppf";
 import {
   packages as defaultPackages,
@@ -12,6 +13,7 @@ export type Catalog = {
   packages: Package[];
   ppf: PpfSettings;
   panels: Panel[];
+  addons: Addon[];
 };
 
 export const defaultCatalog: Catalog = {
@@ -19,6 +21,7 @@ export const defaultCatalog: Catalog = {
   packages: defaultPackages,
   ppf: ppfSettings,
   panels: ppfPanels,
+  addons: defaultAddons,
 };
 
 type PackageRow = {
@@ -37,7 +40,7 @@ type PackageRow = {
 export async function loadCatalog(): Promise<Catalog> {
   if (!supabase) return defaultCatalog;
   try {
-    const [vehicles, pkgs, ppf, panels] = await Promise.all([
+    const [vehicles, pkgs, ppf, panels, addons] = await Promise.all([
       supabase.from("vehicle_types").select("id,label,hint").order("sort_order"),
       supabase
         .from("packages")
@@ -47,6 +50,8 @@ export async function loadCatalog(): Promise<Catalog> {
         .order("sort_order"),
       supabase.from("ppf_settings").select("*").maybeSingle(),
       supabase.from("ppf_panels").select("id,name,price").order("sort_order"),
+      // Add-ons arrived in a later migration: if the table is missing, use the defaults.
+      supabase.from("addons").select("id,name,description,price").order("sort_order"),
     ]);
     const error = vehicles.error ?? pkgs.error ?? ppf.error ?? panels.error;
     if (error) throw error;
@@ -82,6 +87,15 @@ export async function loadCatalog(): Promise<Catalog> {
       panels: panels.data?.length
         ? panels.data.map((p) => ({ id: p.id, name: p.name, price: Number(p.price) }))
         : defaultCatalog.panels,
+      addons:
+        !addons.error && addons.data
+          ? addons.data.map((a) => ({
+              id: a.id,
+              name: a.name,
+              description: a.description,
+              price: Number(a.price),
+            }))
+          : defaultCatalog.addons,
     };
   } catch (error) {
     console.error("Could not load the catalogue from Supabase, using defaults", error);

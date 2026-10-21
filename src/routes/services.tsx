@@ -130,6 +130,14 @@ function ServicesPage() {
                       </li>
                     ))}
                   </ul>
+                  {service.id === "interior" && (
+                    <Link
+                      to="/interior-detailing"
+                      className="btn-primary mt-6 inline-flex items-center gap-2 bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90"
+                    >
+                      View interior packages & prices <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  )}
                   {service.id === "ppf" && (
                     <Link
                       to="/ppf"
