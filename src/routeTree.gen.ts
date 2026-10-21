@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ExteriorDetailingRouteImport } from './routes/exterior-detailing'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InteriorDetailingRouteImport } from './routes/interior-detailing'
 import { Route as PpfRouteImport } from './routes/ppf'
@@ -42,6 +43,11 @@ const AdminRoute = AdminRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExteriorDetailingRoute = ExteriorDetailingRouteImport.update({
+  id: '/exterior-detailing',
+  path: '/exterior-detailing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
+  '/exterior-detailing': typeof ExteriorDetailingRoute
   '/gallery': typeof GalleryRoute
   '/interior-detailing': typeof InteriorDetailingRoute
   '/ppf': typeof PpfRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/exterior-detailing': typeof ExteriorDetailingRoute
   '/gallery': typeof GalleryRoute
   '/interior-detailing': typeof InteriorDetailingRoute
   '/ppf': typeof PpfRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
+  '/exterior-detailing': typeof ExteriorDetailingRoute
   '/gallery': typeof GalleryRoute
   '/interior-detailing': typeof InteriorDetailingRoute
   '/ppf': typeof PpfRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/exterior-detailing'
     | '/gallery'
     | '/interior-detailing'
     | '/ppf'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/exterior-detailing'
     | '/gallery'
     | '/interior-detailing'
     | '/ppf'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/contact'
+    | '/exterior-detailing'
     | '/gallery'
     | '/interior-detailing'
     | '/ppf'
@@ -198,6 +210,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
+  ExteriorDetailingRoute: typeof ExteriorDetailingRoute
   GalleryRoute: typeof GalleryRoute
   InteriorDetailingRoute: typeof InteriorDetailingRoute
   PpfRoute: typeof PpfRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exterior-detailing': {
+      id: '/exterior-detailing'
+      path: '/exterior-detailing'
+      fullPath: '/exterior-detailing'
+      preLoaderRoute: typeof ExteriorDetailingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -330,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
+  ExteriorDetailingRoute: ExteriorDetailingRoute,
   GalleryRoute: GalleryRoute,
   InteriorDetailingRoute: InteriorDetailingRoute,
   PpfRoute: PpfRoute,

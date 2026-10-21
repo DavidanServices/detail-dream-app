@@ -9,16 +9,16 @@ export const services = [
     id: "exterior",
     title: "Exterior Detailing",
     summary:
-      "Hand wash, clay bar, paint decontamination, and gloss-enhancing sealant for a mirror finish.",
-    short: "Wash, decontaminate, and protect your paint.",
+      "Pre-wash, shampoo or snow foam, contact wash, hand-washed alloys and tyre shine for a clean, glossy finish.",
+    short: "A clean, glossy and refreshed exterior.",
     description:
-      "Our exterior detail begins with a thorough hand wash and dry, followed by clay bar decontamination to remove embedded contaminants. We finish with a high-quality sealant or wax to enhance gloss and provide protection against the elements.",
+      "A thorough exterior wash: pre-wash, shampooed or snow foamed, contact wash and rinse, alloys washed by hand and tyre shine included. The result is a clean, glossy and refreshed exterior with a premium finish.",
     features: [
-      "Hand wash & dry",
-      "Clay bar treatment",
-      "Paint decontamination",
-      "Sealant or wax protection",
-      "Wheel & tire deep clean",
+      "Pre-wash",
+      "Shampooed or snow foamed",
+      "Contact wash and rinsed",
+      "Alloys hand washed",
+      "Tyre shine included",
     ],
     image: exteriorImage,
     icon: Droplets,
@@ -86,3 +86,17 @@ export const highlights = [
   "Paint-safe techniques on every vehicle",
   "Satisfaction guaranteed",
 ];
+
+// Where each service lives now that "Services" is the Exterior page.
+export function serviceLink(id: string) {
+  switch (id) {
+    case "exterior":
+      return { to: "/exterior-detailing" as const };
+    case "interior":
+      return { to: "/interior-detailing" as const };
+    case "ceramic":
+      return { to: "/exterior-detailing" as const, hash: "protection" };
+    default:
+      return { to: "/ppf" as const };
+  }
+}

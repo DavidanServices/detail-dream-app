@@ -51,7 +51,10 @@ export async function loadCatalog(): Promise<Catalog> {
       supabase.from("ppf_settings").select("*").maybeSingle(),
       supabase.from("ppf_panels").select("id,name,price").order("sort_order"),
       // Add-ons arrived in a later migration: if the table is missing, use the defaults.
-      supabase.from("addons").select("id,name,description,price").order("sort_order"),
+      supabase
+        .from("addons")
+        .select("id,name,description,price,package_id,starts_from,note")
+        .order("sort_order"),
     ]);
     const error = vehicles.error ?? pkgs.error ?? ppf.error ?? panels.error;
     if (error) throw error;
@@ -94,6 +97,9 @@ export async function loadCatalog(): Promise<Catalog> {
               name: a.name,
               description: a.description,
               price: Number(a.price),
+              packageId: a.package_id ?? undefined,
+              startsFrom: Boolean(a.starts_from),
+              note: a.note ?? undefined,
             }))
           : defaultCatalog.addons,
     };

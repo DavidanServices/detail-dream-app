@@ -123,7 +123,11 @@ function PricingPage() {
           <section className="space-y-4">
             <h2 className="font-heading text-2xl">Optional extras</h2>
             {data.data.addons ? (
-              <AddonsEditor key={JSON.stringify(data.data.addons)} addons={data.data.addons} />
+              <AddonsEditor
+                key={JSON.stringify(data.data.addons)}
+                addons={data.data.addons}
+                packages={data.data.packages.map((p) => ({ id: p.id, name: p.name }))}
+              />
             ) : (
               <p className="border border-border bg-card p-5 text-sm text-muted-foreground">
                 Optional extras are not set up yet. Run the migration{" "}

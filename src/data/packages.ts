@@ -1,3 +1,4 @@
+import { exteriorIncludedServices } from "@/data/exterior";
 import { interiorIncludedServices } from "@/data/interior";
 
 // Default catalogue. It seeds the database and is the fallback when Supabase is unreachable.
@@ -38,14 +39,9 @@ export const packages: Package[] = [
   {
     id: "exterior",
     name: "Exterior Detail",
-    prices: { hatchback: 110, saloon: 130, suv: 150 },
-    description: "Hand wash, clay bar, and protect your paintwork.",
-    features: [
-      "Hand wash & dry",
-      "Clay bar treatment",
-      "Paint decontamination",
-      "Sealant or wax protection",
-    ],
+    prices: { hatchback: 130, saloon: 160, suv: 190 },
+    description: "A clean, glossy and refreshed exterior with a premium finish.",
+    features: exteriorIncludedServices,
     popular: false,
     featured: true,
   },

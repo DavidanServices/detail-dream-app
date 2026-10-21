@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRight, Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
 import { WhatsappIcon } from "@/components/icons";
-import { services } from "@/data/services";
+import { serviceLink, services } from "@/data/services";
 import { mapsUrl, site, telHref, whatsappUrl } from "@/data/site";
 
 const explore = [
-  { to: "/services", label: "Services & pricing" },
+  { to: "/exterior-detailing", label: "Exterior packages" },
   { to: "/interior-detailing", label: "Interior packages" },
   { to: "/ppf", label: "PPF configurator" },
   { to: "/gallery", label: "Gallery" },
@@ -94,15 +94,9 @@ export function Footer() {
           <ul className="mt-6 space-y-3 text-sm">
             {services.map((s) => (
               <li key={s.id}>
-                {s.id === "interior" ? (
-                  <Link to="/interior-detailing" className={linkClass}>
-                    {s.title}
-                  </Link>
-                ) : (
-                  <Link to="/services" hash={s.id} className={linkClass}>
-                    {s.title}
-                  </Link>
-                )}
+                <Link {...serviceLink(s.id)} className={linkClass}>
+                  {s.title}
+                </Link>
               </li>
             ))}
             <li>

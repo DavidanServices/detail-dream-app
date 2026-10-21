@@ -16,12 +16,28 @@ export type AdminAddon = {
   price: number | string;
   sort_order: number;
   active: boolean;
+  package_id?: string | null;
+  starts_from?: boolean;
+  note?: string | null;
 };
 
-export function AddonsEditor({ addons }: { addons: AdminAddon[] }) {
+export function AddonsEditor({
+  addons,
+  packages,
+}: {
+  addons: AdminAddon[];
+  packages: { id: string; name: string }[];
+}) {
   const queryClient = useQueryClient();
   const [rows, setRows] = useState(
-    addons.map((a) => ({ ...a, price: String(Number(a.price)), sort_order: String(a.sort_order) })),
+    addons.map((a) => ({
+      ...a,
+      price: String(Number(a.price)),
+      sort_order: String(a.sort_order),
+      package_id: a.package_id ?? "",
+      starts_from: a.starts_from ?? false,
+      note: a.note ?? "",
+    })),
   );
   const [newName, setNewName] = useState("");
 
@@ -43,6 +59,9 @@ export function AddonsEditor({ addons }: { addons: AdminAddon[] }) {
             description: r.description.trim(),
             price,
             active: r.active,
+            package_id: r.package_id || null,
+            starts_from: r.starts_from,
+            note: r.note.trim() || null,
             sort_order: Number.isFinite(order) ? order : 0,
           })
           .eq("id", r.id);
@@ -81,7 +100,7 @@ export function AddonsEditor({ addons }: { addons: AdminAddon[] }) {
             key={r.id}
             className="grid gap-3 border-b border-border pb-5 last:border-0 last:pb-0 sm:grid-cols-[1fr_7rem_5rem_auto]"
           >
-            <div className="space-y-2 sm:row-span-2">
+            <div className="space-y-2">
               <Input
                 value={r.name}
                 maxLength={80}
@@ -112,6 +131,38 @@ export function AddonsEditor({ addons }: { addons: AdminAddon[] }) {
               <Switch checked={r.active} onCheckedChange={(v) => patch(r.id, { active: v })} />{" "}
               Visible
             </label>
+            <div className="grid gap-3 sm:col-span-4 sm:grid-cols-[1fr_auto_1fr]">
+              <label className="space-y-1 text-xs text-muted-foreground">
+                Shown with package
+                <select
+                  value={r.package_id}
+                  onChange={(e) => patch(r.id, { package_id: e.target.value })}
+                  className="w-full rounded-sm border border-input bg-background px-3 py-2 text-sm text-foreground"
+                >
+                  <option value="">Any package</option>
+                  {packages.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex items-center gap-2 self-end pb-2 text-sm">
+                <Switch
+                  checked={r.starts_from}
+                  onCheckedChange={(v) => patch(r.id, { starts_from: v })}
+                />{" "}
+                Starting rate (&ldquo;From £&rdquo;)
+              </label>
+              <label className="space-y-1 text-xs text-muted-foreground">
+                Note <span>(optional, e.g. depending on car size)</span>
+                <Input
+                  value={r.note}
+                  maxLength={120}
+                  onChange={(e) => patch(r.id, { note: e.target.value })}
+                />
+              </label>
+            </div>
           </div>
         ))}
         {rows.length === 0 && (

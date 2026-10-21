@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { site } from "@/data/site";
 
 const navLinks = [
-  { to: "/services", label: "Services" },
+  { to: "/exterior-detailing", label: "Exterior" },
   { to: "/interior-detailing", label: "Interior" },
   { to: "/ppf", label: "PPF" },
   { to: "/gallery", label: "Gallery" },

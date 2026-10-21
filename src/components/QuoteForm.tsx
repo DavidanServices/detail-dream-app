@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Send } from "lucide-react";
-import type { Addon } from "@/data/addons";
-import { INTERIOR_PACKAGE_ID, priceDisclaimer } from "@/data/interior";
+import { addonPriceLabel, type Addon } from "@/data/addons";
+import { priceDisclaimer } from "@/data/pricing-notes";
 import { gbp, lowestPrice, type Package, type VehicleTypeInfo } from "@/data/packages";
 import type { PpfSettings } from "@/data/ppf";
 import { submitQuote } from "@/lib/quote";
@@ -29,7 +29,6 @@ const field =
 const label = "text-sm font-medium text-card-foreground";
 
 export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset }: Props) {
-  const interior = packages.find((p) => p.id === INTERIOR_PACKAGE_ID);
   const serviceOptions = useMemo(
     () => [
       ...packages.map((pkg) => `${pkg.name} — from ${gbp(lowestPrice(pkg))}`),
@@ -81,10 +80,12 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset }: Props
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset?.nonce]);
 
-  const isInterior = Boolean(interior && service.startsWith(`${interior.name} —`));
+  // The package picked in the dropdown decides which optional extras and estimate are shown.
+  const activePackage = packages.find((p) => service.startsWith(`${p.name} —`));
+  const availableAddons = addons.filter((a) => activePackage && a.packageId === activePackage.id);
   const vehicle = vehicleTypes.find((v) => v.id === vehicleId);
-  const selectedAddons = isInterior ? addons.filter((a) => addonIds.includes(a.id)) : [];
-  const basePrice = isInterior && interior && vehicleId ? interior.prices[vehicleId] : undefined;
+  const selectedAddons = availableAddons.filter((a) => addonIds.includes(a.id));
+  const basePrice = activePackage && vehicleId ? activePackage.prices[vehicleId] : undefined;
   const estimate =
     basePrice !== undefined
       ? basePrice + selectedAddons.reduce((sum, a) => sum + a.price, 0)
@@ -240,10 +241,10 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset }: Props
         </div>
       </div>
 
-      {isInterior && addons.length > 0 && (
+      {availableAddons.length > 0 && (
         <fieldset className="space-y-3 border border-border bg-background/50 p-4">
           <legend className="px-1 text-sm font-medium text-card-foreground">Optional extras</legend>
-          {addons.map((addon) => (
+          {availableAddons.map((addon) => (
             <label key={addon.id} className="flex cursor-pointer items-start gap-3">
               <input
                 type="checkbox"
@@ -253,7 +254,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset }: Props
               />
               <span className="text-sm">
                 <span className="font-medium text-foreground">
-                  {addon.name} <span className="text-primary">+{gbp(addon.price)}</span>
+                  {addon.name} <span className="text-primary">{addonPriceLabel(addon)}</span>
                 </span>
                 <span className="mt-0.5 block text-muted-foreground">{addon.description}</span>
               </span>
@@ -268,7 +269,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset }: Props
           aria-live="polite"
         >
           <p className="font-medium text-foreground">
-            {vehicle?.label} interior detail
+            {vehicle?.label} {activePackage?.name.toLowerCase()}
             {selectedAddons.length > 0 &&
               ` + ${selectedAddons.map((a) => a.name.toLowerCase()).join(", ")}`}
             : <span className="text-primary">from {gbp(estimate)}</span>

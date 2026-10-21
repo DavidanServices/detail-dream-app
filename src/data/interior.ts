@@ -4,8 +4,7 @@ import { Armchair, DoorOpen, Gauge, Layers, ShieldCheck, Sparkles, Wind } from "
 // (package "interior" in /admin/pricing), so editing a price updates every page and the booking form.
 export const INTERIOR_PACKAGE_ID = "interior";
 
-export const priceDisclaimer =
-  "Prices are starting rates for standard vehicles. Vehicle size, condition and individual requirements may affect the final quote.";
+export { priceDisclaimer } from "@/data/pricing-notes";
 
 // The same seven services are included in every interior package. Leather conditioning is NOT one of them.
 export const interiorIncluded = [

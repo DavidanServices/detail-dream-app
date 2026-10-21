@@ -8,7 +8,7 @@ import { QuoteCta } from "@/components/sections/QuoteCta";
 import { Process } from "@/components/sections/Process";
 import { TrustStrip } from "@/components/sections/TrustStrip";
 import { cheapestPackagePrice, gbp, lowestPrice } from "@/data/packages";
-import { highlights, services } from "@/data/services";
+import { highlights, serviceLink, services } from "@/data/services";
 import { stagger } from "@/lib/motion";
 import { loadCatalog } from "@/lib/catalog";
 import { pageHead } from "@/lib/seo";
@@ -79,7 +79,8 @@ function HomePage() {
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
-                to="/services"
+                to="/"
+                hash="services"
                 className="inline-flex items-center border border-border px-8 py-4 text-sm font-semibold uppercase tracking-[0.12em] text-foreground transition-all duration-300 hover:border-foreground hover:bg-foreground/5"
               >
                 View services
@@ -113,7 +114,7 @@ function HomePage() {
       <TrustStrip />
 
       {/* Services index */}
-      <section className="bg-background py-24 lg:py-32">
+      <section id="services" className="scroll-mt-20 bg-background py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="Services"
@@ -124,9 +125,7 @@ function HomePage() {
             {services.map((service, i) => (
               <Link
                 key={service.id}
-                {...(service.id === "interior"
-                  ? { to: "/interior-detailing" as const }
-                  : { to: "/services" as const, hash: service.id })}
+                {...serviceLink(service.id)}
                 className="reveal group grid items-center gap-6 py-7 md:grid-cols-12"
               >
                 <span className="font-mono text-sm text-primary md:col-span-1">0{i + 1}</span>
