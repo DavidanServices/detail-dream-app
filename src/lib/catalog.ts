@@ -1,5 +1,5 @@
 import { addons as defaultAddons, type Addon } from "@/data/addons";
-import { ppfPanels, ppfSettings, type Panel, type PpfSettings } from "@/data/ppf";
+import { ppfSettings, type PpfColor, type PpfSettings, type PpfTier } from "@/data/ppf";
 import {
   packages as defaultPackages,
   vehicleTypes as defaultVehicleTypes,
@@ -13,7 +13,6 @@ export type Catalog = {
   vehicleTypes: VehicleTypeInfo[];
   packages: Package[];
   ppf: PpfSettings;
-  panels: Panel[];
   addons: Addon[];
   /** Edited page texts by key; anything missing falls back to the defaults in src/data/page-text.ts. */
   content: Record<string, string>;
@@ -23,7 +22,6 @@ export const defaultCatalog: Catalog = {
   vehicleTypes: defaultVehicleTypes,
   packages: defaultPackages,
   ppf: ppfSettings,
-  panels: ppfPanels,
   addons: defaultAddons,
   content: {},
 };
@@ -67,16 +65,39 @@ async function fetchPackages() {
   return { ...full, legacy: false };
 }
 
+type SizeRow = {
+  vehicle_type_id: string;
+  title: string;
+  blurb: string;
+  price: number | string | null;
+};
+
+// Sizes follow the vehicle types' order; a missing price stays null ("price on request").
+const tiersFrom = (rows: SizeRow[], vehicles: { id: string }[] | null): PpfTier[] => {
+  const order = new Map((vehicles ?? []).map((v, i) => [v.id, i]));
+  return rows
+    .filter((r) => order.has(r.vehicle_type_id))
+    .sort((a, b) => (order.get(a.vehicle_type_id) ?? 0) - (order.get(b.vehicle_type_id) ?? 0))
+    .map((r) => ({
+      vehicleTypeId: r.vehicle_type_id,
+      title: r.title,
+      blurb: r.blurb,
+      price: r.price === null ? null : Number(r.price),
+    }));
+};
+
 // Loads live prices and texts from Supabase. Any failure falls back to the bundled defaults so
 // the public site never breaks because of the database.
 export async function loadCatalog(): Promise<Catalog> {
   if (!supabase) return defaultCatalog;
   try {
-    const [vehicles, pkgs, ppf, panels, addons, content] = await Promise.all([
+    const [vehicles, pkgs, ppf, ppfSizes, ppfColors, addons, content] = await Promise.all([
       supabase.from("vehicle_types").select("id,label,hint").order("sort_order"),
       fetchPackages(),
       supabase.from("ppf_settings").select("*").maybeSingle(),
-      supabase.from("ppf_panels").select("id,name,price").order("sort_order"),
+      // PPF sizes and colours arrived in a later migration: if missing, use the defaults.
+      supabase.from("ppf_sizes").select("vehicle_type_id,title,blurb,price"),
+      supabase.from("ppf_colors").select("id,name,hex,finish").order("sort_order"),
       // Later migrations: if these are missing, use the defaults instead of failing.
       supabase
         .from("addons")
@@ -84,7 +105,7 @@ export async function loadCatalog(): Promise<Catalog> {
         .order("sort_order"),
       supabase.from("site_content").select("key,value"),
     ]);
-    const error = vehicles.error ?? pkgs.error ?? ppf.error ?? panels.error;
+    const error = vehicles.error ?? pkgs.error ?? ppf.error;
     if (error) throw error;
     if (!pkgs.data?.length || !vehicles.data?.length) return defaultCatalog;
 
@@ -124,13 +145,16 @@ export async function loadCatalog(): Promise<Catalog> {
             description: ppf.data.description,
             tagline: ppf.data.tagline,
             features: ppf.data.features ?? [],
-            startingFrom: Number(ppf.data.starting_from),
-            fullCarPrice: Number(ppf.data.full_car_price),
+            tiers:
+              !ppfSizes.error && ppfSizes.data?.length
+                ? tiersFrom(ppfSizes.data, vehicles.data)
+                : defaultCatalog.ppf.tiers,
+            colors:
+              !ppfColors.error && ppfColors.data
+                ? (ppfColors.data as PpfColor[])
+                : defaultCatalog.ppf.colors,
           }
         : defaultCatalog.ppf,
-      panels: panels.data?.length
-        ? panels.data.map((p) => ({ id: p.id, name: p.name, price: Number(p.price) }))
-        : defaultCatalog.panels,
       addons:
         !addons.error && addons.data
           ? addons.data.map((a) => ({

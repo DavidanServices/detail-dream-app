@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { addonPriceLabel, type Addon } from "@/data/addons";
 import { gbp, lowestPrice, type Package, type VehicleTypeInfo } from "@/data/packages";
-import type { PpfSettings } from "@/data/ppf";
+import { ppfFromPrice, type PpfSettings } from "@/data/ppf";
 import { submitQuote } from "@/lib/quote";
 
 // Applied whenever `nonce` changes, so a pricing card can preselect the form without remounting it.
@@ -43,6 +43,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
   const [addonIds, setAddonIds] = useState<string[]>([]);
   const [date, setDate] = useState("");
   const [message, setMessage] = useState("");
+  const lastPresetMessage = useRef("");
   const [today, setToday] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
@@ -76,7 +77,14 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
     if (preset.addonIds)
       setAddonIds(preset.addonIds.filter((id) => addons.some((a) => a.id === id)));
     if (preset.date) setDate(preset.date);
-    if (preset.message) setMessage(preset.message);
+    // A preset note (e.g. a chosen colour) never overwrites text the visitor typed themselves.
+    if (
+      preset.message !== undefined &&
+      (!message.trim() || message === lastPresetMessage.current)
+    ) {
+      setMessage(preset.message);
+      lastPresetMessage.current = preset.message;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset?.nonce]);
 
@@ -97,7 +105,10 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
       const forVehicle = vehicleId ? pkg.prices[vehicleId] : undefined;
       return `${name} — from ${gbp(forVehicle ?? lowestPrice(pkg))}`;
     }
-    if (name === ppf.name) return `${name} — from ${gbp(ppf.startingFrom)}`;
+    if (name === ppf.name) {
+      const from = ppfFromPrice(ppf);
+      return from === null ? name : `${name} — from ${gbp(from)}`;
+    }
     return name;
   };
 

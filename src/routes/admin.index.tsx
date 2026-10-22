@@ -113,9 +113,9 @@ function Dashboard() {
         >
           <ShieldCheck className="h-6 w-6 text-primary" />
           <div>
-            <p className="font-heading text-xl">PPF configurator</p>
+            <p className="font-heading text-xl">Paint protection film</p>
             <p className="text-sm text-muted-foreground">
-              Panel prices, starting price and full-car price.
+              Packages by car size and the colour palette.
             </p>
           </div>
         </Link>

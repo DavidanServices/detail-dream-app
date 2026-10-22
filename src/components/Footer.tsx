@@ -7,7 +7,7 @@ import { mapsUrl, site, telHref, whatsappUrl } from "@/data/site";
 const explore = [
   { to: "/exterior-detailing", label: "Exterior packages" },
   { to: "/interior-detailing", label: "Interior packages" },
-  { to: "/ppf", label: "PPF configurator" },
+  { to: "/ppf", label: "Paint protection film" },
   { to: "/gallery", label: "Gallery" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },

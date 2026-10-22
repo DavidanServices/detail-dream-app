@@ -51,14 +51,14 @@ export function DetailingHero({ eyebrow, title, lead, image, imageAlt, stats }: 
 
           {stats.length > 0 && (
             <dl
-              style={stagger(4)}
-              className="enter mt-12 grid max-w-xl grid-cols-2 gap-px border border-border bg-border sm:grid-cols-4"
+              style={{ ...stagger(4), "--cols": stats.length } as React.CSSProperties}
+              className="enter mt-12 grid max-w-xl grid-cols-2 gap-px border border-border bg-border sm:[grid-template-columns:repeat(var(--cols),minmax(0,1fr))]"
             >
               {stats.map((stat) => (
                 <div key={stat.label} className="bg-background/80 p-4 backdrop-blur">
                   <dt className="label-tech">{stat.label}</dt>
                   <dd
-                    className={`mt-1 font-heading text-3xl ${stat.accent ? "text-primary" : "text-foreground"}`}
+                    className={`mt-1 whitespace-nowrap font-heading ${stat.value.length > 8 ? "text-2xl" : "text-3xl"} ${stat.accent ? "text-primary" : "text-foreground"}`}
                   >
                     {stat.value}
                   </dd>

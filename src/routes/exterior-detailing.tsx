@@ -15,6 +15,7 @@ import { iconFor } from "@/data/icons";
 import { EXTERIOR_PACKAGE_ID } from "@/data/exterior";
 import { text } from "@/data/page-text";
 import { gbp, highlightsOf } from "@/data/packages";
+import { ppfFromPrice } from "@/data/ppf";
 import { telHref } from "@/data/site";
 import { loadCatalog } from "@/lib/catalog";
 import { detailingHead } from "@/lib/detailing-seo";
@@ -171,10 +172,18 @@ function ExteriorPage() {
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">{ppf.description}</p>
               <div className="mt-4 flex items-baseline gap-2">
-                <span className="font-heading text-4xl font-bold text-foreground">
-                  {gbp(ppf.startingFrom)}
-                </span>
-                <span className="text-sm text-muted-foreground">starting from</span>
+                {ppfFromPrice(ppf) === null ? (
+                  <span className="font-heading text-3xl font-bold text-foreground">
+                    Price on request
+                  </span>
+                ) : (
+                  <>
+                    <span className="font-heading text-4xl font-bold text-foreground">
+                      {gbp(ppfFromPrice(ppf) ?? 0)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">starting from</span>
+                  </>
+                )}
               </div>
               <ul className="mt-6 flex-1 space-y-3">
                 {ppf.features.map((feature) => (
@@ -188,7 +197,7 @@ function ExteriorPage() {
                 to="/ppf"
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-sm border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary/20"
               >
-                Configure Coverage <ArrowRight className="h-4 w-4" />
+                View packages & colours <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

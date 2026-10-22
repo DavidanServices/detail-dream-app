@@ -11,7 +11,8 @@ export type TextField = {
 
 const interior = "Interior page";
 const exterior = "Exterior page";
-const shared = "Shared (both pages and the form)";
+const ppf = "PPF page";
+const shared = "Shared (all detailing pages and the form)";
 
 export const textFields: TextField[] = [
   // ---- Interior
@@ -198,6 +199,92 @@ export const textFields: TextField[] = [
     multiline: true,
     default:
       "Add long-lasting protection, or combine interior and exterior in one visit. Pick your vehicle type to see the price.",
+  },
+
+  // ---- PPF
+  {
+    key: "ppf.seo.title",
+    label: "Browser / Google title",
+    group: ppf,
+    default: "Paint Protection Film (PPF) | Davidan Services",
+  },
+  {
+    key: "ppf.seo.description",
+    label: "Google description",
+    group: ppf,
+    default: "",
+    multiline: true,
+    hint: "Leave empty to use the built-in description.",
+  },
+  {
+    key: "ppf.hero.eyebrow",
+    label: "Small line above the headline",
+    group: ppf,
+    default: "Davidan Services — Paint Protection Film",
+  },
+  {
+    key: "ppf.hero.title",
+    label: "Headline (white part)",
+    group: ppf,
+    default: "Invisible protection",
+  },
+  {
+    key: "ppf.hero.accent",
+    label: "Headline (red part)",
+    group: ppf,
+    default: "for your paintwork.",
+  },
+  {
+    key: "ppf.hero.lead",
+    label: "Intro text",
+    group: ppf,
+    multiline: true,
+    default:
+      "Self-healing clear film that guards your paint against stone chips, scratches and road debris, while staying virtually invisible.",
+  },
+  {
+    key: "ppf.about.title",
+    label: "“What is PPF” heading",
+    group: ppf,
+    default: "What is paint protection film?",
+  },
+  {
+    key: "ppf.about.lead",
+    label: "“What is PPF” text",
+    group: ppf,
+    multiline: true,
+    default:
+      "A clear, self-healing film applied to high-impact panels. It absorbs stone chips and light scratches while staying virtually invisible, helping your paintwork keep its finish.",
+  },
+  {
+    key: "ppf.sizes.title",
+    label: "Packages heading",
+    group: ppf,
+    default: "Packages by vehicle size",
+  },
+  {
+    key: "ppf.sizes.lead",
+    label: "Packages intro",
+    group: ppf,
+    multiline: true,
+    default:
+      "Choose the size that matches your vehicle. Tell us the coverage you have in mind and we'll confirm the details.",
+  },
+  { key: "ppf.colors.title", label: "Colours heading", group: ppf, default: "Choose your finish" },
+  {
+    key: "ppf.colors.lead",
+    label: "Colours intro",
+    group: ppf,
+    multiline: true,
+    default:
+      "A palette of gloss, satin and matte colours. Availability is confirmed when you request a quote.",
+  },
+  {
+    key: "ppf.colors.note",
+    label: "Colours note",
+    group: ppf,
+    multiline: true,
+    default: "Colours on screen are a guide only; the real film can look different in person.",
   },
 
   // ---- Shared

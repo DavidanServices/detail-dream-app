@@ -8,6 +8,7 @@ import { QuoteCta } from "@/components/sections/QuoteCta";
 import { Process } from "@/components/sections/Process";
 import { TrustStrip } from "@/components/sections/TrustStrip";
 import { cheapestPackagePrice, gbp, lowestPrice } from "@/data/packages";
+import { ppfFromPrice } from "@/data/ppf";
 import { highlights, serviceLink, services } from "@/data/services";
 import { stagger } from "@/lib/motion";
 import { loadCatalog } from "@/lib/catalog";
@@ -37,13 +38,13 @@ function HomePage() {
       .map((pkg) => ({
         name: pkg.name,
         description: pkg.tagline ?? pkg.description,
-        price: gbp(lowestPrice(pkg)),
+        price: `from ${gbp(lowestPrice(pkg))}`,
         cta: "Book bundle",
       })),
     {
       name: ppf.name,
       description: ppf.tagline,
-      price: gbp(ppf.startingFrom),
+      price: ppfFromPrice(ppf) === null ? "On request" : `from ${gbp(ppfFromPrice(ppf) ?? 0)}`,
       cta: "Request quote",
     },
   ];
@@ -213,7 +214,7 @@ function HomePage() {
                   <p className="mt-1 text-sm text-muted-foreground">{x.description}</p>
                 </div>
                 <div className="sm:text-right">
-                  <p className="font-heading text-4xl text-foreground">from {x.price}</p>
+                  <p className="font-heading text-4xl text-foreground">{x.price}</p>
                   <Link
                     to="/contact"
                     search={{ service: x.name }}

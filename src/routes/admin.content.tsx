@@ -15,6 +15,7 @@ export const Route = createFileRoute("/admin/content")({ component: ContentPage 
 const previews: Record<string, string> = {
   "Interior page": "/interior-detailing",
   "Exterior page": "/exterior-detailing",
+  "PPF page": "/ppf",
 };
 
 function ContentPage() {
