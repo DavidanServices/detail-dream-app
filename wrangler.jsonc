@@ -1,0 +1,5 @@
+{
+  // Cloudflare Worker for davidan.co.uk. `npm run build` generates the real config in .output/;
+  // values here are merged into it by the build.
+  "name": "davidan-services"
+}
