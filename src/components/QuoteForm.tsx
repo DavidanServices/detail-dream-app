@@ -28,17 +28,17 @@ const field =
   "w-full rounded-sm border border-input bg-background px-3 py-3 text-base text-foreground outline-none ring-offset-background transition-shadow duration-200 focus:ring-2 focus:ring-ring sm:py-2 sm:text-sm";
 const label = "text-sm font-medium text-card-foreground";
 
+const NOT_SURE = "Not sure / Multiple services";
+
 export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclaimer }: Props) {
-  const serviceOptions = useMemo(
-    () => [
-      ...packages.map((pkg) => `${pkg.name} — from ${gbp(lowestPrice(pkg))}`),
-      `${ppf.name} — from ${gbp(ppf.startingFrom)}`,
-      "Not sure / Multiple services",
-    ],
+  // The dropdown stores the service NAME; its label shows the price for the chosen vehicle type
+  // (or the lowest price until a vehicle is chosen), so the list always matches the catalogue.
+  const serviceNames = useMemo(
+    () => [...packages.map((pkg) => pkg.name), ppf.name, NOT_SURE],
     [packages, ppf],
   );
 
-  const [service, setService] = useState(serviceOptions[0] ?? "");
+  const [service, setService] = useState(serviceNames[0] ?? "");
   const [vehicleId, setVehicleId] = useState("");
   const [addonIds, setAddonIds] = useState<string[]>([]);
   const [date, setDate] = useState("");
@@ -60,7 +60,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
     if (!preset) return;
     if (preset.service) {
       const wanted = preset.service.toLowerCase();
-      const match = serviceOptions.find((o) => o.toLowerCase().startsWith(wanted));
+      const match = serviceNames.find((n) => n.toLowerCase().startsWith(wanted));
       if (match) setService(match);
     }
     if (preset.vehicle !== undefined) {
@@ -81,7 +81,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
   }, [preset?.nonce]);
 
   // The package picked in the dropdown decides which optional extras and estimate are shown.
-  const activePackage = packages.find((p) => service.startsWith(`${p.name} —`));
+  const activePackage = packages.find((p) => p.name === service);
   const availableAddons = addons.filter((a) => activePackage && a.packageId === activePackage.id);
   const vehicle = vehicleTypes.find((v) => v.id === vehicleId);
   const selectedAddons = availableAddons.filter((a) => addonIds.includes(a.id));
@@ -90,6 +90,16 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
     basePrice !== undefined
       ? basePrice + selectedAddons.reduce((sum, a) => sum + a.price, 0)
       : undefined;
+
+  const serviceLabel = (name: string) => {
+    const pkg = packages.find((p) => p.name === name);
+    if (pkg) {
+      const forVehicle = vehicleId ? pkg.prices[vehicleId] : undefined;
+      return `${name} — from ${gbp(forVehicle ?? lowestPrice(pkg))}`;
+    }
+    if (name === ppf.name) return `${name} — from ${gbp(ppf.startingFrom)}`;
+    return name;
+  };
 
   const toggleAddon = (id: string) =>
     setAddonIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -108,7 +118,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
       name: String(form.get("name") ?? ""),
       email: String(form.get("email") ?? ""),
       phone: String(form.get("phone") ?? ""),
-      service: service.split(" — from")[0] ?? service,
+      service,
       vehicle: vehicle?.label ?? "",
       message,
       preferredDate: date,
@@ -199,8 +209,10 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
           onChange={(e) => setService(e.target.value)}
           className={field}
         >
-          {serviceOptions.map((option) => (
-            <option key={option}>{option}</option>
+          {serviceNames.map((name) => (
+            <option key={name} value={name}>
+              {serviceLabel(name)}
+            </option>
           ))}
         </select>
       </div>
