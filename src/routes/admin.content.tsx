@@ -16,6 +16,7 @@ const previews: Record<string, string> = {
   "Interior page": "/interior-detailing",
   "Exterior page": "/exterior-detailing",
   "PPF page": "/ppf",
+  "Company details (Privacy Policy and Terms)": "/privacy",
 };
 
 function ContentPage() {

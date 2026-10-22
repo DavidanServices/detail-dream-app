@@ -26,7 +26,7 @@ export const Route = createFileRoute("/ppf")({
       title: text(content, "ppf.seo.title"),
       description:
         text(content, "ppf.seo.description") ||
-        "Paint protection film (PPF) by Davidan Services: self-healing clear film for stone chips and scratches, packages by vehicle size and a choice of gloss, satin and matte colours.",
+        "Paint protection film (PPF) by Davidan Services: self-healing clear film, packages by vehicle size and gloss, satin and matte colours.",
       path: "/ppf",
     });
   },

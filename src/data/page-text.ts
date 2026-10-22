@@ -12,6 +12,7 @@ export type TextField = {
 const interior = "Interior page";
 const exterior = "Exterior page";
 const ppf = "PPF page";
+const company = "Company details (Privacy Policy and Terms)";
 const shared = "Shared (all detailing pages and the form)";
 
 export const textFields: TextField[] = [
@@ -285,6 +286,60 @@ export const textFields: TextField[] = [
     group: ppf,
     multiline: true,
     default: "Colours on screen are a guide only; the real film can look different in person.",
+  },
+
+  // ---- Company details (legal pages)
+  {
+    key: "company.name",
+    label: "Registered company name",
+    group: company,
+    default: "[Registered company name]",
+    hint: "Shown on the Privacy Policy and Terms pages.",
+  },
+  {
+    key: "company.number",
+    label: "Company registration number",
+    group: company,
+    default: "[Company number]",
+  },
+  {
+    key: "company.address",
+    label: "Registered office address",
+    group: company,
+    default: "[Registered office address]",
+  },
+  {
+    key: "company.vat",
+    label: "VAT number",
+    group: company,
+    default: "[VAT number, if registered]",
+  },
+  {
+    key: "company.ico",
+    label: "ICO registration number",
+    group: company,
+    default: "[ICO registration number]",
+  },
+  {
+    key: "company.email",
+    label: "Contact email for privacy and legal matters",
+    group: company,
+    default: "contact@davidan.com",
+  },
+  {
+    key: "terms.paymentTerms",
+    label: "Payment terms (Terms page)",
+    group: company,
+    multiline: true,
+    default:
+      "Payment is due when the work is completed, unless we have agreed something different with you in writing. We will tell you which payment methods we accept when we confirm your booking.",
+  },
+  {
+    key: "terms.cancellationNotice",
+    label: "Cancellation notice period (Terms page)",
+    group: company,
+    default: "24 hours",
+    hint: "Used in the sentence “at least … notice”.",
   },
 
   // ---- Shared

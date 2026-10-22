@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { addonPriceLabel, type Addon } from "@/data/addons";
@@ -334,6 +335,18 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
         <Send className="h-4 w-4" />
         {sending ? "Sending..." : "Request Appointment"}
       </button>
+
+      <p className="text-center text-xs leading-relaxed text-muted-foreground">
+        By sending this request you agree to our{" "}
+        <Link to="/terms" className="underline underline-offset-4 hover:text-foreground">
+          Terms
+        </Link>{" "}
+        and acknowledge our{" "}
+        <Link to="/privacy" className="underline underline-offset-4 hover:text-foreground">
+          Privacy Policy
+        </Link>
+        .
+      </p>
     </form>
   );
 }
