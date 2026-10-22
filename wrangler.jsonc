@@ -1,5 +1,14 @@
 {
-  // Cloudflare Worker for davidan.co.uk. `npm run build` generates the real config in .output/;
-  // values here are merged into it by the build.
-  "name": "davidan-services"
+  // Cloudflare Worker for davidan.co.uk.
+  // `npm run build` writes the Worker to .output/ (Nitro). The paths below point at it, and
+  // `build.command` makes `wrangler deploy` run the build itself, so deploying works even when
+  // the dashboard "Build command" is empty.
+  "name": "davidan-services",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-10-19",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": ".output/public", "binding": "ASSETS" },
+  "no_bundle": true,
+  "rules": [{ "type": "ESModule", "globs": ["**/*.mjs", "**/*.js"] }],
+  "build": { "command": "npm run build" }
 }
