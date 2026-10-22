@@ -21,6 +21,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminPpfRouteImport } from './routes/admin.ppf'
 import { Route as AdminPricingRouteImport } from './routes/admin.pricing'
 import { Route as AdminRequestsRouteImport } from './routes/admin.requests'
@@ -85,6 +86,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminContentRoute = AdminContentRouteImport.update({
+  id: '/content',
+  path: '/content',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminPpfRoute = AdminPpfRouteImport.update({
   id: '/ppf',
   path: '/ppf',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/admin/content': typeof AdminContentRoute
   '/admin/ppf': typeof AdminPpfRoute
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/admin/content': typeof AdminContentRoute
   '/admin/ppf': typeof AdminPpfRoute
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/admin/content': typeof AdminContentRoute
   '/admin/ppf': typeof AdminPpfRoute
   '/admin/pricing': typeof AdminPricingRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/services'
     | '/terms'
+    | '/admin/content'
     | '/admin/ppf'
     | '/admin/pricing'
     | '/admin/requests'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/services'
     | '/terms'
+    | '/admin/content'
     | '/admin/ppf'
     | '/admin/pricing'
     | '/admin/requests'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/services'
     | '/terms'
+    | '/admin/content'
     | '/admin/ppf'
     | '/admin/pricing'
     | '/admin/requests'
@@ -305,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/content': {
+      id: '/admin/content'
+      path: '/content'
+      fullPath: '/admin/content'
+      preLoaderRoute: typeof AdminContentRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/ppf': {
       id: '/admin/ppf'
       path: '/ppf'
@@ -330,6 +349,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminContentRoute: typeof AdminContentRoute
   AdminPpfRoute: typeof AdminPpfRoute
   AdminPricingRoute: typeof AdminPricingRoute
   AdminRequestsRoute: typeof AdminRequestsRoute
@@ -337,6 +357,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminContentRoute: AdminContentRoute,
   AdminPpfRoute: AdminPpfRoute,
   AdminPricingRoute: AdminPricingRoute,
   AdminRequestsRoute: AdminRequestsRoute,

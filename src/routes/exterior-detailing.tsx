@@ -11,46 +11,43 @@ import { PackageCard } from "@/components/PackageCard";
 import { Faq } from "@/components/sections/Faq";
 import { SectionHeading } from "@/components/SectionHeading";
 import { addonPriceLabel } from "@/data/addons";
-import {
-  EXTERIOR_PACKAGE_ID,
-  exteriorIncluded,
-  exteriorIncludedServices,
-  exteriorResult,
-  exteriorSameService,
-  exteriorTagline,
-  exteriorTiers,
-} from "@/data/exterior";
-import { gbp } from "@/data/packages";
+import { iconFor } from "@/data/icons";
+import { EXTERIOR_PACKAGE_ID } from "@/data/exterior";
+import { text } from "@/data/page-text";
+import { gbp, highlightsOf } from "@/data/packages";
 import { telHref } from "@/data/site";
 import { loadCatalog } from "@/lib/catalog";
 import { detailingHead } from "@/lib/detailing-seo";
-
-const tierTitle = (v: { id: string; label: string }) =>
-  exteriorTiers[v.id]?.title ?? `${v.label} Exterior Detail`;
+import { tierBlurb, tierTitle } from "@/lib/tiers";
 
 export const Route = createFileRoute("/exterior-detailing")({
   loader: () => loadCatalog(),
   staleTime: 60_000,
   head: ({ loaderData }) => {
+    const content = loaderData?.content ?? {};
     const pkg = loaderData?.packages.find((p) => p.id === EXTERIOR_PACKAGE_ID);
     return detailingHead({
       path: "/exterior-detailing",
-      title: "Exterior Car Detailing Packages | Davidan Services",
+      title: text(content, "exterior.seo.title"),
+      descriptionOverride: text(content, "exterior.seo.description"),
       noun: "exterior car detailing",
       serviceName: "Exterior Car Detailing",
       pkg,
       tiers: loaderData?.vehicleTypes ?? [],
-      tierTitle,
+      tierTitle: (v) => tierTitle(pkg, v, "Exterior Detail"),
     });
   },
   component: ExteriorPage,
 });
 
 function ExteriorPage() {
-  const { packages, ppf, vehicleTypes, addons } = Route.useLoaderData();
+  const { packages, ppf, vehicleTypes, addons, content } = Route.useLoaderData();
+  const t = (key: string) => text(content, key);
   const pkg = packages.find((p) => p.id === EXTERIOR_PACKAGE_ID);
   const extra = addons.find((a) => a.packageId === EXTERIOR_PACKAGE_ID);
   const tiers = vehicleTypes.filter((v) => pkg?.prices[v.id] !== undefined);
+  const items = pkg ? highlightsOf(pkg) : [];
+  const title = (v: (typeof tiers)[number]) => tierTitle(pkg, v, "Exterior Detail");
   const { preset, withAddon, choose, toggleAddon } = useDetailingSelection(pkg?.name, extra);
   // Ceramic coating and the bundles live here too, under "Protection & bundles".
   const more = packages.filter((p) => p.id !== EXTERIOR_PACKAGE_ID && p.id !== "interior");
@@ -58,19 +55,20 @@ function ExteriorPage() {
   return (
     <>
       <DetailingHero
-        eyebrow="Davidan Services — Exterior Detailing"
+        eyebrow={t("exterior.hero.eyebrow")}
         title={
           <>
-            Exterior <span className="text-primary">Detailing</span>
+            {t("exterior.hero.title")}{" "}
+            <span className="text-primary">{t("exterior.hero.accent")}</span>
           </>
         }
-        lead={`${exteriorResult} The same service is included for every vehicle size.`}
+        lead={t("exterior.hero.lead")}
         image={exteriorImage}
         imageAlt="Car exterior being washed and detailed"
         stats={[
           ...(pkg
             ? tiers.map((v) => ({
-                label: tierTitle(v).split(" ")[0] ?? v.label,
+                label: title(v).split(" ")[0] ?? v.label,
                 value: gbp(pkg.prices[v.id] ?? 0),
               }))
             : []),
@@ -82,17 +80,19 @@ function ExteriorPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="Exterior detail"
-            title="Exterior detailing, priced by vehicle size"
-            lead={`${exteriorSameService}.`}
+            title={t("exterior.packages.title")}
+            lead={t("exterior.packages.lead")}
           />
           {pkg && tiers.length > 0 ? (
             <TierCards
               pkg={pkg}
               tiers={tiers}
-              titleFor={tierTitle}
-              included={exteriorIncludedServices}
+              titleFor={title}
+              blurbFor={(v) => tierBlurb(pkg, v)}
+              included={items.map((item) => item.text)}
               selectedAddon={withAddon ? extra : undefined}
               onChoose={choose}
+              disclaimer={t("pricing.disclaimer")}
             />
           ) : (
             <p className="mt-14 border border-border bg-card p-6 text-muted-foreground">
@@ -114,15 +114,19 @@ function ExteriorPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="What's included"
-            title="Five services in every exterior detail"
-            lead="The same thorough process, whichever vehicle size you choose."
+            title={t("exterior.included.title")}
+            lead={t("exterior.included.lead")}
           />
           <IncludedGrid
-            items={exteriorIncluded}
+            items={items.map((item) => ({
+              icon: iconFor(item.icon),
+              title: item.title || item.text,
+              text: item.text,
+            }))}
             note={
               <>
                 <p className="label-tech">Optional</p>
-                <p className="leading-relaxed">Polish is available separately as an add-on.</p>
+                <p className="leading-relaxed">{t("exterior.included.note")}</p>
               </>
             }
           />
@@ -134,7 +138,7 @@ function ExteriorPage() {
           addon={extra}
           selected={withAddon}
           onToggle={toggleAddon}
-          hint="Add it to any exterior package."
+          hint={t("exterior.addon.hint")}
         />
       )}
 
@@ -142,10 +146,10 @@ function ExteriorPage() {
         <div className="reveal mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <p className="eyebrow">The result</p>
           <p className="mt-6 font-heading text-4xl text-foreground sm:text-5xl lg:text-6xl">
-            {exteriorResult}
+            {t("exterior.result.text")}
           </p>
           <p className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-primary">
-            {exteriorTagline}
+            {t("exterior.result.tagline")}
           </p>
         </div>
       </section>
@@ -154,8 +158,8 @@ function ExteriorPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="Go further"
-            title="Protection & bundles"
-            lead="Add long-lasting protection, or combine interior and exterior in one visit. Pick your vehicle type to see the price."
+            title={t("exterior.protection.title")}
+            lead={t("exterior.protection.lead")}
           />
           <div className="reveal mt-14 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {more.map((p) => (
@@ -197,6 +201,7 @@ function ExteriorPage() {
         vehicleTypes={vehicleTypes}
         addons={addons}
         preset={preset}
+        content={content}
       />
       <Faq />
     </>

@@ -1,6 +1,5 @@
 import { ArrowRight, Check, Info } from "lucide-react";
 import type { Addon } from "@/data/addons";
-import { priceDisclaimer } from "@/data/pricing-notes";
 import { gbp, type Package, type VehicleTypeInfo } from "@/data/packages";
 import { stagger } from "@/lib/motion";
 
@@ -14,6 +13,7 @@ type Props = {
   /** The optional extra the visitor switched on, so cards can show the combined starting price. */
   selectedAddon?: Addon | undefined;
   onChoose: (vehicleId: string) => void;
+  disclaimer: string;
 };
 
 // One card per vehicle size, all with the same included services. Prices come from the catalogue.
@@ -25,6 +25,7 @@ export function TierCards({
   included,
   selectedAddon,
   onChoose,
+  disclaimer,
 }: Props) {
   return (
     <>
@@ -81,7 +82,7 @@ export function TierCards({
 
       <p className="reveal mt-8 flex items-start gap-3 border-l-2 border-primary bg-primary/5 px-4 py-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-        {priceDisclaimer}
+        {disclaimer}
       </p>
     </>
   );

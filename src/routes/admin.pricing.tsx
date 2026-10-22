@@ -28,7 +28,7 @@ function PricingPage() {
         supabase!.from("vehicle_types").select("*").order("sort_order"),
         supabase!
           .from("packages")
-          .select("*,package_prices(vehicle_type_id,price)")
+          .select("*,package_prices(vehicle_type_id,price,title,blurb)")
           .order("sort_order"),
         supabase!.from("addons").select("*").order("sort_order"),
       ]);

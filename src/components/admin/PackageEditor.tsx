@@ -17,7 +17,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { HighlightsEditor } from "@/components/admin/HighlightsEditor";
 import { Textarea } from "@/components/ui/textarea";
+import type { Highlight } from "@/data/icons";
 import { supabase } from "@/lib/supabase";
 
 export type AdminPackage = {
@@ -26,11 +28,17 @@ export type AdminPackage = {
   description: string;
   tagline: string | null;
   features: string[];
+  highlights?: Highlight[] | null;
   popular: boolean;
   featured: boolean;
   sort_order: number;
   active: boolean;
-  package_prices: { vehicle_type_id: string; price: number | string }[];
+  package_prices: {
+    vehicle_type_id: string;
+    price: number | string;
+    title?: string | null;
+    blurb?: string | null;
+  }[];
 };
 
 export type AdminVehicleType = {
@@ -48,7 +56,20 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
   const [name, setName] = useState(pkg.name);
   const [description, setDescription] = useState(pkg.description);
   const [tagline, setTagline] = useState(pkg.tagline ?? "");
-  const [features, setFeatures] = useState(pkg.features.join("\n"));
+  // Items with icon + title + text. Packages saved before icons existed start from their plain lines.
+  const [items, setItems] = useState<Highlight[]>(() =>
+    pkg.highlights && pkg.highlights.length > 0
+      ? pkg.highlights
+      : pkg.features.map((text) => ({ icon: "check", title: "", text })),
+  );
+  const [tiers, setTiers] = useState<Record<string, { title: string; blurb: string }>>(() =>
+    Object.fromEntries(
+      pkg.package_prices.map((p) => [
+        p.vehicle_type_id,
+        { title: p.title ?? "", blurb: p.blurb ?? "" },
+      ]),
+    ),
+  );
   const [popular, setPopular] = useState(pkg.popular);
   const [featured, setFeatured] = useState(pkg.featured);
   const [active, setActive] = useState(pkg.active);
@@ -62,7 +83,13 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
   const save = useMutation({
     mutationFn: async () => {
       if (!name.trim()) throw new Error("The package needs a name.");
-      const toUpsert: { package_id: string; vehicle_type_id: string; price: number }[] = [];
+      const toUpsert: {
+        package_id: string;
+        vehicle_type_id: string;
+        price: number;
+        title: string | null;
+        blurb: string | null;
+      }[] = [];
       const toDelete: string[] = [];
       for (const v of vehicleTypes) {
         const raw = (prices[v.id] ?? "").trim();
@@ -72,8 +99,17 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
         }
         const price = Number(raw);
         if (!Number.isFinite(price) || price < 0) throw new Error(`Invalid price for ${v.label}.`);
-        toUpsert.push({ package_id: pkg.id, vehicle_type_id: v.id, price });
+        toUpsert.push({
+          package_id: pkg.id,
+          vehicle_type_id: v.id,
+          price,
+          title: tiers[v.id]?.title.trim() || null,
+          blurb: tiers[v.id]?.blurb.trim() || null,
+        });
       }
+      const cleanItems = items
+        .map((item) => ({ icon: item.icon, title: item.title.trim(), text: item.text.trim() }))
+        .filter((item) => item.text);
       const sortOrder = Number.parseInt(order, 10);
       const { error } = await supabase!
         .from("packages")
@@ -81,10 +117,8 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
           name: name.trim(),
           description: description.trim(),
           tagline: tagline.trim() || null,
-          features: features
-            .split("\n")
-            .map((f) => f.trim())
-            .filter(Boolean),
+          features: cleanItems.map((item) => item.text),
+          highlights: cleanItems,
           popular,
           featured,
           active,
@@ -171,10 +205,12 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
             <Input maxLength={120} value={tagline} onChange={(e) => setTagline(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>
-              What&apos;s included <span className="text-muted-foreground">(one per line)</span>
-            </Label>
-            <Textarea rows={5} value={features} onChange={(e) => setFeatures(e.target.value)} />
+            <Label>What&apos;s included</Label>
+            <HighlightsEditor items={items} onChange={setItems} />
+            <p className="text-xs text-muted-foreground">
+              Shown as the list on each package card and as the icon grid on the Interior and
+              Exterior pages.
+            </p>
           </div>
         </div>
 
@@ -201,6 +237,45 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
             <p className="mt-2 text-xs text-muted-foreground">
               Leave a price empty to hide that vehicle type for this package.
             </p>
+            <details className="mt-4 border border-border bg-background/50 p-3">
+              <summary className="cursor-pointer text-sm font-medium">
+                Card text per vehicle type (optional)
+              </summary>
+              <div className="mt-3 space-y-4">
+                {vehicleTypes.map((v) => (
+                  <div key={v.id} className="space-y-2">
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                      {v.label}
+                    </p>
+                    <Input
+                      value={tiers[v.id]?.title ?? ""}
+                      maxLength={80}
+                      placeholder={`Card title, e.g. ${v.label} ${name}`}
+                      onChange={(e) =>
+                        setTiers((prev) => ({
+                          ...prev,
+                          [v.id]: { title: e.target.value, blurb: prev[v.id]?.blurb ?? "" },
+                        }))
+                      }
+                      aria-label={`${v.label} card title`}
+                    />
+                    <Textarea
+                      rows={2}
+                      maxLength={300}
+                      value={tiers[v.id]?.blurb ?? ""}
+                      placeholder="Short description for this vehicle type"
+                      onChange={(e) =>
+                        setTiers((prev) => ({
+                          ...prev,
+                          [v.id]: { title: prev[v.id]?.title ?? "", blurb: e.target.value },
+                        }))
+                      }
+                      aria-label={`${v.label} card description`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </details>
           </div>
           <div className="space-y-2">
             <Label htmlFor={`${pkg.id}-order`}>Display order</Label>

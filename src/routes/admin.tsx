@@ -21,6 +21,7 @@ const nav = [
   { to: "/admin/requests", label: "Requests", exact: false },
   { to: "/admin/pricing", label: "Pricing", exact: false },
   { to: "/admin/ppf", label: "PPF", exact: false },
+  { to: "/admin/content", label: "Page texts", exact: false },
 ] as const;
 
 function AdminLayout() {

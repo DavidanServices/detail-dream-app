@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Send } from "lucide-react";
 import { addonPriceLabel, type Addon } from "@/data/addons";
-import { priceDisclaimer } from "@/data/pricing-notes";
 import { gbp, lowestPrice, type Package, type VehicleTypeInfo } from "@/data/packages";
 import type { PpfSettings } from "@/data/ppf";
 import { submitQuote } from "@/lib/quote";
@@ -22,13 +21,14 @@ type Props = {
   vehicleTypes: VehicleTypeInfo[];
   addons: Addon[];
   preset?: QuotePreset;
+  disclaimer: string;
 };
 
 const field =
   "w-full rounded-sm border border-input bg-background px-3 py-3 text-base text-foreground outline-none ring-offset-background transition-shadow duration-200 focus:ring-2 focus:ring-ring sm:py-2 sm:text-sm";
 const label = "text-sm font-medium text-card-foreground";
 
-export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset }: Props) {
+export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclaimer }: Props) {
   const serviceOptions = useMemo(
     () => [
       ...packages.map((pkg) => `${pkg.name} — from ${gbp(lowestPrice(pkg))}`),
@@ -274,7 +274,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset }: Props
               ` + ${selectedAddons.map((a) => a.name.toLowerCase()).join(", ")}`}
             : <span className="text-primary">from {gbp(estimate)}</span>
           </p>
-          <p className="mt-1 text-muted-foreground">{priceDisclaimer}</p>
+          <p className="mt-1 text-muted-foreground">{disclaimer}</p>
         </div>
       )}
 

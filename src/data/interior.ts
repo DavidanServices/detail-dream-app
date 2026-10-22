@@ -1,45 +1,41 @@
-import { Armchair, DoorOpen, Gauge, Layers, ShieldCheck, Sparkles, Wind } from "lucide-react";
+import type { Highlight } from "@/data/icons";
 
-// Interior Detailing copy. Prices are NOT stored here: they come from the catalogue
-// (package "interior" in /admin/pricing), so editing a price updates every page and the booking form.
+// Default Interior Detailing copy. It seeds the database; live values are edited in /admin
+// (prices and items under Pricing, page texts under Page texts).
 export const INTERIOR_PACKAGE_ID = "interior";
 
-export { priceDisclaimer } from "@/data/pricing-notes";
-
 // The same seven services are included in every interior package. Leather conditioning is NOT one of them.
-export const interiorIncluded = [
+export const interiorHighlights: Highlight[] = [
   {
-    icon: Wind,
+    icon: "wind",
     title: "Full vacuum",
     text: "Full interior vacuum, including boot and underneath seats where accessible",
   },
   {
-    icon: Gauge,
+    icon: "gauge",
     title: "Dashboard & trim",
     text: "Detailed cleaning of dashboard, air vents, buttons and interior trim",
   },
   {
-    icon: DoorOpen,
+    icon: "door",
     title: "Doors & cupholders",
     text: "Cleaning of door panels, door shuts and cupholders, including steam cleaning where appropriate",
   },
-  { icon: Sparkles, title: "Interior glass", text: "Interior glass cleaning" },
+  { icon: "sparkles", title: "Interior glass", text: "Interior glass cleaning" },
   {
-    icon: Layers,
+    icon: "layers",
     title: "Mats & plastics",
     text: "Floor mat cleaning and restoration of interior plastic surfaces",
   },
   {
-    icon: Armchair,
+    icon: "armchair",
     title: "Leather clean",
     text: "Leather cleaning to restore a clean, factory-style finish",
   },
-  { icon: ShieldCheck, title: "Seatbelts", text: "Seatbelt cleaning and restoration" },
-] as const;
+  { icon: "shield", title: "Seatbelts", text: "Seatbelt cleaning and restoration" },
+];
 
-export const interiorIncludedServices: string[] = interiorIncluded.map((item) => item.text);
-
-// Per vehicle type (ids match vehicle_types) title and description for the three package cards.
+// Per vehicle type (ids match vehicle_types): title and description for the three package cards.
 export const interiorTiers: Record<string, { title: string; blurb: string }> = {
   hatchback: {
     title: "Hatchback Interior Detail",

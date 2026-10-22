@@ -3,6 +3,7 @@ import type { Package, VehicleTypeInfo } from "@/data/packages";
 import type { PpfSettings } from "@/data/ppf";
 import { mapsUrl, site, telHref, whatsappUrl } from "@/data/site";
 import { QuoteForm, type QuotePreset } from "@/components/QuoteForm";
+import { text } from "@/data/page-text";
 import { SectionHeading } from "@/components/SectionHeading";
 
 type Props = {
@@ -11,17 +12,18 @@ type Props = {
   vehicleTypes: VehicleTypeInfo[];
   addons: Addon[];
   preset: QuotePreset;
+  content: Record<string, string>;
 };
 
-export function BookingSection({ packages, ppf, vehicleTypes, addons, preset }: Props) {
+export function BookingSection({ packages, ppf, vehicleTypes, addons, preset, content }: Props) {
   return (
     <section id="book" className="scroll-mt-20 border-t border-border bg-secondary py-24 lg:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:px-8">
         <div>
           <SectionHeading
             eyebrow="Book your detail"
-            title="Request a quote"
-            lead="Tell us about your vehicle and we'll come back with availability and a clear price. No obligation."
+            title={text(content, "booking.title")}
+            lead={text(content, "booking.lead")}
           />
           <ul className="reveal mt-8 space-y-3 text-muted-foreground">
             <li>
@@ -63,6 +65,7 @@ export function BookingSection({ packages, ppf, vehicleTypes, addons, preset }: 
             vehicleTypes={vehicleTypes}
             addons={addons}
             preset={preset}
+            disclaimer={text(content, "pricing.disclaimer")}
           />
         </div>
       </div>

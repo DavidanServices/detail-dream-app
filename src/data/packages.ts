@@ -1,5 +1,6 @@
-import { exteriorIncludedServices } from "@/data/exterior";
-import { interiorIncludedServices } from "@/data/interior";
+import { exteriorHighlights, exteriorTiers } from "@/data/exterior";
+import type { Highlight } from "@/data/icons";
+import { interiorHighlights, interiorTiers } from "@/data/interior";
 
 // Default catalogue. It seeds the database and is the fallback when Supabase is unreachable.
 // Live prices are edited in /admin and loaded through src/lib/catalog.ts.
@@ -21,6 +22,10 @@ export type Package = {
   description: string;
   tagline?: string | undefined;
   features: string[];
+  /** Items with icon and short title for the detailing pages; empty means "use features". */
+  highlights: Highlight[];
+  /** Optional per vehicle type card text (title and description). */
+  tiers?: Record<string, { title?: string | undefined; blurb?: string | undefined }> | undefined;
   popular: boolean;
   /** Shown as a card in the home page price list; the rest appear as wide rows. */
   featured: boolean;
@@ -32,7 +37,9 @@ export const packages: Package[] = [
     name: "Interior Detail",
     prices: { hatchback: 110, saloon: 150, suv: 180 },
     description: "A thorough interior detail for every vehicle size, from hatchback to SUV.",
-    features: interiorIncludedServices,
+    features: interiorHighlights.map((h) => h.text),
+    highlights: interiorHighlights,
+    tiers: interiorTiers,
     popular: false,
     featured: true,
   },
@@ -41,7 +48,9 @@ export const packages: Package[] = [
     name: "Exterior Detail",
     prices: { hatchback: 130, saloon: 160, suv: 190 },
     description: "A clean, glossy and refreshed exterior with a premium finish.",
-    features: exteriorIncludedServices,
+    features: exteriorHighlights.map((h) => h.text),
+    highlights: exteriorHighlights,
+    tiers: exteriorTiers,
     popular: false,
     featured: true,
   },
@@ -56,6 +65,7 @@ export const packages: Package[] = [
       "Paint-safe techniques",
       "Cabin deep clean",
     ],
+    highlights: [],
     popular: true,
     featured: true,
   },
@@ -70,6 +80,7 @@ export const packages: Package[] = [
       "UV resistance",
       "Enhanced depth & gloss",
     ],
+    highlights: [],
     popular: false,
     featured: true,
   },
@@ -85,6 +96,7 @@ export const packages: Package[] = [
       "Full protection & gloss",
       "Best value",
     ],
+    highlights: [],
     popular: false,
     featured: false,
   },
@@ -101,3 +113,9 @@ export const cheapestPackagePrice = (list: Package[]) => {
 };
 
 export const gbp = (n: number) => `£${n.toLocaleString("en-GB")}`;
+
+/** Items shown in the "what's included" lists: the icon items if set, otherwise the plain feature lines. */
+export const highlightsOf = (pkg: Package): Highlight[] =>
+  pkg.highlights.length > 0
+    ? pkg.highlights
+    : pkg.features.map((text) => ({ icon: "check", title: text, text }));

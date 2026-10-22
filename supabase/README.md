@@ -30,7 +30,14 @@ The website reads prices from Supabase and stores contact-form requests there. T
 | --- | --- | --- |
 | `vehicle_types`, `packages`, `package_prices` | /admin/pricing | Home, Services, booking form |
 | `ppf_settings`, `ppf_panels` | /admin/ppf | PPF configurator, Services, Home |
+| `addons` | /admin/pricing > Optional extras | Interior and Exterior pages, booking form |
+| `packages.highlights`, `package_prices.title/blurb` | /admin/pricing (per package) | "What's included" lists and card text |
+| `site_content` | /admin/content (Page texts) | Headlines and descriptions of the Interior and Exterior pages |
 | `quote_requests` | /admin/requests | Contact form (visitors can only add rows) |
 | `admin_users` | SQL only | Who may use /admin |
+
+Migrations are numbered by date. Run any you have not run yet, in order, in the SQL Editor:
+`20261018…_davidan_admin.sql`, `20261022…_interior_pricing_addons.sql`, `20261023…_exterior_pricing_addons.sql`,
+`20261024…_editable_content.sql`. Until a migration is run the site keeps working with built-in defaults.
 
 If Supabase is unreachable the public site falls back to the prices bundled in `src/data/`, so it never breaks.

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useMemo } from "react";
+import { text } from "@/data/page-text";
 import { mapsUrl, site, telHref } from "@/data/site";
 import { stagger } from "@/lib/motion";
 import { loadCatalog } from "@/lib/catalog";
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
-  const { packages, ppf, vehicleTypes, addons } = Route.useLoaderData();
+  const { packages, ppf, vehicleTypes, addons, content } = Route.useLoaderData();
   const search = Route.useSearch();
   const preset = useMemo(
     () => ({
@@ -156,6 +157,7 @@ function ContactPage() {
                 vehicleTypes={vehicleTypes}
                 addons={addons}
                 preset={preset}
+                disclaimer={text(content, "pricing.disclaimer")}
               />
             </div>
           </div>

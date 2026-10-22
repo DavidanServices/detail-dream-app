@@ -8,61 +8,62 @@ import { TierCards } from "@/components/detailing/TierCards";
 import { useDetailingSelection } from "@/components/detailing/useDetailingSelection";
 import { SectionHeading } from "@/components/SectionHeading";
 import { addonPriceLabel } from "@/data/addons";
-import {
-  INTERIOR_PACKAGE_ID,
-  interiorIncluded,
-  interiorIncludedServices,
-  interiorTiers,
-} from "@/data/interior";
-import { gbp } from "@/data/packages";
+import { iconFor } from "@/data/icons";
+import { INTERIOR_PACKAGE_ID } from "@/data/interior";
+import { text } from "@/data/page-text";
+import { gbp, highlightsOf } from "@/data/packages";
 import { telHref } from "@/data/site";
 import { loadCatalog } from "@/lib/catalog";
 import { detailingHead } from "@/lib/detailing-seo";
-
-const tierTitle = (v: { id: string; label: string }) =>
-  interiorTiers[v.id]?.title ?? `${v.label} Interior Detail`;
+import { tierBlurb, tierTitle } from "@/lib/tiers";
 
 export const Route = createFileRoute("/interior-detailing")({
   loader: () => loadCatalog(),
   staleTime: 60_000,
   head: ({ loaderData }) => {
+    const content = loaderData?.content ?? {};
     const pkg = loaderData?.packages.find((p) => p.id === INTERIOR_PACKAGE_ID);
     return detailingHead({
       path: "/interior-detailing",
-      title: "Interior Car Detailing Packages | Davidan Services",
+      title: text(content, "interior.seo.title"),
+      descriptionOverride: text(content, "interior.seo.description"),
       noun: "interior car detailing",
       serviceName: "Interior Car Detailing",
       pkg,
       tiers: loaderData?.vehicleTypes ?? [],
-      tierTitle,
+      tierTitle: (v) => tierTitle(pkg, v, "Interior Detail"),
     });
   },
   component: InteriorPage,
 });
 
 function InteriorPage() {
-  const { packages, ppf, vehicleTypes, addons } = Route.useLoaderData();
+  const { packages, ppf, vehicleTypes, addons, content } = Route.useLoaderData();
+  const t = (key: string) => text(content, key);
   const pkg = packages.find((p) => p.id === INTERIOR_PACKAGE_ID);
   const extra = addons.find((a) => a.packageId === INTERIOR_PACKAGE_ID);
   const tiers = vehicleTypes.filter((v) => pkg?.prices[v.id] !== undefined);
+  const items = pkg ? highlightsOf(pkg) : [];
+  const title = (v: (typeof tiers)[number]) => tierTitle(pkg, v, "Interior Detail");
   const { preset, withAddon, choose, toggleAddon } = useDetailingSelection(pkg?.name, extra);
 
   return (
     <>
       <DetailingHero
-        eyebrow="Davidan Services — Premium Interior Detailing"
+        eyebrow={t("interior.hero.eyebrow")}
         title={
           <>
-            A Cleaner Interior. <span className="text-primary">A Better Driving Experience.</span>
+            {t("interior.hero.title")}{" "}
+            <span className="text-primary">{t("interior.hero.accent")}</span>
           </>
         }
-        lead="Professional interior detailing for hatchbacks, saloons and SUVs. Every accessible surface is cleaned with care, so your cabin looks, feels and smells properly looked after."
+        lead={t("interior.hero.lead")}
         image={interiorImage}
         imageAlt="Detailed car interior after a professional clean"
         stats={[
           ...(pkg
             ? tiers.map((v) => ({
-                label: tierTitle(v).split(" ")[0] ?? v.label,
+                label: title(v).split(" ")[0] ?? v.label,
                 value: gbp(pkg.prices[v.id] ?? 0),
               }))
             : []),
@@ -74,18 +75,19 @@ function InteriorPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="Our packages"
-            title="Interior detailing, priced by vehicle size"
-            lead="Every package includes the same seven services. Choose the one that matches your vehicle."
+            title={t("interior.packages.title")}
+            lead={t("interior.packages.lead")}
           />
           {pkg && tiers.length > 0 ? (
             <TierCards
               pkg={pkg}
               tiers={tiers}
-              titleFor={tierTitle}
-              blurbFor={(v) => interiorTiers[v.id]?.blurb}
-              included={interiorIncludedServices}
+              titleFor={title}
+              blurbFor={(v) => tierBlurb(pkg, v)}
+              included={items.map((item) => item.text)}
               selectedAddon={withAddon ? extra : undefined}
               onChoose={choose}
+              disclaimer={t("pricing.disclaimer")}
             />
           ) : (
             <p className="mt-14 border border-border bg-card p-6 text-muted-foreground">
@@ -107,17 +109,19 @@ function InteriorPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="What's included"
-            title="Seven services in every interior detail"
-            lead="The same thorough process, whichever package you choose."
+            title={t("interior.included.title")}
+            lead={t("interior.included.lead")}
           />
           <IncludedGrid
-            items={interiorIncluded}
+            items={items.map((item) => ({
+              icon: iconFor(item.icon),
+              title: item.title || item.text,
+              text: item.text,
+            }))}
             note={
               <>
                 <p className="label-tech">Not included</p>
-                <p className="leading-relaxed">
-                  Leather conditioning is available separately as an optional extra.
-                </p>
+                <p className="leading-relaxed">{t("interior.included.note")}</p>
               </>
             }
           />
@@ -129,7 +133,7 @@ function InteriorPage() {
           addon={extra}
           selected={withAddon}
           onToggle={toggleAddon}
-          hint="Add it to any interior package."
+          hint={t("interior.addon.hint")}
         />
       )}
 
@@ -139,6 +143,7 @@ function InteriorPage() {
         vehicleTypes={vehicleTypes}
         addons={addons}
         preset={preset}
+        content={content}
       />
     </>
   );

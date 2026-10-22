@@ -6,6 +6,7 @@ import {
   type Package,
   type VehicleTypeInfo,
 } from "@/data/packages";
+import type { Highlight } from "@/data/icons";
 import { supabase } from "@/lib/supabase";
 
 export type Catalog = {
@@ -14,6 +15,8 @@ export type Catalog = {
   ppf: PpfSettings;
   panels: Panel[];
   addons: Addon[];
+  /** Edited page texts by key; anything missing falls back to the defaults in src/data/page-text.ts. */
+  content: Record<string, string>;
 };
 
 export const defaultCatalog: Catalog = {
@@ -22,6 +25,14 @@ export const defaultCatalog: Catalog = {
   ppf: ppfSettings,
   panels: ppfPanels,
   addons: defaultAddons,
+  content: {},
+};
+
+type PriceRow = {
+  vehicle_type_id: string;
+  price: number | string;
+  title?: string | null;
+  blurb?: string | null;
 };
 
 type PackageRow = {
@@ -30,31 +41,48 @@ type PackageRow = {
   description: string;
   tagline: string | null;
   features: string[];
+  highlights?: Highlight[] | null;
   popular: boolean;
   featured: boolean;
-  package_prices: { vehicle_type_id: string; price: number | string }[];
+  package_prices: PriceRow[];
 };
 
-// Loads live prices from Supabase. Any failure falls back to the bundled defaults so the
-// public site never breaks because of the database.
+const FULL_COLUMNS =
+  "id,name,description,tagline,features,highlights,popular,featured,package_prices(vehicle_type_id,price,title,blurb)";
+const LEGACY_COLUMNS =
+  "id,name,description,tagline,features,popular,featured,package_prices(vehicle_type_id,price)";
+
+// Postgres / PostgREST report an unknown column when a migration has not been run yet.
+const isMissingColumn = (error: { code?: string }) =>
+  error.code === "42703" || error.code === "PGRST204";
+
+// Reads packages with the newest columns; on a database that is not migrated yet it
+// falls back to the older columns so live prices keep working.
+async function fetchPackages() {
+  const full = await supabase!.from("packages").select(FULL_COLUMNS).order("sort_order");
+  if (full.error && isMissingColumn(full.error)) {
+    const legacy = await supabase!.from("packages").select(LEGACY_COLUMNS).order("sort_order");
+    return { ...legacy, legacy: true };
+  }
+  return { ...full, legacy: false };
+}
+
+// Loads live prices and texts from Supabase. Any failure falls back to the bundled defaults so
+// the public site never breaks because of the database.
 export async function loadCatalog(): Promise<Catalog> {
   if (!supabase) return defaultCatalog;
   try {
-    const [vehicles, pkgs, ppf, panels, addons] = await Promise.all([
+    const [vehicles, pkgs, ppf, panels, addons, content] = await Promise.all([
       supabase.from("vehicle_types").select("id,label,hint").order("sort_order"),
-      supabase
-        .from("packages")
-        .select(
-          "id,name,description,tagline,features,popular,featured,package_prices(vehicle_type_id,price)",
-        )
-        .order("sort_order"),
+      fetchPackages(),
       supabase.from("ppf_settings").select("*").maybeSingle(),
       supabase.from("ppf_panels").select("id,name,price").order("sort_order"),
-      // Add-ons arrived in a later migration: if the table is missing, use the defaults.
+      // Later migrations: if these are missing, use the defaults instead of failing.
       supabase
         .from("addons")
         .select("id,name,description,price,package_id,starts_from,note")
         .order("sort_order"),
+      supabase.from("site_content").select("key,value"),
     ]);
     const error = vehicles.error ?? pkgs.error ?? ppf.error ?? panels.error;
     if (error) throw error;
@@ -63,20 +91,33 @@ export async function loadCatalog(): Promise<Catalog> {
     const activeVehicleIds = new Set(vehicles.data.map((v) => v.id));
     return {
       vehicleTypes: vehicles.data as VehicleTypeInfo[],
-      packages: (pkgs.data as PackageRow[]).map((row) => ({
-        id: row.id,
-        name: row.name,
-        description: row.description,
-        tagline: row.tagline ?? undefined,
-        features: row.features ?? [],
-        popular: row.popular,
-        featured: row.featured,
-        prices: Object.fromEntries(
+      packages: (pkgs.data as unknown as PackageRow[]).map((row) => {
+        const fallback = pkgs.legacy ? defaultPackages.find((d) => d.id === row.id) : undefined;
+        const tiers = Object.fromEntries(
           row.package_prices
-            .filter((p) => activeVehicleIds.has(p.vehicle_type_id))
-            .map((p) => [p.vehicle_type_id, Number(p.price)]),
-        ),
-      })),
+            .filter((p) => p.title || p.blurb)
+            .map((p) => [
+              p.vehicle_type_id,
+              { title: p.title ?? undefined, blurb: p.blurb ?? undefined },
+            ]),
+        );
+        return {
+          id: row.id,
+          name: row.name,
+          description: row.description,
+          tagline: row.tagline ?? undefined,
+          features: row.features ?? [],
+          highlights: row.highlights ?? fallback?.highlights ?? [],
+          tiers: Object.keys(tiers).length > 0 ? tiers : fallback?.tiers,
+          popular: row.popular,
+          featured: row.featured,
+          prices: Object.fromEntries(
+            row.package_prices
+              .filter((p) => activeVehicleIds.has(p.vehicle_type_id))
+              .map((p) => [p.vehicle_type_id, Number(p.price)]),
+          ),
+        };
+      }),
       ppf: ppf.data
         ? {
             name: ppf.data.name,
@@ -102,6 +143,10 @@ export async function loadCatalog(): Promise<Catalog> {
               note: a.note ?? undefined,
             }))
           : defaultCatalog.addons,
+      content:
+        !content.error && content.data
+          ? Object.fromEntries(content.data.map((r) => [r.key, r.value as string]))
+          : {},
     };
   } catch (error) {
     console.error("Could not load the catalogue from Supabase, using defaults", error);
