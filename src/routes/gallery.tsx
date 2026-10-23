@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/components/PageHero";
-import { gallery } from "@/data/gallery";
+import { SectionHeading } from "@/components/SectionHeading";
+import { gallery, results } from "@/data/gallery";
 import { stagger } from "@/lib/motion";
 import { pageHead } from "@/lib/seo";
 
@@ -50,6 +51,39 @@ function GalleryPage() {
               </figure>
             ))}
           </div>
+
+          <div className="mt-24">
+            <SectionHeading
+              eyebrow="Results so far"
+              title="Before and after"
+              lead="Real interiors from our work: the car as it arrived on the left, and after our detail on the right."
+            />
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              {results.map((item, i) => (
+                <figure
+                  key={item.caption}
+                  style={stagger(i % 2)}
+                  className={`reveal overflow-hidden rounded-sm border border-border bg-card ${i === 0 ? "md:col-span-2" : ""}`}
+                >
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    width={1536}
+                    height={1024}
+                    loading="lazy"
+                    className="h-auto w-full"
+                  />
+                  <figcaption className="flex items-center justify-between border-t border-border px-5 py-3 font-heading text-lg uppercase tracking-wide text-foreground">
+                    {item.caption}
+                    <span className="font-mono text-[11px] tracking-[0.2em] text-muted-foreground">
+                      BEFORE / AFTER
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+
           <div className="reveal mt-16 flex flex-col items-start justify-between gap-6 border-t border-border pt-10 sm:flex-row sm:items-center">
             <p className="max-w-md text-lg text-muted-foreground">
               Want results like these on your own vehicle?
