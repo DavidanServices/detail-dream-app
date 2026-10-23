@@ -19,8 +19,9 @@ export const Route = createFileRoute("/admin")({
 const nav = [
   { to: "/admin", label: "Dashboard", exact: true },
   { to: "/admin/requests", label: "Requests", exact: false },
-  { to: "/admin/pricing", label: "Pricing", exact: false },
+  { to: "/admin/pricing", label: "Prices", exact: false },
   { to: "/admin/ppf", label: "PPF", exact: false },
+  { to: "/admin/offer", label: "Offer", exact: false },
   { to: "/admin/content", label: "Page texts", exact: false },
 ] as const;
 

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import { ChevronDown, ExternalLink, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import { HighlightsEditor } from "@/components/admin/HighlightsEditor";
 import { Textarea } from "@/components/ui/textarea";
 import type { Highlight } from "@/data/icons";
+import { appearsOn, packagePage } from "@/lib/admin-sections";
 import { supabase } from "@/lib/supabase";
 
 export type AdminPackage = {
@@ -74,39 +75,14 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
   const [featured, setFeatured] = useState(pkg.featured);
   const [active, setActive] = useState(pkg.active);
   const [order, setOrder] = useState(String(pkg.sort_order));
-  const [prices, setPrices] = useState<Record<string, string>>(() =>
-    Object.fromEntries(pkg.package_prices.map((p) => [p.vehicle_type_id, String(Number(p.price))])),
-  );
+  // Vehicle types this package has a price for: only those can have their own card text.
+  const pricedIds = new Set(pkg.package_prices.map((p) => p.vehicle_type_id));
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin", "pricing"] });
 
   const save = useMutation({
     mutationFn: async () => {
       if (!name.trim()) throw new Error("The package needs a name.");
-      const toUpsert: {
-        package_id: string;
-        vehicle_type_id: string;
-        price: number;
-        title: string | null;
-        blurb: string | null;
-      }[] = [];
-      const toDelete: string[] = [];
-      for (const v of vehicleTypes) {
-        const raw = (prices[v.id] ?? "").trim();
-        if (raw === "") {
-          toDelete.push(v.id);
-          continue;
-        }
-        const price = Number(raw);
-        if (!Number.isFinite(price) || price < 0) throw new Error(`Invalid price for ${v.label}.`);
-        toUpsert.push({
-          package_id: pkg.id,
-          vehicle_type_id: v.id,
-          price,
-          title: tiers[v.id]?.title.trim() || null,
-          blurb: tiers[v.id]?.blurb.trim() || null,
-        });
-      }
       const cleanItems = items
         .map((item) => ({ icon: item.icon, title: item.title.trim(), text: item.text.trim() }))
         .filter((item) => item.text);
@@ -126,16 +102,16 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
         })
         .eq("id", pkg.id);
       if (error) throw error;
-      if (toUpsert.length) {
-        const { error: e } = await supabase!.from("package_prices").upsert(toUpsert);
-        if (e) throw e;
-      }
-      if (toDelete.length) {
+      // Prices are edited in the price list; here only the card texts of existing prices change.
+      for (const v of vehicleTypes.filter((x) => pricedIds.has(x.id))) {
         const { error: e } = await supabase!
           .from("package_prices")
-          .delete()
+          .update({
+            title: tiers[v.id]?.title.trim() || null,
+            blurb: tiers[v.id]?.blurb.trim() || null,
+          })
           .eq("package_id", pkg.id)
-          .in("vehicle_type_id", toDelete);
+          .eq("vehicle_type_id", v.id);
         if (e) throw e;
       }
     },
@@ -158,163 +134,220 @@ export function PackageEditor({ pkg, vehicleTypes }: Props) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const page = packagePage(pkg.id);
+  const prices = vehicleTypes
+    .filter((v) => pricedIds.has(v.id))
+    .map((v) => `£${Number(pkg.package_prices.find((x) => x.vehicle_type_id === v.id)?.price)}`)
+    .join(" · ");
+
   return (
-    <div
-      className={`border bg-card p-5 ${active ? "border-border" : "border-dashed border-border opacity-80"}`}
+    <details
+      className={`group border bg-card ${active ? "border-border" : "border-dashed border-border opacity-80"}`}
     >
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 flex-1 space-y-1">
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={80}
-            className="h-auto border-0 bg-transparent px-0 font-heading text-2xl shadow-none focus-visible:ring-0"
-            aria-label="Package name"
-          />
-          <p className="font-mono text-[11px] text-muted-foreground">id: {pkg.id}</p>
+      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-1 p-5 [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0 flex-1">
+          <p className="font-heading text-2xl">{name || pkg.name}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {appearsOn(pkg.id, featured).join(" · ")}
+          </p>
         </div>
-        <div className="flex flex-wrap items-center gap-5 text-sm">
-          <label className="flex items-center gap-2">
-            <Switch checked={active} onCheckedChange={setActive} /> Visible
-          </label>
-          <label className="flex items-center gap-2">
-            <Switch checked={popular} onCheckedChange={setPopular} /> Most popular
-          </label>
-          <label className="flex items-center gap-2">
-            <Switch checked={featured} onCheckedChange={setFeatured} /> On home page
-          </label>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {prices && <span className="text-muted-foreground">{prices}</span>}
+          {!active && (
+            <span className="rounded-sm border border-border px-2 py-0.5 text-muted-foreground">
+              Hidden
+            </span>
+          )}
+          {popular && (
+            <span className="rounded-sm bg-primary/15 px-2 py-0.5 text-primary">Most popular</span>
+          )}
+          <span className="inline-flex items-center gap-1 font-medium text-primary">
+            Edit <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+          </span>
         </div>
-      </div>
+      </summary>
 
-      <div className="mt-5 grid gap-6 lg:grid-cols-2">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Description</Label>
-            <Textarea
-              rows={2}
-              maxLength={300}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>
-              Short tagline{" "}
-              <span className="text-muted-foreground">(optional, used in wide home rows)</span>
-            </Label>
-            <Input maxLength={120} value={tagline} onChange={(e) => setTagline(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label>What&apos;s included</Label>
-            <HighlightsEditor items={items} onChange={setItems} />
-            <p className="text-xs text-muted-foreground">
-              Shown as the list on each package card and as the icon grid on the Interior and
-              Exterior pages.
-            </p>
-          </div>
+      <div className="border-t border-border p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">
+            Prices are changed in the <strong>Price list</strong> at the top of this page. Here you
+            edit the texts and where this package is shown.
+          </p>
+          <a
+            href={page.href}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+          >
+            See it on the site <ExternalLink className="h-3 w-3" />
+          </a>
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <p className="mb-2 text-sm font-medium">Price per vehicle type (£)</p>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {vehicleTypes.map((v) => (
-                <div key={v.id} className="space-y-1">
-                  <Label htmlFor={`${pkg.id}-${v.id}`} className="text-xs text-muted-foreground">
+        <div className="mt-5 grid gap-6 lg:grid-cols-2">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor={`${pkg.id}-name`}>Package name</Label>
+              <Input
+                id={`${pkg.id}-name`}
+                value={name}
+                maxLength={80}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea
+                rows={2}
+                maxLength={300}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                The short text under the name on the package cards.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label>
+                Short tagline <span className="text-muted-foreground">(optional)</span>
+              </Label>
+              <Input maxLength={120} value={tagline} onChange={(e) => setTagline(e.target.value)} />
+              <p className="text-xs text-muted-foreground">
+                Used instead of the description on the wide rows of the home page.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-3 border border-border bg-background/50 p-4">
+              <p className="text-sm font-medium">Where and how it is shown</p>
+              <label className="flex items-start gap-3 text-sm">
+                <Switch checked={active} onCheckedChange={setActive} className="mt-0.5" />
+                <span>
+                  Visible on the website
+                  <span className="block text-xs text-muted-foreground">
+                    Off hides it everywhere (pages, home page, booking form).
+                  </span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 text-sm">
+                <Switch checked={popular} onCheckedChange={setPopular} className="mt-0.5" />
+                <span>
+                  &ldquo;Most popular&rdquo; tag
+                  <span className="block text-xs text-muted-foreground">
+                    Adds a red tag and a highlighted border on its card.
+                  </span>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 text-sm">
+                <Switch checked={featured} onCheckedChange={setFeatured} className="mt-0.5" />
+                <span>
+                  Large card on the home page
+                  <span className="block text-xs text-muted-foreground">
+                    On: big card with its own price. Off: a slim row lower on the page.
+                  </span>
+                </span>
+              </label>
+              <div className="flex items-center gap-3 text-sm">
+                <Input
+                  id={`${pkg.id}-order`}
+                  inputMode="numeric"
+                  className="w-20"
+                  value={order}
+                  onChange={(e) => setOrder(e.target.value)}
+                  aria-label="Display order"
+                />
+                <label htmlFor={`${pkg.id}-order`}>
+                  Display order
+                  <span className="block text-xs text-muted-foreground">
+                    1 is shown first, then 2, 3 and so on.
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 space-y-2">
+          <Label>What&apos;s included</Label>
+          <HighlightsEditor items={items} onChange={setItems} />
+          <p className="text-xs text-muted-foreground">
+            Each line is a tick on the package cards. On the Interior and Exterior pages the lines
+            with a short title also appear as the icon grid.
+          </p>
+        </div>
+
+        <details className="mt-6 border border-border bg-background/50 p-3">
+          <summary className="cursor-pointer text-sm font-medium">
+            Card title and text per vehicle type (optional)
+          </summary>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Used on the Interior and Exterior pages, where each vehicle type has its own card.
+            Vehicle types without a price are not listed here.
+          </p>
+          <div className="mt-3 space-y-4">
+            {vehicleTypes
+              .filter((v) => pricedIds.has(v.id))
+              .map((v) => (
+                <div key={v.id} className="space-y-2">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">
                     {v.label}
-                    {!v.active && " (hidden)"}
-                  </Label>
+                  </p>
                   <Input
-                    id={`${pkg.id}-${v.id}`}
-                    inputMode="decimal"
-                    placeholder="Not offered"
-                    value={prices[v.id] ?? ""}
-                    onChange={(e) => setPrices((prev) => ({ ...prev, [v.id]: e.target.value }))}
+                    value={tiers[v.id]?.title ?? ""}
+                    maxLength={80}
+                    placeholder={`Card title, e.g. ${v.label} ${name}`}
+                    onChange={(e) =>
+                      setTiers((prev) => ({
+                        ...prev,
+                        [v.id]: { title: e.target.value, blurb: prev[v.id]?.blurb ?? "" },
+                      }))
+                    }
+                    aria-label={`${v.label} card title`}
+                  />
+                  <Textarea
+                    rows={2}
+                    maxLength={300}
+                    value={tiers[v.id]?.blurb ?? ""}
+                    placeholder="Short description for this vehicle type"
+                    onChange={(e) =>
+                      setTiers((prev) => ({
+                        ...prev,
+                        [v.id]: { title: prev[v.id]?.title ?? "", blurb: e.target.value },
+                      }))
+                    }
+                    aria-label={`${v.label} card description`}
                   />
                 </div>
               ))}
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Leave a price empty to hide that vehicle type for this package.
-            </p>
-            <details className="mt-4 border border-border bg-background/50 p-3">
-              <summary className="cursor-pointer text-sm font-medium">
-                Card text per vehicle type (optional)
-              </summary>
-              <div className="mt-3 space-y-4">
-                {vehicleTypes.map((v) => (
-                  <div key={v.id} className="space-y-2">
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground">
-                      {v.label}
-                    </p>
-                    <Input
-                      value={tiers[v.id]?.title ?? ""}
-                      maxLength={80}
-                      placeholder={`Card title, e.g. ${v.label} ${name}`}
-                      onChange={(e) =>
-                        setTiers((prev) => ({
-                          ...prev,
-                          [v.id]: { title: e.target.value, blurb: prev[v.id]?.blurb ?? "" },
-                        }))
-                      }
-                      aria-label={`${v.label} card title`}
-                    />
-                    <Textarea
-                      rows={2}
-                      maxLength={300}
-                      value={tiers[v.id]?.blurb ?? ""}
-                      placeholder="Short description for this vehicle type"
-                      onChange={(e) =>
-                        setTiers((prev) => ({
-                          ...prev,
-                          [v.id]: { title: prev[v.id]?.title ?? "", blurb: e.target.value },
-                        }))
-                      }
-                      aria-label={`${v.label} card description`}
-                    />
-                  </div>
-                ))}
-              </div>
-            </details>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor={`${pkg.id}-order`}>Display order</Label>
-            <Input
-              id={`${pkg.id}-order`}
-              inputMode="numeric"
-              className="w-24"
-              value={order}
-              onChange={(e) => setOrder(e.target.value)}
-            />
-          </div>
+        </details>
+
+        <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {pkg.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  The package and all its prices are removed from the website. To hide it
+                  temporarily, switch &ldquo;Visible on the website&rdquo; off instead.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => remove.mutate()}>Delete</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <Button onClick={() => save.mutate()} disabled={save.isPending}>
+            {save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save {name}
+          </Button>
         </div>
       </div>
-
-      <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete {pkg.name}?</AlertDialogTitle>
-              <AlertDialogDescription>
-                The package and all its prices are removed from the website. To hide it temporarily,
-                switch Visible off instead.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => remove.mutate()}>Delete</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>
-          {save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save package
-        </Button>
-      </div>
-    </div>
+    </details>
   );
 }

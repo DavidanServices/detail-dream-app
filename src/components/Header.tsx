@@ -41,7 +41,18 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex shrink-0 items-center">
+          <Link
+            to="/"
+            className="flex shrink-0 items-center"
+            onClick={(e) => {
+              setMobileOpen(false);
+              // Already on the home page: the router does nothing, so scroll up ourselves.
+              if (pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+          >
             <img
               src="/logo.png"
               alt={`${site.name} logo`}

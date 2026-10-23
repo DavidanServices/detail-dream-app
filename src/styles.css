@@ -413,3 +413,21 @@
 ::view-transition-new(root) {
   z-index: 2;
 }
+
+/* Scrolling offer strip */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  animation: marquee 40s linear infinite;
+}
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}

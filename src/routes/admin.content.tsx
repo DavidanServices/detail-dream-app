@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { textFields } from "@/data/page-text";
+import { promoGroup, textFields } from "@/data/page-text";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/content")({ component: ContentPage });
@@ -60,7 +60,9 @@ function ContentForm({ saved }: { saved: Record<string, string> }) {
 
   const groups = useMemo(() => {
     const map = new Map<string, typeof textFields>();
-    for (const f of textFields) map.set(f.group, [...(map.get(f.group) ?? []), f]);
+    // The monthly offer has its own admin page.
+    for (const f of textFields.filter((x) => x.group !== promoGroup))
+      map.set(f.group, [...(map.get(f.group) ?? []), f]);
     return [...map.entries()];
   }, []);
 

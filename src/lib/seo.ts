@@ -35,3 +35,26 @@ export function pageHead({ title, description, path, ogTitle, ogDescription, jso
       : {}),
   };
 }
+
+// LocalBusiness data for Google. Built only from the business details in site.ts; opening hours
+// are left out until they are confirmed.
+export const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AutomotiveBusiness",
+  "@id": `${site.url}/#business`,
+  name: site.name,
+  description:
+    "Professional exterior and interior car detailing, ceramic coating and paint protection film.",
+  url: site.url,
+  image: `${site.url}${site.ogImage}`,
+  telephone: `+44${site.phone.replace(/\D/g, "").slice(1)}`,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: site.address.street,
+    addressLocality: site.address.locality,
+    postalCode: site.address.postcode,
+    addressCountry: "GB",
+  },
+  areaServed: ["Dunstable", "Luton", "Houghton Regis", "Leighton Buzzard", "Bedfordshire"],
+  priceRange: "££",
+};

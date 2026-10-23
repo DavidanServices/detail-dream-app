@@ -10,5 +10,7 @@
   "assets": { "directory": ".output/public", "binding": "ASSETS" },
   "no_bundle": true,
   "rules": [{ "type": "ESModule", "globs": ["**/*.mjs", "**/*.js"] }],
-  "build": { "command": "npm run build" }
+  "build": { "command": "npm run build" },
+  // Sender of the quote notification emails; the Resend key is a secret set in the dashboard.
+  "vars": { "QUOTE_EMAIL_FROM": "Davidan Services <website@davidan.co.uk>" }
 }

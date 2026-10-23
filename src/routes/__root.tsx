@@ -17,6 +17,8 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { RevealObserver } from "../components/RevealObserver";
 import { ContactFab } from "../components/ContactFab";
+import { PromoBar } from "../components/PromoBar";
+import { PromoContext, loadPromoContent, promoFrom } from "../lib/promo";
 
 function NotFoundComponent() {
   return (
@@ -80,6 +82,8 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: async () => ({ promoContent: await loadPromoContent() }),
+  staleTime: 60_000,
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -136,6 +140,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { promoContent } = Route.useLoaderData();
+  const promo = promoFrom(promoContent);
   const isAdmin = useRouterState({ select: (s) => s.location.pathname.startsWith("/admin") });
 
   return (
@@ -143,15 +149,18 @@ function RootComponent() {
       {isAdmin ? (
         <Outlet />
       ) : (
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">
-            <Outlet />
-          </main>
-          <Footer />
-          <RevealObserver />
-          <ContactFab />
-        </div>
+        <PromoContext.Provider value={promo}>
+          <div className="flex min-h-screen flex-col">
+            {promo && <PromoBar promo={promo} />}
+            <Header />
+            <main className="flex-1">
+              <Outlet />
+            </main>
+            <Footer />
+            <RevealObserver />
+            <ContactFab />
+          </div>
+        </PromoContext.Provider>
       )}
     </QueryClientProvider>
   );

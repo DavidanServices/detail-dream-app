@@ -3,15 +3,18 @@ const phone = "07773 456027";
 const digits = phone.replace(/\D/g, "");
 // UK numbers: drop the leading 0 and prefix the country code for tel: and WhatsApp links.
 const international = `44${digits.slice(1)}`;
-const addressLines = ["Cowbridge Farm, Bridle Way", "Dunstable LU5 6HS"] as const;
+const street = "Cowbridge Farm, Bridle Way";
+const locality = "Dunstable";
+const postcode = "LU5 6HS";
+const addressLines = [street, `${locality} ${postcode}`] as const;
 
 export const site = {
   name: "Davidan Services",
   url: "https://davidan.co.uk",
   locale: "en_GB",
   phone,
-  email: "contact@davidan.com",
-  address: { lines: addressLines },
+  email: "contact@davidan.co.uk",
+  address: { lines: addressLines, street, locality, postcode },
   // Add real profile URLs; icons only render for entries that exist.
   social: [] as { name: "Instagram" | "Facebook"; href: string }[],
   hours: ["Mon–Fri: 8am – 6pm", "Saturday: 9am – 4pm"],

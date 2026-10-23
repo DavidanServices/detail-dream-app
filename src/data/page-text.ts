@@ -13,6 +13,7 @@ const interior = "Interior page";
 const exterior = "Exterior page";
 const ppf = "PPF page";
 const company = "Company details (Privacy Policy and Terms)";
+export const promoGroup = "Monthly offer (strip at the top of the site)";
 const shared = "Shared (all detailing pages and the form)";
 
 export const textFields: TextField[] = [
@@ -255,7 +256,7 @@ export const textFields: TextField[] = [
     group: ppf,
     multiline: true,
     default:
-      "A clear, self-healing film applied to high-impact panels. It absorbs stone chips and light scratches while staying virtually invisible, helping your paintwork keep its finish.",
+      "A self-healing film applied to high-impact panels. Our clear PPF absorbs stone chips and light scratches while staying virtually invisible, helping your paintwork keep its finish. If you want a change of look, the same protection is also available in colour.",
   },
   {
     key: "ppf.sizes.title",
@@ -278,7 +279,7 @@ export const textFields: TextField[] = [
     group: ppf,
     multiline: true,
     default:
-      "A palette of gloss, satin and matte colours. Availability is confirmed when you request a quote.",
+      "The colours below are just a selection: we have a palette of 250 colours in gloss, satin and matte. Not sure which suits your car? Book a colour consultation and we'll go through the full palette with you.",
   },
   {
     key: "ppf.colors.note",
@@ -324,7 +325,7 @@ export const textFields: TextField[] = [
     key: "company.email",
     label: "Contact email for privacy and legal matters",
     group: company,
-    default: "contact@davidan.com",
+    default: "contact@davidan.co.uk",
   },
   {
     key: "terms.paymentTerms",
@@ -340,6 +341,36 @@ export const textFields: TextField[] = [
     group: company,
     default: "24 hours",
     hint: "Used in the sentence “at least … notice”.",
+  },
+
+  // ---- Monthly offer
+  {
+    key: "promo.enabled",
+    label: "Show the offer?",
+    group: promoGroup,
+    default: "no",
+    hint: "Type yes to show the strip at the top of every page, no to hide it.",
+  },
+  {
+    key: "promo.text",
+    label: "Offer message",
+    group: promoGroup,
+    default: "Halloween offer: 15% off all packages",
+    hint: "The text that scrolls across the strip.",
+  },
+  {
+    key: "promo.percent",
+    label: "Discount on all packages (%)",
+    group: promoGroup,
+    default: "15",
+    hint: "Prices on the website show this discount with the old price crossed out. Use 0 for no price change.",
+  },
+  {
+    key: "promo.ends",
+    label: "Last day of the offer",
+    group: promoGroup,
+    default: "",
+    hint: "Format YYYY-MM-DD, for example 2026-10-31. The offer switches itself off after this day. Leave empty for no end date.",
   },
 
   // ---- Shared

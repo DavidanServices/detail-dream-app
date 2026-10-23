@@ -12,7 +12,8 @@ import { ppfFromPrice } from "@/data/ppf";
 import { highlights, serviceLink, services } from "@/data/services";
 import { stagger } from "@/lib/motion";
 import { loadCatalog } from "@/lib/catalog";
-import { pageHead } from "@/lib/seo";
+import { promoPrice, usePromo } from "@/lib/promo";
+import { localBusinessJsonLd, pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   head: () =>
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/")({
       ogDescription:
         "Expert exterior and interior detailing, ceramic coating, and paint protection film.",
       path: "/",
+      jsonLd: localBusinessJsonLd,
     }),
   loader: () => loadCatalog(),
   staleTime: 60_000,
@@ -31,6 +33,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { packages, ppf } = Route.useLoaderData();
+  const promo = usePromo();
   const featuredPackages = packages.filter((pkg) => pkg.featured);
   const widePackages = [
     ...packages
@@ -38,7 +41,7 @@ function HomePage() {
       .map((pkg) => ({
         name: pkg.name,
         description: pkg.tagline ?? pkg.description,
-        price: `from ${gbp(lowestPrice(pkg))}`,
+        price: `from ${gbp(promoPrice(lowestPrice(pkg), promo))}`,
         cta: "Book bundle",
       })),
     {
@@ -105,7 +108,7 @@ function HomePage() {
             >
               <p className="label-tech">Packages from</p>
               <p className="mt-1 font-heading text-5xl text-foreground">
-                {gbp(cheapestPackagePrice(packages))}
+                {gbp(promoPrice(cheapestPackagePrice(packages), promo))}
               </p>
             </div>
           </div>
@@ -187,7 +190,7 @@ function HomePage() {
                 >
                   starting from
                 </p>
-                <p className="font-heading text-6xl">{gbp(lowestPrice(pkg))}</p>
+                <p className="font-heading text-6xl">{gbp(promoPrice(lowestPrice(pkg), promo))}</p>
                 <Link
                   to="/contact"
                   search={{ service: pkg.name }}

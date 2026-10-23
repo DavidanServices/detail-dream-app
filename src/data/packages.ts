@@ -57,7 +57,7 @@ export const packages: Package[] = [
   {
     id: "exterior-interior",
     name: "Exterior + Interior",
-    prices: { hatchback: 185, saloon: 210, suv: 250 },
+    prices: { hatchback: 230, saloon: 290, suv: 340 },
     description: "Our most popular combo — a complete inside-and-out refresh.",
     features: [
       "Full exterior detail",
@@ -87,7 +87,7 @@ export const packages: Package[] = [
   {
     id: "complete",
     name: "The Complete Bundle",
-    prices: { hatchback: 310, saloon: 360, suv: 420 },
+    prices: { hatchback: 380, saloon: 450, suv: 520 },
     description: "Everything in one package: exterior, interior, and ceramic coating.",
     tagline: "Exterior + Interior + Ceramic Coating",
     features: [

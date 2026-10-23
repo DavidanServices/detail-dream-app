@@ -4,6 +4,7 @@ import { Send } from "lucide-react";
 import { addonPriceLabel, type Addon } from "@/data/addons";
 import { gbp, lowestPrice, type Package, type VehicleTypeInfo } from "@/data/packages";
 import { ppfFromPrice, type PpfSettings } from "@/data/ppf";
+import { promoPrice, usePromo } from "@/lib/promo";
 import { submitQuote } from "@/lib/quote";
 
 // Applied whenever `nonce` changes, so a pricing card can preselect the form without remounting it.
@@ -34,6 +35,7 @@ const NOT_SURE = "Not sure / Multiple services";
 export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclaimer }: Props) {
   // The dropdown stores the service NAME; its label shows the price for the chosen vehicle type
   // (or the lowest price until a vehicle is chosen), so the list always matches the catalogue.
+  const promo = usePromo();
   const serviceNames = useMemo(
     () => [...packages.map((pkg) => pkg.name), ppf.name, NOT_SURE],
     [packages, ppf],
@@ -97,14 +99,14 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
   const basePrice = activePackage && vehicleId ? activePackage.prices[vehicleId] : undefined;
   const estimate =
     basePrice !== undefined
-      ? basePrice + selectedAddons.reduce((sum, a) => sum + a.price, 0)
+      ? promoPrice(basePrice, promo) + selectedAddons.reduce((sum, a) => sum + a.price, 0)
       : undefined;
 
   const serviceLabel = (name: string) => {
     const pkg = packages.find((p) => p.name === name);
     if (pkg) {
       const forVehicle = vehicleId ? pkg.prices[vehicleId] : undefined;
-      return `${name} — from ${gbp(forVehicle ?? lowestPrice(pkg))}`;
+      return `${name} — from ${gbp(promoPrice(forVehicle ?? lowestPrice(pkg), promo))}`;
     }
     if (name === ppf.name) {
       const from = ppfFromPrice(ppf);
@@ -132,7 +134,7 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
       phone: String(form.get("phone") ?? ""),
       service,
       vehicle: vehicle?.label ?? "",
-      message,
+      message: promo ? `${message}${message ? "\n\n" : ""}Active offer: ${promo.text}` : message,
       preferredDate: date,
       addons: selectedAddons.map((a) => ({ id: a.id, name: a.name })),
     });
@@ -297,6 +299,9 @@ export function QuoteForm({ packages, ppf, vehicleTypes, addons, preset, disclai
             {selectedAddons.length > 0 &&
               ` + ${selectedAddons.map((a) => a.name.toLowerCase()).join(", ")}`}
             : <span className="text-primary">from {gbp(estimate)}</span>
+            {promo && promo.percent > 0 && (
+              <span className="ml-2 text-xs text-muted-foreground">(offer applied)</span>
+            )}
           </p>
           <p className="mt-1 text-muted-foreground">{disclaimer}</p>
         </div>

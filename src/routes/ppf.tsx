@@ -38,6 +38,7 @@ function PpfPage() {
   const t = (key: string) => text(content, key);
   const [vehicle, setVehicle] = useState<string | undefined>();
   const [color, setColor] = useState<PpfColor | undefined>();
+  const [consultation, setConsultation] = useState(false);
   const [nonce, setNonce] = useState(0);
 
   // Choosing a size or a colour fills the quote form below; the visitor can still edit everything.
@@ -46,11 +47,13 @@ function PpfPage() {
       nonce,
       service: ppf.name,
       vehicle,
-      message: color
-        ? `Preferred colour: ${color.name} (${finishLabels[color.finish]}).`
-        : undefined,
+      message: consultation
+        ? "I'd like to book a colour consultation to see the full 250-colour palette."
+        : color
+          ? `Preferred colour: ${color.name} (${finishLabels[color.finish]}).`
+          : undefined,
     }),
-    [nonce, ppf.name, vehicle, color],
+    [nonce, ppf.name, vehicle, color, consultation],
   );
 
   const tiers = ppf.tiers.filter((tier) => vehicleTypes.some((v) => v.id === tier.vehicleTypeId));
@@ -122,9 +125,26 @@ function PpfPage() {
               selectedId={color?.id}
               onSelect={(c) => {
                 setColor(c);
+                setConsultation(false);
                 setNonce((n) => n + 1);
               }}
             />
+          </div>
+          <div className="reveal mt-10 flex flex-col items-start gap-4 border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-xl text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">250 colours available.</span> See the
+              full palette in person and get advice on the best finish for your car.
+            </p>
+            <a
+              href="#book"
+              onClick={() => {
+                setConsultation(true);
+                setNonce((n) => n + 1);
+              }}
+              className="btn-primary bg-primary px-6 py-3 text-xs font-semibold text-primary-foreground"
+            >
+              Book a colour consultation
+            </a>
           </div>
           <p className="reveal mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted-foreground">
             <span>{t("ppf.colors.note")}</span>

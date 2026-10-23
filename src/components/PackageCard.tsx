@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { lowestPrice, type Package, type VehicleTypeInfo } from "@/data/packages";
+import { promoPrice, usePromo } from "@/lib/promo";
 
 export function PackageCard({
   pkg,
@@ -15,7 +16,9 @@ export function PackageCard({
   const offered = vehicleTypes.filter((v) => pkg.prices[v.id] !== undefined);
   const [vehicle, setVehicle] = useState<string>(offered[0]?.id ?? "");
   const vehicleLabel = offered.find((v) => v.id === vehicle)?.label ?? "";
-  const lowest = lowestPrice(pkg);
+  const promo = usePromo();
+  const fullPrice = open ? (pkg.prices[vehicle] ?? 0) : lowestPrice(pkg);
+  const shownPrice = promoPrice(fullPrice, promo);
 
   return (
     <div
@@ -34,9 +37,10 @@ export function PackageCard({
           key={open ? vehicle : "base"}
           className="flex items-baseline gap-2 duration-500 animate-in fade-in slide-in-from-bottom-3"
         >
-          <span className="font-heading text-4xl font-bold text-foreground">
-            £{open ? pkg.prices[vehicle] : lowest}
-          </span>
+          <span className="font-heading text-4xl font-bold text-foreground">£{shownPrice}</span>
+          {shownPrice < fullPrice && (
+            <span className="text-sm text-muted-foreground line-through">£{fullPrice}</span>
+          )}
           <span className="text-sm text-muted-foreground">
             {open ? vehicleLabel : "starting from"}
           </span>

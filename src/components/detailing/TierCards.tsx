@@ -2,6 +2,7 @@ import { ArrowRight, Check, Info } from "lucide-react";
 import type { Addon } from "@/data/addons";
 import { gbp, type Package, type VehicleTypeInfo } from "@/data/packages";
 import { stagger } from "@/lib/motion";
+import { promoPrice, usePromo } from "@/lib/promo";
 
 type Props = {
   pkg: Package;
@@ -27,11 +28,13 @@ export function TierCards({
   onChoose,
   disclaimer,
 }: Props) {
+  const promo = usePromo();
   return (
     <>
       <div className="mt-14 grid gap-6 md:grid-cols-3">
         {tiers.map((v, i) => {
-          const price = pkg.prices[v.id] ?? 0;
+          const fullPrice = pkg.prices[v.id] ?? 0;
+          const price = promoPrice(fullPrice, promo);
           const title = titleFor(v);
           const blurb = blurbFor?.(v);
           return (
@@ -46,6 +49,14 @@ export function TierCards({
               </p>
               <h3 className="mt-5 font-heading text-3xl text-card-foreground">{title}</h3>
               <p className="mt-6 text-sm uppercase tracking-[0.18em] text-muted-foreground">From</p>
+              {price < fullPrice && (
+                <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="line-through">{gbp(fullPrice)}</span>
+                  <span className="rounded-sm bg-primary px-1.5 py-0.5 text-[11px] font-bold text-primary-foreground">
+                    -{promo?.percent}%
+                  </span>
+                </p>
+              )}
               <p className="font-heading text-7xl leading-none text-foreground">{gbp(price)}</p>
               {selectedAddon && (
                 <p className="mt-2 text-sm text-primary">
