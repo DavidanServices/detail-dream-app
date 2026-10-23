@@ -3,17 +3,26 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { PromoStrip } from "@/components/PromoStrip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { text } from "@/data/page-text";
-import { loadPromoContent, promoPrice } from "@/lib/promo";
+import { promoThemes, themeById, type PromoThemeId } from "@/data/promo-themes";
+import { loadPromoContent, promoPrice, type Promo } from "@/lib/promo";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/offer")({ component: OfferPage });
 
-const KEYS = ["promo.enabled", "promo.text", "promo.percent", "promo.ends"] as const;
+const KEYS = [
+  "promo.enabled",
+  "promo.text",
+  "promo.percent",
+  "promo.ends",
+  "promo.theme",
+  "promo.snow",
+] as const;
 
 function OfferPage() {
   const saved = useQuery({ queryKey: ["admin", "promo"], queryFn: loadPromoContent });
@@ -22,9 +31,10 @@ function OfferPage() {
       <div>
         <h1 className="font-heading text-4xl">Monthly offer</h1>
         <p className="mt-2 max-w-3xl text-muted-foreground">
-          A red strip at the very top of every page of the website, with the offer scrolling across
-          it. If you set a discount, every package price on the website shows the old price crossed
-          out and the new price, and the booking form uses it too.
+          A strip at the very top of every page of the website, with the offer scrolling across it.
+          Pick a look (Christmas, Black Friday...), write the message and set a discount. If you set
+          a discount, every package price on the website shows the old price crossed out and the new
+          price, and the booking form uses it too.
         </p>
       </div>
       {saved.isLoading && <p className="text-sm text-muted-foreground">Loading...</p>}
@@ -40,8 +50,21 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
   const [message, setMessage] = useState(text(saved, "promo.text"));
   const [percent, setPercent] = useState(text(saved, "promo.percent"));
   const [endsOn, setEndsOn] = useState(text(saved, "promo.ends"));
+  const [themeId, setThemeId] = useState<PromoThemeId>(themeById(text(saved, "promo.theme")).id);
+  const [snow, setSnow] = useState(
+    saved["promo.snow"] ? /^(yes|on|true|1)$/i.test(saved["promo.snow"]) : themeById(themeId).snow,
+  );
 
   const pct = Math.min(90, Math.max(0, Math.round(Number(percent) || 0)));
+
+  // Picking a look also suggests its message and snow setting, unless the message was written by hand.
+  const chooseTheme = (id: PromoThemeId) => {
+    const previous = themeById(themeId);
+    const next = themeById(id);
+    if (!message.trim() || message === previous.message(pct)) setMessage(next.message(pct));
+    setSnow(next.snow);
+    setThemeId(id);
+  };
 
   const save = useMutation({
     mutationFn: async () => {
@@ -53,6 +76,8 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
         "promo.text": message.trim(),
         "promo.percent": String(pct),
         "promo.ends": endsOn.trim(),
+        "promo.theme": themeId,
+        "promo.snow": snow ? "yes" : "no",
       };
       for (const key of KEYS) {
         const value = values[key];
@@ -75,9 +100,13 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const endLabel = endsOn
-    ? new Date(`${endsOn}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "long" })
-    : "";
+  const preview: Promo = {
+    text: message.trim() || "Your offer message",
+    percent: pct,
+    endsOn,
+    theme: themeId,
+    snow,
+  };
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
@@ -92,6 +121,44 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
           </span>
         </label>
 
+        <div className="space-y-3">
+          <Label>Look of the strip</Label>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {promoThemes.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => chooseTheme(t.id)}
+                aria-pressed={themeId === t.id}
+                className={`overflow-hidden border text-left transition-colors ${
+                  themeId === t.id ? "border-primary ring-2 ring-primary/40" : "border-border"
+                }`}
+              >
+                <span
+                  className="block px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em]"
+                  style={{ background: t.bg, color: t.fg, borderBottom: `2px solid ${t.accent}` }}
+                >
+                  {t.separator} {t.label} {t.separator}
+                </span>
+                <span className="block px-3 py-1.5 text-xs text-muted-foreground">
+                  {t.snow ? "With falling snow" : "Plain"}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <label className="flex items-start gap-3">
+          <Switch checked={snow} onCheckedChange={setSnow} className="mt-0.5" />
+          <span className="text-sm">
+            <span className="font-medium">Falling snowflakes</span>
+            <span className="block text-muted-foreground">
+              Snowflakes drift down from the strip. Works with any look; it is on by default for
+              Christmas.
+            </span>
+          </span>
+        </label>
+
         <div className="space-y-2">
           <Label htmlFor="offer-text">Offer message</Label>
           <Input
@@ -99,9 +166,18 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
             maxLength={140}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Halloween offer: 15% off all packages"
+            placeholder={themeById(themeId).message(pct)}
           />
-          <p className="text-xs text-muted-foreground">The text that scrolls across the strip.</p>
+          <p className="text-xs text-muted-foreground">
+            The text that scrolls across the strip.{" "}
+            <button
+              type="button"
+              onClick={() => setMessage(themeById(themeId).message(pct))}
+              className="font-medium text-primary underline"
+            >
+              Use the suggested message for {themeById(themeId).label}
+            </button>
+          </p>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2">
@@ -143,19 +219,14 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
 
       <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <p className="text-sm font-medium">Preview</p>
-        <div className="overflow-hidden border border-border bg-primary text-primary-foreground">
-          <p className="truncate px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.16em]">
-            {message || "Your offer message"}
-            {endLabel && ` · Ends ${endLabel}`}
-          </p>
+        <div className="h-28">
+          <PromoStrip promo={preview} />
         </div>
         {pct > 0 && (
           <div className="border border-border bg-card p-4 text-sm">
             <p className="text-muted-foreground">Example price on the website</p>
             <p className="mt-1 flex items-baseline gap-2">
-              <span className="font-heading text-3xl">
-                £{promoPrice(230, { text: "", endsOn: "", percent: pct })}
-              </span>
+              <span className="font-heading text-3xl">£{promoPrice(230, preview)}</span>
               <span className="text-muted-foreground line-through">£230</span>
               <span className="rounded-sm bg-primary px-1.5 py-0.5 text-[11px] font-bold text-primary-foreground">
                 -{pct}%

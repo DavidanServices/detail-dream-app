@@ -1,14 +1,18 @@
 import { createContext, useContext } from "react";
 import { text } from "@/data/page-text";
+import { themeById, type PromoThemeId } from "@/data/promo-themes";
 import { supabase } from "@/lib/supabase";
 
-// The monthly offer is managed in /admin > Page texts ("Monthly offer"). It is stored in site_content
-// like every other text, so it needs no extra table.
+// The monthly offer is managed in /admin > Offer. It is stored in site_content like every other
+// text, so it needs no extra table.
 export type Promo = {
   text: string;
   percent: number;
   /** Last day of the offer, YYYY-MM-DD, or "" for no end date. */
   endsOn: string;
+  theme: PromoThemeId;
+  /** Falling snowflakes over the strip. */
+  snow: boolean;
 };
 
 export async function loadPromoContent(): Promise<Record<string, string>> {
@@ -42,7 +46,11 @@ export function promoFrom(content: Record<string, string>, now = new Date()): Pr
     90,
     Math.max(0, Math.round(Number(text(content, "promo.percent")) || 0)),
   );
-  return { text: message, percent, endsOn };
+  const theme = themeById(text(content, "promo.theme").trim());
+  // Snow follows the theme unless the admin chose explicitly.
+  const snowSetting = content["promo.snow"]?.trim();
+  const snow = snowSetting ? /^(yes|on|true|1)$/i.test(snowSetting) : theme.snow;
+  return { text: message, percent, endsOn, theme: theme.id, snow };
 }
 
 /** Price after the offer's percentage discount, rounded to whole pounds. */

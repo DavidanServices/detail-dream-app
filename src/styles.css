@@ -431,3 +431,27 @@
     animation: none;
   }
 }
+
+/* Snowflakes falling from the offer strip */
+@keyframes flake-fall {
+  0% {
+    transform: translate3d(0, -14px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(var(--drift, 12px), 120px, 0) rotate(300deg);
+    opacity: 0;
+  }
+}
+.flake {
+  animation: flake-fall var(--dur, 6s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flake {
+    display: none;
+  }
+}

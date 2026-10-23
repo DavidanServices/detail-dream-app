@@ -373,6 +373,13 @@ export const textFields: TextField[] = [
     hint: "Format YYYY-MM-DD, for example 2026-10-31. The offer switches itself off after this day. Leave empty for no end date.",
   },
 
+  {
+    key: "promo.theme",
+    label: "Look of the strip",
+    group: promoGroup,
+    default: "brand",
+  },
+
   // ---- Shared
   {
     key: "pricing.disclaimer",
