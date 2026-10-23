@@ -18,6 +18,7 @@ import { gbp, highlightsOf } from "@/data/packages";
 import { ppfFromPrice } from "@/data/ppf";
 import { telHref } from "@/data/site";
 import { loadCatalog } from "@/lib/catalog";
+import { promoPrice, usePromo } from "@/lib/promo";
 import { detailingHead } from "@/lib/detailing-seo";
 import { tierBlurb, tierTitle } from "@/lib/tiers";
 
@@ -43,6 +44,7 @@ export const Route = createFileRoute("/exterior-detailing")({
 
 function ExteriorPage() {
   const { packages, ppf, vehicleTypes, addons, content } = Route.useLoaderData();
+  const promo = usePromo();
   const t = (key: string) => text(content, key);
   const pkg = packages.find((p) => p.id === EXTERIOR_PACKAGE_ID);
   const extra = addons.find((a) => a.packageId === EXTERIOR_PACKAGE_ID);
@@ -70,7 +72,7 @@ function ExteriorPage() {
           ...(pkg
             ? tiers.map((v) => ({
                 label: title(v).split(" ")[0] ?? v.label,
-                value: gbp(pkg.prices[v.id] ?? 0),
+                value: gbp(promoPrice(pkg.prices[v.id] ?? 0, promo)),
               }))
             : []),
           ...(extra ? [{ label: extra.name, value: addonPriceLabel(extra), accent: true }] : []),

@@ -2,7 +2,7 @@ import { ArrowRight, Check, Info } from "lucide-react";
 import type { Addon } from "@/data/addons";
 import { gbp, type Package, type VehicleTypeInfo } from "@/data/packages";
 import { stagger } from "@/lib/motion";
-import { promoPrice, usePromo } from "@/lib/promo";
+import { promoPrice, promoWas, usePromo } from "@/lib/promo";
 
 type Props = {
   pkg: Package;
@@ -33,8 +33,9 @@ export function TierCards({
     <>
       <div className="mt-14 grid gap-6 md:grid-cols-3">
         {tiers.map((v, i) => {
-          const fullPrice = pkg.prices[v.id] ?? 0;
-          const price = promoPrice(fullPrice, promo);
+          const listPrice = pkg.prices[v.id] ?? 0;
+          const price = promoPrice(listPrice, promo);
+          const fullPrice = promoWas(listPrice, promo) ?? price;
           const title = titleFor(v);
           const blurb = blurbFor?.(v);
           return (
@@ -55,6 +56,7 @@ export function TierCards({
                   <span className="rounded-sm bg-primary px-1.5 py-0.5 text-[11px] font-bold text-primary-foreground">
                     -{promo?.percent}%
                   </span>
+                  <span className="font-medium text-primary">Save {gbp(fullPrice - price)}</span>
                 </p>
               )}
               <p className="font-heading text-7xl leading-none text-foreground">{gbp(price)}</p>

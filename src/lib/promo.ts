@@ -13,6 +13,12 @@ export type Promo = {
   theme: PromoThemeId;
   /** Falling snowflakes over the strip. */
   snow: boolean;
+  /**
+   * "take": the percentage is taken off the prices in the price list.
+   * "already": the listed prices are already the reduced ones, so the website shows a higher
+   * original price crossed out and keeps the listed price.
+   */
+  mode: "take" | "already";
 };
 
 export async function loadPromoContent(): Promise<Record<string, string>> {
@@ -50,12 +56,21 @@ export function promoFrom(content: Record<string, string>, now = new Date()): Pr
   // Snow follows the theme unless the admin chose explicitly.
   const snowSetting = content["promo.snow"]?.trim();
   const snow = snowSetting ? /^(yes|on|true|1)$/i.test(snowSetting) : theme.snow;
-  return { text: message, percent, endsOn, theme: theme.id, snow };
+  const mode = text(content, "promo.mode").trim() === "already" ? "already" : "take";
+  return { text: message, percent, endsOn, theme: theme.id, snow, mode };
 }
 
-/** Price after the offer's percentage discount, rounded to whole pounds. */
+/** The price a customer pays: the listed price, minus the discount in "take" mode. */
 export const promoPrice = (price: number, promo: Promo | null) =>
-  promo && promo.percent > 0 ? Math.round((price * (100 - promo.percent)) / 100) : price;
+  promo && promo.percent > 0 && promo.mode === "take"
+    ? Math.round((price * (100 - promo.percent)) / 100)
+    : price;
+
+/** The crossed-out original price to show next to the price, or null when there is no discount. */
+export const promoWas = (price: number, promo: Promo | null): number | null => {
+  if (!promo || promo.percent <= 0) return null;
+  return promo.mode === "already" ? Math.round(price / (1 - promo.percent / 100)) : price;
+};
 
 export const PromoContext = createContext<Promo | null>(null);
 export const usePromo = () => useContext(PromoContext);

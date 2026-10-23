@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { lowestPrice, type Package, type VehicleTypeInfo } from "@/data/packages";
-import { promoPrice, usePromo } from "@/lib/promo";
+import { promoPrice, promoWas, usePromo } from "@/lib/promo";
 
 export function PackageCard({
   pkg,
@@ -17,8 +17,9 @@ export function PackageCard({
   const [vehicle, setVehicle] = useState<string>(offered[0]?.id ?? "");
   const vehicleLabel = offered.find((v) => v.id === vehicle)?.label ?? "";
   const promo = usePromo();
-  const fullPrice = open ? (pkg.prices[vehicle] ?? 0) : lowestPrice(pkg);
-  const shownPrice = promoPrice(fullPrice, promo);
+  const listPrice = open ? (pkg.prices[vehicle] ?? 0) : lowestPrice(pkg);
+  const shownPrice = promoPrice(listPrice, promo);
+  const fullPrice = promoWas(listPrice, promo) ?? shownPrice;
 
   return (
     <div
@@ -39,13 +40,21 @@ export function PackageCard({
         >
           <span className="font-heading text-4xl font-bold text-foreground">£{shownPrice}</span>
           {shownPrice < fullPrice && (
-            <span className="text-sm text-muted-foreground line-through">£{fullPrice}</span>
+            <>
+              <span className="text-sm text-muted-foreground line-through">£{fullPrice}</span>
+              <span className="rounded-sm bg-primary px-1.5 py-0.5 text-[11px] font-bold text-primary-foreground">
+                -{promo?.percent}%
+              </span>
+            </>
           )}
           <span className="text-sm text-muted-foreground">
             {open ? vehicleLabel : "starting from"}
           </span>
         </div>
       </div>
+      {shownPrice < fullPrice && (
+        <p className="-mt-1 text-sm font-medium text-primary">You save £{fullPrice - shownPrice}</p>
+      )}
 
       <div
         className={`grid transition-all duration-500 ease-out ${open ? "mt-4 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}

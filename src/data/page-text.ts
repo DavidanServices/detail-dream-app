@@ -374,6 +374,12 @@ export const textFields: TextField[] = [
   },
 
   {
+    key: "promo.mode",
+    label: "How the discount works",
+    group: promoGroup,
+    default: "take",
+  },
+  {
     key: "promo.theme",
     label: "Look of the strip",
     group: promoGroup,

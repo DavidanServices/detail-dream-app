@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { appearsOn } from "@/lib/admin-sections";
-import { promoPrice, type Promo } from "@/lib/promo";
+import { promoPrice, promoWas, type Promo } from "@/lib/promo";
 import { supabase } from "@/lib/supabase";
 
 type Props = { packages: AdminPackage[]; vehicleTypes: AdminVehicleType[]; promo: Promo | null };
@@ -120,7 +120,9 @@ export function PriceTable({ packages, vehicleTypes, promo }: Props) {
                 {vehicleTypes.map((v) => {
                   const raw = cell(p.id, v.id);
                   const n = Number(raw);
-                  const sale = raw !== "" && Number.isFinite(n) ? promoPrice(n, promo) : n;
+                  const valid = raw !== "" && Number.isFinite(n);
+                  const sale = valid ? promoPrice(n, promo) : n;
+                  const was = valid ? promoWas(n, promo) : null;
                   return (
                     <td key={v.id} className="px-2 py-3 align-top">
                       <div className="relative w-28">
@@ -142,7 +144,11 @@ export function PriceTable({ packages, vehicleTypes, promo }: Props) {
                         />
                       </div>
                       {promo && promo.percent > 0 && raw !== "" && Number.isFinite(n) && (
-                        <p className="mt-1 text-[11px] text-primary">Customers see £{sale}</p>
+                        <p className="mt-1 text-[11px] text-primary">
+                          {promo.mode === "already"
+                            ? `Shown with £${was} crossed out`
+                            : `Customers see £${sale}`}
+                        </p>
                       )}
                       {raw === "" && (
                         <p className="mt-1 text-[11px] text-muted-foreground">Not offered</p>

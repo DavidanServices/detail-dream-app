@@ -12,7 +12,7 @@ import { ppfFromPrice } from "@/data/ppf";
 import { highlights, serviceLink, services } from "@/data/services";
 import { stagger } from "@/lib/motion";
 import { loadCatalog } from "@/lib/catalog";
-import { promoPrice, usePromo } from "@/lib/promo";
+import { promoPrice, promoWas, usePromo } from "@/lib/promo";
 import { localBusinessJsonLd, pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -190,7 +190,25 @@ function HomePage() {
                 >
                   starting from
                 </p>
-                <p className="font-heading text-6xl">{gbp(promoPrice(lowestPrice(pkg), promo))}</p>
+                <p className="flex items-baseline gap-3">
+                  <span className="font-heading text-6xl">
+                    {gbp(promoPrice(lowestPrice(pkg), promo))}
+                  </span>
+                  {promoWas(lowestPrice(pkg), promo) !== null && (
+                    <span className="text-base line-through opacity-70">
+                      {gbp(promoWas(lowestPrice(pkg), promo) ?? 0)}
+                    </span>
+                  )}
+                </p>
+                {promoWas(lowestPrice(pkg), promo) !== null && (
+                  <p className="mt-1 text-sm font-semibold">
+                    Save{" "}
+                    {gbp(
+                      (promoWas(lowestPrice(pkg), promo) ?? 0) -
+                        promoPrice(lowestPrice(pkg), promo),
+                    )}
+                  </p>
+                )}
                 <Link
                   to="/contact"
                   search={{ service: pkg.name }}

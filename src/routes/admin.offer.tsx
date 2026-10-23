@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { text } from "@/data/page-text";
 import { promoThemes, themeById, type PromoThemeId } from "@/data/promo-themes";
-import { loadPromoContent, promoPrice, type Promo } from "@/lib/promo";
+import { loadPromoContent, promoPrice, promoWas, type Promo } from "@/lib/promo";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/offer")({ component: OfferPage });
@@ -22,6 +22,7 @@ const KEYS = [
   "promo.ends",
   "promo.theme",
   "promo.snow",
+  "promo.mode",
 ] as const;
 
 function OfferPage() {
@@ -55,6 +56,10 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
     saved["promo.snow"] ? /^(yes|on|true|1)$/i.test(saved["promo.snow"]) : themeById(themeId).snow,
   );
 
+  const [mode, setMode] = useState<Promo["mode"]>(
+    text(saved, "promo.mode") === "already" ? "already" : "take",
+  );
+
   const pct = Math.min(90, Math.max(0, Math.round(Number(percent) || 0)));
 
   // Picking a look also suggests its message and snow setting, unless the message was written by hand.
@@ -78,6 +83,7 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
         "promo.ends": endsOn.trim(),
         "promo.theme": themeId,
         "promo.snow": snow ? "yes" : "no",
+        "promo.mode": mode,
       };
       for (const key of KEYS) {
         const value = values[key];
@@ -106,6 +112,7 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
     endsOn,
     theme: themeId,
     snow,
+    mode,
   };
 
   return (
@@ -210,6 +217,39 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
           </div>
         </div>
 
+        <div className="space-y-3">
+          <Label>How should the discount work?</Label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                {
+                  id: "take",
+                  title: "Take the discount off my prices",
+                  text: "The customer pays the percentage less than the price in the price list. The list price is shown crossed out.",
+                },
+                {
+                  id: "already",
+                  title: "My prices are already reduced",
+                  text: "The prices in the price list stay exactly as they are. The website shows a higher original price crossed out, calculated from the percentage.",
+                },
+              ] as const
+            ).map((o) => (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => setMode(o.id)}
+                aria-pressed={mode === o.id}
+                className={`border p-4 text-left text-sm transition-colors ${
+                  mode === o.id ? "border-primary ring-2 ring-primary/40" : "border-border"
+                }`}
+              >
+                <span className="block font-medium">{o.title}</span>
+                <span className="mt-1 block text-xs text-muted-foreground">{o.text}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="flex justify-end border-t border-border pt-4">
           <Button onClick={() => save.mutate()} disabled={save.isPending}>
             {save.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save offer
@@ -224,10 +264,10 @@ function OfferForm({ saved }: { saved: Record<string, string> }) {
         </div>
         {pct > 0 && (
           <div className="border border-border bg-card p-4 text-sm">
-            <p className="text-muted-foreground">Example price on the website</p>
+            <p className="text-muted-foreground">Example: a package listed at £230</p>
             <p className="mt-1 flex items-baseline gap-2">
               <span className="font-heading text-3xl">£{promoPrice(230, preview)}</span>
-              <span className="text-muted-foreground line-through">£230</span>
+              <span className="text-muted-foreground line-through">£{promoWas(230, preview)}</span>
               <span className="rounded-sm bg-primary px-1.5 py-0.5 text-[11px] font-bold text-primary-foreground">
                 -{pct}%
               </span>
